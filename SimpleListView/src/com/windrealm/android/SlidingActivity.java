@@ -393,6 +393,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		// Ultimate destination coordinates toward which the tray will move
 		int mDestX;
 		int mDestY;
+		private int mdeltaYAnimation;
 
 		public TrayAnimationTimerTask(){
 			// Setup destination coordinates based on the tray state. 
@@ -424,6 +425,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			default:
 				break;
 			}
+			
+			mdeltaYAnimation = mOnTop?-1*mYAxis/10:((screenHeight- mYAxis)/10);
 		}
 
 		// This function is called after every frame.
@@ -458,7 +461,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 						mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);	
 					}
 					*/
-					mYAxis = mYAxis+deltaY;
+					mYAxis = mYAxis+mdeltaYAnimation;
 					
 					mYAxis=Math.min(screenHeigh-OVERLAY_HEIGHT, mYAxis);
 					mYAxis=Math.max(mYAxis, 0);
