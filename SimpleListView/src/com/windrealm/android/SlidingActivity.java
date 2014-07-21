@@ -484,7 +484,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			int screenHeight = getResources().getDisplayMetrics().heightPixels;
 			int screenWidth = getResources().getDisplayMetrics().widthPixels;
 			
-			int widthn = (int) (OVERLAY_WIDTH + (screenWidth-OVERLAY_WIDTH)*(screenHeight-OVERLAY_HEIGHT-mYAxis)/(float)OVERLAY_HEIGHT);
+			int widthn = (int) (screenWidth - (screenWidth-OVERLAY_WIDTH)*mYAxis/(float)(screenHeight-OVERLAY_HEIGHT));
 			widthn = Math.max(widthn, OVERLAY_WIDTH);
 			widthn = Math.min(widthn, screenWidth);
 			int heighn = (int) (widthn*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH);
