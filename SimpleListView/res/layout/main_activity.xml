@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/rl_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="#d4c0ff" >
+
+ <RelativeLayout
+    android:id="@+id/rl_footer"
+    android:layout_width="fill_parent"
+    android:layout_height="70dp"
+    android:layout_alignParentBottom="true"
+    android:background="#40e0d0" >
+
+    <ImageView
+        android:id="@+id/iv_new_file"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="18dp"
+        android:onClick="onNewFileClick"
+        android:src="@drawable/ic_action_attachment" />
+
+    <TextView
+        android:id="@+id/tv_new_file"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/iv_new_file"
+        android:layout_below="@+id/iv_new_file"
+        android:text="New"
+        android:textColor="#ffffff" />
+
+    <ImageView
+        android:id="@+id/iv_insert"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignTop="@+id/iv_new_file"
+        android:layout_marginLeft="30dp"
+        android:layout_toRightOf="@+id/iv_new_file"
+        android:src="@drawable/ic_action_edit" />
+
+    <TextView
+        android:id="@+id/tv_insert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/iv_insert"
+        android:layout_below="@+id/iv_insert"
+        android:text="Insert"
+        android:textColor="#ffffff" />
+
+    <ImageView
+        android:id="@+id/iv_up_arrow"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:paddingBottom="10dp"
+        android:src="@drawable/ic_action_forward" />
+
+    <ImageView
+        android:id="@+id/iv_down_arrow"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/ic_action_back"
+        android:paddingBottom="10dp"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/iv_save"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignTop="@+id/iv_insert"
+        android:layout_marginLeft="30dp"
+        android:layout_toRightOf="@+id/iv_up_arrow"
+        android:src="@drawable/ic_action_save" />
+
+    <TextView
+        android:id="@+id/tv_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/iv_save"
+        android:layout_alignParentBottom="true"
+        android:text="Save"
+        android:textColor="#ffffff" />
+
+    <ImageView
+        android:id="@+id/iv_settings"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignTop="@+id/iv_save"
+        android:layout_marginLeft="27dp"
+        android:layout_toRightOf="@+id/tv_save"
+        android:paddingTop="2dp"
+        android:src="@drawable/ic_action_settings" />
+
+    <TextView
+        android:id="@+id/tv_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="260dp"
+        android:text="Settings"
+        android:textColor="#ffffff" />
+ </RelativeLayout>
+
+ </RelativeLayout>
