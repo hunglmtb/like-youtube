@@ -97,6 +97,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private RelativeLayout.LayoutParams mRootRelativeLayoutParams;
 	private int mYAxis = 0;
 	private int mLastY = 0;
+	private boolean mDoAnimation = true;
+	private boolean mSlidingStart = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -311,6 +313,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			mPrevDragX = x;
 			mPrevDragY = y;
 
+			mDoAnimation = false;
 			break;
 
 		case MotionEvent.ACTION_MOVE:
@@ -318,6 +321,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			// Calculate position of the whole tray according to the drag, and update layout.
 			float deltaX = x-mPrevDragX;
 			float deltaY = y-mPrevDragY;
+			
 			if (mOverlayMode==OverlayMode.APP) {
 				deltaY = deltaY>=0?0:deltaY;				
 			}
@@ -328,39 +332,27 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 			if (mIsSlidingX) {
 				mRootLayoutParams.x += deltaX;
-				//				mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(
-				//						mRootLayout.getWidth(), mRootLayout.getHeight());
-				//mRootRelativeLayoutParams.leftMargin = oldLeftMargin + ;
-				//mRootRelativeLayoutParams.addRule(View.ma, anchor)
 			}
 			else{
-				mRootLayoutParams.y += deltaY;
-				mYAxis = y;
-				int screenHeight = mAppLayout.getHeight();
-				mYAxis = Math.min(mYAxis, screenHeight-OVERLAY_HEIGHT);
+				mSlidingStart = mSlidingStart||
+								((mOnTop&&deltaY>0&&y>(mRootLayout.getHeight()/2)))||
+								(!mOnTop&&deltaY<0&&y<(mAppLayout.getHeight() - mRootLayout.getHeight()/2));
+				if(mSlidingStart){
+					mRootLayoutParams.y += deltaY;
+					mYAxis = y - mRootLayout.getHeight()/2;
+					int screenHeight = mAppLayout.getHeight();
+					mYAxis = Math.min(mYAxis, screenHeight-OVERLAY_HEIGHT);
+					mYAxis = Math.max(mYAxis, 0);
+				}
+				else return;
 
-
-				/*int dY = (int) ((deltaY/Math.abs(deltaY))*10);
-				int dX = dY*mRootLayout.getWidth()/mRootLayout.getHeight();
-				mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(
-						mRootLayout.getWidth()-dX, mRootLayout.getHeight()-dY);
-				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);*/
-				//mRootRelativeLayoutParams.topMargin += (deltaY/Math.abs(deltaY))*10;
-				/*				LayoutParams ml = mLogoLayout.getLayoutParams();
-			ml.width += 5;
-			ml.height += 5;
-			mLogoLayout.setLayoutParams(ml);
-			mLogoLayout.requestLayout();*/
 			}
 
+			mDoAnimation = true;
 
 			mPrevDragX = x;
 			mPrevDragY = y;
 			//Log.i("hung", "mRootLayoutParams.x "+mRootLayoutParams.x+" mRootLayoutParams.y"+mRootLayoutParams.y);
-
-
-
 			//animateButtons();
 			updateViewLayout();
 
@@ -369,15 +361,23 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_CANCEL:
 			mIsFirstTimeMove = true;
+			mSlidingStart = false;
 			setOverlayPlace(x,y);
-
-			//animation
-			mTrayAnimationTimerTask = new TrayAnimationTimerTask();
-			mTrayAnimationTimer = new Timer();
-			mTrayAnimationTimer.schedule(mTrayAnimationTimerTask, 0, ANIMATION_FRAME_RATE);
+			doAnimation();
 			break;
 		}
 	}
+
+
+	private void doAnimation() {
+		//animation
+		if (mDoAnimation ) {
+			mTrayAnimationTimerTask = new TrayAnimationTimerTask();
+			mTrayAnimationTimer = new Timer();
+			mTrayAnimationTimer.schedule(mTrayAnimationTimerTask, 0, ANIMATION_FRAME_RATE);			
+		}
+	}
+
 
 
 	// Timer for animation/automatic movement of the tray.
