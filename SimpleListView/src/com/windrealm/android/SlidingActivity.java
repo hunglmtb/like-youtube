@@ -365,7 +365,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 								((mOnTop&&deltaY>0&&(aboveHalf||bottomHalf )))||
 								(!mOnTop&&deltaY<0&&y<(mAppLayout.getHeight() - mRootLayout.getHeight()/2));
 				if(mSlidingStart){
-					int correctDeltaY = mStartDragY<slidingMidleRangeY?mRootLayout.getHeight()/2:mRootLayout.getHeight();
+					int correctDeltaY = mStartDragY<slidingMidleRangeY?3*mRootLayout.getHeight()/4:mRootLayout.getHeight();
 					int slideYDelata = mOnTop?correctDeltaY:slidingMidleRangeY;
 					mRootLayoutParams.y += deltaY;
 					mYAxis = y - slideYDelata;
