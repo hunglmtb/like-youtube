@@ -72,7 +72,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 	// Variables that control drag
 	private int mStartDragX;
-	//private int mStartDragY; // Unused as yet
+	private int mStartDragY; // Unused as yet
 	private int mPrevDragX;
 	private int mPrevDragY;
 
@@ -96,9 +96,13 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private ArrayAdapter<String> listAdapter ;
 	private RelativeLayout.LayoutParams mRootRelativeLayoutParams;
 	private int mYAxis = 0;
+	private int mXAxis;
 	private int mLastY = 0;
 	private boolean mDoAnimation = true;
 	private boolean mSlidingStart = false;
+	private int mTopHeigh;
+	private int mBottomWidth;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -299,6 +303,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private void dragTray(int action, int x, int y){
 		switch (action){
 		case MotionEvent.ACTION_DOWN:
+			mTopHeigh = mOnTop?mRootLayout.getHeight():OVERLAY_HEIGHT;
+			mBottomWidth = OVERLAY_WIDTH;
 
 			mIsFirstTimeMove = true;
 			// Cancel any currently running animations/automatic tray movements.
@@ -309,7 +315,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 			// Store the start points
 			mStartDragX = x;
-			//mStartDragY = y;
+			mStartDragY = y;
 			mPrevDragX = x;
 			mPrevDragY = y;
 
@@ -330,16 +336,39 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 				mIsFirstTimeMove = false;
 			}
 
-			if (mIsSlidingX) {
+			if (mIsSlidingX) {  
 				mRootLayoutParams.x += deltaX;
+				
+				int slidingMidleRangeX = mBottomWidth/2;
+				int slidedRangeX = mBottomWidth/3;
+				boolean leftHalf = (mStartDragX<slidingMidleRangeX&&deltaX>slidedRangeX);
+				boolean rightHalf = ((mStartDragX>=slidingMidleRangeX)&&y>=mBottomWidth);
+				mSlidingStart = mSlidingStart||
+								((!mOnTop&&deltaX>0&&(leftHalf||rightHalf )));
+				
+				if(mSlidingStart){
+					int correctDeltaX = mStartDragX<slidingMidleRangeX?mRootLayout.getWidth()/2:mRootLayout.getWidth();
+					int slideXDelata = mOnTop?correctDeltaX:slidingMidleRangeX;
+					mXAxis = x - slideXDelata;
+					int screenWidth = mAppLayout.getWidth();
+					mXAxis = Math.min(mXAxis, screenWidth-OVERLAY_WIDTH);
+					mXAxis = Math.max(mXAxis, 0);
+				}
+				else return;
 			}
 			else{
+				int slidingMidleRangeY =mTopHeigh /2;
+				int slidedRangeY = mTopHeigh/3;
+				boolean aboveHalf = (mStartDragY<slidingMidleRangeY&&deltaY>slidedRangeY);
+				boolean bottomHalf = ((mStartDragY>=slidingMidleRangeY)&&y>=mTopHeigh);
 				mSlidingStart = mSlidingStart||
-								((mOnTop&&deltaY>0&&y>(mRootLayout.getHeight()/2)))||
+								((mOnTop&&deltaY>0&&(aboveHalf||bottomHalf )))||
 								(!mOnTop&&deltaY<0&&y<(mAppLayout.getHeight() - mRootLayout.getHeight()/2));
 				if(mSlidingStart){
+					int correctDeltaY = mStartDragY<slidingMidleRangeY?mRootLayout.getHeight()/2:mRootLayout.getHeight();
+					int slideYDelata = mOnTop?correctDeltaY:slidingMidleRangeY;
 					mRootLayoutParams.y += deltaY;
-					mYAxis = y - mRootLayout.getHeight()/2;
+					mYAxis = y - slideYDelata;
 					int screenHeight = mAppLayout.getHeight();
 					mYAxis = Math.min(mYAxis, screenHeight-OVERLAY_HEIGHT);
 					mYAxis = Math.max(mYAxis, 0);
