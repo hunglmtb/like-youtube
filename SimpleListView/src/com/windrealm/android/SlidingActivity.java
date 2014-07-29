@@ -50,6 +50,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	public static final int PADDING = 5;
 	private static final int OVERLAY_HEIGHT = 210;
 	private static final int OVERLAY_WIDTH = 280;
+	private static final float DRAG_MOVE_RANGE = OVERLAY_HEIGHT/2;
 
 	// Layout containers for various widgets
 	private WindowManager.LayoutParams 	mRootLayoutParams;		// Parameters of the root layout
@@ -327,6 +328,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			// Calculate position of the whole tray according to the drag, and update layout.
 			float deltaX = x-mPrevDragX;
 			float deltaY = y-mPrevDragY;
+
+			
 			
 			if (mOverlayMode==OverlayMode.APP) {
 				deltaY = deltaY>=0?0:deltaY;				
@@ -338,29 +341,30 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 			if (mIsSlidingX) {  
 				mRootLayoutParams.x += deltaX;
-				
-				int slidingMidleRangeX = mBottomWidth/2;
-				int slidedRangeX = mBottomWidth/3;
-				boolean leftHalf = (mStartDragX<slidingMidleRangeX&&deltaX>slidedRangeX);
-				boolean rightHalf = ((mStartDragX>=slidingMidleRangeX)&&y>=mBottomWidth);
-				mSlidingStart = mSlidingStart||
-								((!mOnTop&&deltaX>0&&(leftHalf||rightHalf )));
-				
-				if(mSlidingStart){
-					int correctDeltaX = mStartDragX<slidingMidleRangeX?mRootLayout.getWidth()/2:mRootLayout.getWidth();
-					int slideXDelata = mOnTop?correctDeltaX:slidingMidleRangeX;
-					mXAxis = x - slideXDelata;
-					int screenWidth = mAppLayout.getWidth();
-					mXAxis = Math.min(mXAxis, screenWidth-OVERLAY_WIDTH);
-					mXAxis = Math.max(mXAxis, 0);
+				if (!mOnTop) {
+					int slidingMidleRangeX = mBottomWidth/2;
+					int slidedRangeX = mBottomWidth/3;
+					boolean leftHalf = (mStartDragX<slidingMidleRangeX&&deltaX>slidedRangeX);
+					boolean rightHalf = ((mStartDragX>=slidingMidleRangeX)&&x>=mBottomWidth);
+					mSlidingStart = mSlidingStart||(!mOnTop);
+					
+					if(mSlidingStart){
+						int correctDeltaX = mStartDragX<slidingMidleRangeX?mRootLayout.getWidth()/2:mRootLayout.getWidth();
+						int slideXDelata = mOnTop?correctDeltaX:slidingMidleRangeX;
+						mXAxis = x - slideXDelata;
+						int screenWidth = mAppLayout.getWidth();
+						mXAxis = Math.min(mXAxis, screenWidth-OVERLAY_WIDTH);
+						mXAxis = Math.max(mXAxis, 0);
+					}
+					else return;
 				}
 				else return;
 			}
 			else{
-				int slidingMidleRangeY =mTopHeigh /2;
-				int slidedRangeY = mTopHeigh/3;
+				int slidingMidleRangeY =mTopHeigh /3;
+				int slidedRangeY = mTopHeigh/4;
 				boolean aboveHalf = (mStartDragY<slidingMidleRangeY&&deltaY>slidedRangeY);
-				boolean bottomHalf = ((mStartDragY>=slidingMidleRangeY)&&y>=mTopHeigh);
+				boolean bottomHalf = ((mStartDragY>=slidingMidleRangeY)&&y>=(slidingMidleRangeY+slidedRangeY));
 				mSlidingStart = mSlidingStart||
 								((mOnTop&&deltaY>0&&(aboveHalf||bottomHalf )))||
 								(!mOnTop&&deltaY<0&&y<(mAppLayout.getHeight() - mRootLayout.getHeight()/2));
@@ -376,11 +380,12 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 				else return;
 
 			}
+			
+			mPrevDragX = x;
+			mPrevDragY = y;
 
 			mDoAnimation = true;
 
-			mPrevDragX = x;
-			mPrevDragY = y;
 			//Log.i("hung", "mRootLayoutParams.x "+mRootLayoutParams.x+" mRootLayoutParams.y"+mRootLayoutParams.y);
 			//animateButtons();
 			updateViewLayout();
@@ -795,53 +800,15 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private void setOverlayPlace(int x, int y) {
 		boolean previousSide = mOnTop;
 		int screenHeight = mAppLayout.getHeight();
-		int screenWidth = mAppLayout.getWidth();
-
-		//boolean closeTray = !mIsTrayOpen;
-
-		switch (mOverlayMode) {
-		case APP:
-			if (mIsSlidingX){
-				mOnTop = (x<screenWidth/2||(x-mStartDragX)<-screenWidth/3);
-				mClosed = mOnTop||(x>=screenWidth||(x-mStartDragX)>mRootLayoutParams.width/2);
-			}
-			break;
-		case HOME_SHOW:
-
-			if (mIsSlidingX){
-				boolean resultAtLeft = mIsTrayOpen?(x-mStartDragX)<(2*mContentContainerLayout.getWidth()/9):(x-mStartDragX)<mContentContainerLayout.getWidth();
-				boolean resultAtRight = mIsTrayOpen?(x-mStartDragX)<(-1*(2*mContentContainerLayout.getWidth()/9)):(x-mStartDragX)<-1*mContentContainerLayout.getWidth();
-				mOnTop = mOnTop?resultAtLeft:resultAtRight;
-				//Log.i("hung", "mIsLeftSide "+mIsLeftSide+ " mIsTrayOpen "+mIsTrayOpen+" with x "+x+" mStartDragX "+mStartDragX+ " (x-mStartDragX) "+(x-mStartDragX)+" (mAlbumCoverLayout.getWidth()/8) "+(mAlbumCoverLayout.getWidth()/8));
-			}
-			else{
-				mClosed =  mRootLayoutParams.y>=((TRAY_MOVEMENT_REGION_FRACTION-1)*screenHeight)/TRAY_MOVEMENT_REGION_FRACTION-mRootLayout.getWidth();
-			}
-
-			//set opentray
-			boolean sideKept = previousSide==mOnTop;
-			if (sideKept) {
-				// When the tray is released, bring it back to "open" or "closed" state.
-				if (mIsSlidingX&&(mOnTop&&((mIsTrayOpen && (x-mStartDragX)<=0) ||
-						(!mIsTrayOpen && (x-mStartDragX)>=0))))
-					mIsTrayOpen = !mIsTrayOpen;
-
-				if (mIsSlidingX&&(!mOnTop&&((!mIsTrayOpen && (x-mStartDragX)<=0) ||
-						(mIsTrayOpen && (x-mStartDragX)>=0))))
-					mIsTrayOpen = !mIsTrayOpen;				
-			}
-			else{
-				mIsTrayOpen = mOnTop?mRootLayoutParams.x>=0:mRootLayoutParams.x<=screenWidth-mRootLayoutParams.width;
-				//Log.i("hung", "mIsLeftSide "+mIsLeftSide+ " mIsTrayOpen "+mIsTrayOpen+" with x "+x+" screenWidth "+screenWidth+" mRootLayoutParams.width "+mRootLayoutParams.width);
-			}
-
-			mOnTop = (y<screenHeight/2);
-
-
-			break;
-		default:
-			break;
+		float deltaX = x-mStartDragX;
+		float deltaY = y-mStartDragY;
+		if (mOnTop) {
+			mOnTop = deltaY<DRAG_MOVE_RANGE;
 		}
+		else{
+			mOnTop = (y<screenHeight-DRAG_MOVE_RANGE - OVERLAY_HEIGHT);
+		}
+	
 
 	}
 
