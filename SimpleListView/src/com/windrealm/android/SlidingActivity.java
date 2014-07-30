@@ -50,7 +50,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	public static final int PADDING = 5;
 	private static final int OVERLAY_HEIGHT = 210;
 	private static final int OVERLAY_WIDTH = 280;
-	private static final float DRAG_MOVE_RANGE = OVERLAY_HEIGHT/2;
+	private static final float DRAG_MOVE_RANGE = 3*OVERLAY_HEIGHT/4;
 
 	// Layout containers for various widgets
 	private WindowManager.LayoutParams 	mRootLayoutParams;		// Parameters of the root layout
@@ -798,18 +798,40 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 
 	private void setOverlayPlace(int x, int y) {
-		boolean previousSide = mOnTop;
+		
 		int screenHeight = mAppLayout.getHeight();
 		float deltaX = x-mStartDragX;
 		float deltaY = y-mStartDragY;
+		
 		if (mOnTop) {
-			mOnTop = deltaY<DRAG_MOVE_RANGE;
+			//mOnTop = deltaY<OVERLAY_HEIGHT;
+			mOnTop = (screenHeight - mRootRelativeLayoutParams.bottomMargin - mRootRelativeLayoutParams.height)<DRAG_MOVE_RANGE;
+			//mOnTop = deltaY<0;			
+			
 		}
 		else{
-			mOnTop = (y<screenHeight-DRAG_MOVE_RANGE - OVERLAY_HEIGHT);
+			mOnTop = (mRootRelativeLayoutParams.bottomMargin)>DRAG_MOVE_RANGE;
 		}
-	
-
+		
+		/*
+		if (Math.abs(deltaY)-DRAG_MOVE_RANGE>=0) {
+			boolean previousSide = mOnTop;
+			if (mOnTop) {
+				//mOnTop = deltaY<OVERLAY_HEIGHT;
+				//mOnTop = mRootRelativeLayoutParams.bottomMargin>screenHeight - 2*OVERLAY_HEIGHT;
+				mOnTop = deltaY<0;			
+				
+			}
+			else{
+				mOnTop = deltaY<0;			
+			}
+		}
+		else{
+			mOnTop = mRootRelativeLayoutParams.bottomMargin>(3*OVERLAY_HEIGHT/2);		
+		}*/
+		/*if (mOnTop==previousSide) {
+			mOnTop = y<(screenHeight - 2*OVERLAY_HEIGHT);
+		}*/
 	}
 
 
