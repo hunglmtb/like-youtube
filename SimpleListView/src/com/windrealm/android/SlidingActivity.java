@@ -99,6 +99,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private int mYAxis = 0;
 	private int mXAxis;
 	private int mLastY = 0;
+	private int mLastX = 0;
+	
 	private boolean mDoAnimation = true;
 	private boolean mSlidingStart = false;
 	private int mTopHeigh;
@@ -346,17 +348,14 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 					int slidedRangeX = mBottomWidth/3;
 					boolean leftHalf = (mStartDragX<slidingMidleRangeX&&deltaX>slidedRangeX);
 					boolean rightHalf = ((mStartDragX>=slidingMidleRangeX)&&x>=mBottomWidth);
-					mSlidingStart = mSlidingStart||(!mOnTop);
+					//mSlidingStart = mSlidingStart||(!mOnTop);
 					
-					if(mSlidingStart){
-						int correctDeltaX = mStartDragX<slidingMidleRangeX?mRootLayout.getWidth()/2:mRootLayout.getWidth();
-						int slideXDelata = mOnTop?correctDeltaX:slidingMidleRangeX;
-						mXAxis = x - slideXDelata;
-						int screenWidth = mAppLayout.getWidth();
-						mXAxis = Math.min(mXAxis, screenWidth-OVERLAY_WIDTH);
-						mXAxis = Math.max(mXAxis, 0);
-					}
-					else return;
+					int correctDeltaX = mStartDragX<slidingMidleRangeX?mRootLayout.getWidth()/2:mRootLayout.getWidth();
+					int slideXDelata = slidingMidleRangeX;
+					mXAxis = x - slideXDelata;
+					int screenWidth = mAppLayout.getWidth();
+					mXAxis = Math.min(mXAxis, screenWidth-OVERLAY_WIDTH);
+					mXAxis = Math.max(mXAxis, 0);
 				}
 				else return;
 			}
@@ -430,6 +429,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 		private void setDestinationCordinate() {
 			int screenHeight = mAppLayout.getHeight();
+			int screenWidth = mAppLayout.getWidth();
 			switch (mOverlayMode) {
 			case APP:
 				break;
@@ -452,7 +452,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			}
 
 			mLastY  = mYAxis;
-
+			mLastX = mXAxis;
+			
 			mYAxis=Math.min(screenHeight-OVERLAY_HEIGHT, mYAxis);
 			mYAxis=Math.max(mYAxis, 0);
 			if (mOnTop) {
@@ -460,6 +461,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			}
 			else{
 				mYAxis=screenHeight-OVERLAY_HEIGHT;
+				mXAxis = mClosed?0:screenWidth-OVERLAY_WIDTH; 
 			}
 		}
 
@@ -479,11 +481,12 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 
 					int screenHeigh = mAppLayout.getHeight();
+					int screenWidht = mAppLayout.getWidth();
 					updateViewLayout();
 					animateButtons();
 
 					// Cancel animation when the destination is reached
-					if (mYAxis==0 || mYAxis == (screenHeigh-OVERLAY_HEIGHT)){
+					if (mYAxis==0 || mYAxis == (screenHeigh-OVERLAY_HEIGHT)||mXAxis ==0 || mXAxis == (screenWidht - OVERLAY_WIDTH)){
 						TrayAnimationTimerTask.this.cancel();
 						mTrayAnimationTimer.cancel();
 						if (mClosed) {
@@ -504,30 +507,37 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 	private void updateViewLayout() {
 		try {
+			int screenWidth = mAppLayout.getWidth();
+			if (!mIsSlidingX) {
 
-			int screenWidth = getResources().getDisplayMetrics().widthPixels;
-			int screenHeight = mAppLayout.getHeight();
+				int screenHeight = mAppLayout.getHeight();
 
-			int widthn = (int) (screenWidth - (screenWidth-OVERLAY_WIDTH)*mYAxis/(float)(screenHeight-OVERLAY_HEIGHT));
-			widthn = Math.max(widthn, OVERLAY_WIDTH);
-			widthn = Math.min(widthn, screenWidth);
-			int heighn = (int) (widthn*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH);
-			int margin = (int) (screenHeight - mYAxis - heighn);
+				int widthn = (int) (screenWidth - (screenWidth-OVERLAY_WIDTH)*mYAxis/(float)(screenHeight-OVERLAY_HEIGHT));
+				widthn = Math.max(widthn, OVERLAY_WIDTH);
+				widthn = Math.min(widthn, screenWidth);
+				int heighn = (int) (widthn*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH);
+				int margin = (int) (screenHeight - mYAxis - heighn);
 
-			mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(widthn,heighn);
+				mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(widthn,heighn);
 
-			if (mYAxis == screenHeight) {
-				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);			
+				if (mYAxis == screenHeight) {
+					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);			
+				}
+				else{
+					mRootRelativeLayoutParams.bottomMargin = margin;
+					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);				
+				}
 			}
 			else{
-				mRootRelativeLayoutParams.bottomMargin = margin;
+				mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(OVERLAY_WIDTH,OVERLAY_HEIGHT);
 				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);				
+				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+				mRootRelativeLayoutParams.rightMargin = screenWidth - OVERLAY_WIDTH - mXAxis;
 			}
-
-			Log.i("hung", "widthn "+widthn+ " heighn "+heighn+ " mYAxis "+mYAxis+ " margin "+margin);
-
+			
+			Log.i("hung", "widthn "+mRootRelativeLayoutParams.width+ " heighn "+mRootRelativeLayoutParams.height+ " mYAxis "+mYAxis+ " rightMargin "+mRootRelativeLayoutParams.rightMargin+" bottomMargin"+mRootRelativeLayoutParams.bottomMargin);
 			mRootLayout.setLayoutParams(mRootRelativeLayoutParams);
 			mRootLayout.requestLayout();
 			//mAppLayout.updateViewLayout(mRootLayout, mRootRelativeLayoutParams);
@@ -663,6 +673,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		widthn = Math.min(widthn, screenWidth);
 		int marginTop = Math.max(mLastY, 0);
 		int marginLeft =  (int) ((screenWidth-OVERLAY_WIDTH)*mLastY/(float)(screenHeight-OVERLAY_HEIGHT));
+
 		marginLeft = Math.max(marginLeft, 0);
 
 
@@ -675,16 +686,32 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			targetW = OVERLAY_WIDTH;
 			marginTop = mLastY-screenHeight + OVERLAY_HEIGHT;
 			marginLeft = OVERLAY_WIDTH - widthn;
+
+			if (mIsSlidingX) {
+				marginTop = 0;					
+				if (mClosed) {
+					marginLeft = mLastX;
+				}
+				else{
+					marginLeft = OVERLAY_WIDTH + mLastX - screenWidth;
+				}
+				Log.i("hung", "translate marginLeft "+marginLeft);
+			}
+			
 		}
+		
 		
 		float fromX = (screenWidth - (screenWidth-OVERLAY_WIDTH)*mLastY/(float)(screenHeight-OVERLAY_HEIGHT))/targetW;
 		float toX = 1.0f;
 		float fromY = fromX;
 		float toY = 1.0f;
 		
+		
 		//Log.i("hung", "relativeDistance "+relativeDistance);
-		Animation animationScale = new ScaleAnimation(fromX, toX, fromY, toY);
-		animations.addAnimation(animationScale);
+		if (!mIsSlidingX) {
+			Animation animationScale = new ScaleAnimation(fromX, toX, fromY, toY);			
+			animations.addAnimation(animationScale);
+		}
 
 		TranslateAnimation translate = new TranslateAnimation( marginLeft, 0 , marginTop,0 );
 		animations.addAnimation(translate);
@@ -798,40 +825,17 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 
 	private void setOverlayPlace(int x, int y) {
-		
-		int screenHeight = mAppLayout.getHeight();
-		float deltaX = x-mStartDragX;
-		float deltaY = y-mStartDragY;
-		
 		if (mOnTop) {
-			//mOnTop = deltaY<OVERLAY_HEIGHT;
+			int screenHeight = mAppLayout.getHeight();
 			mOnTop = (screenHeight - mRootRelativeLayoutParams.bottomMargin - mRootRelativeLayoutParams.height)<DRAG_MOVE_RANGE;
-			//mOnTop = deltaY<0;			
-			
+			mClosed = false;
 		}
 		else{
 			mOnTop = (mRootRelativeLayoutParams.bottomMargin)>DRAG_MOVE_RANGE;
+			int screenWidth = mAppLayout.getWidth();
+			mClosed = x<screenWidth/2;
 		}
 		
-		/*
-		if (Math.abs(deltaY)-DRAG_MOVE_RANGE>=0) {
-			boolean previousSide = mOnTop;
-			if (mOnTop) {
-				//mOnTop = deltaY<OVERLAY_HEIGHT;
-				//mOnTop = mRootRelativeLayoutParams.bottomMargin>screenHeight - 2*OVERLAY_HEIGHT;
-				mOnTop = deltaY<0;			
-				
-			}
-			else{
-				mOnTop = deltaY<0;			
-			}
-		}
-		else{
-			mOnTop = mRootRelativeLayoutParams.bottomMargin>(3*OVERLAY_HEIGHT/2);		
-		}*/
-		/*if (mOnTop==previousSide) {
-			mOnTop = y<(screenHeight - 2*OVERLAY_HEIGHT);
-		}*/
 	}
 
 
