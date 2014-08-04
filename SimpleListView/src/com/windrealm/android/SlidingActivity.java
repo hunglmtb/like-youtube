@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.PixelFormat;
 import android.os.Build;
@@ -104,8 +105,6 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private boolean mDoAnimation = true;
 	private boolean mSlidingStart = false;
 	private int mTopHeigh;
-	private int mBottomWidth;
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -148,8 +147,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 		mRootLayout = (RelativeLayout) findViewById(R.id.root_layout);
 
-		mContentContainerLayout = (RelativeLayout) mRootLayout.findViewById(R.id.content_container);
-		mContentContainerLayout.setOnTouchListener(new TrayTouchListener());
+		//mContentContainerLayout = (RelativeLayout) mRootLayout.findViewById(R.id.content_container);
+		mRootLayout.setOnTouchListener(new TrayTouchListener());
 
 		//mLogoLayout = (RelativeLayout) mRootLayout.findViewById(R.id.logo_layout);
 		/*mAlbumCoverLayout = (RelativeLayout) mRootLayout.findViewById(R.id.cover_layout);
@@ -307,7 +306,6 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		switch (action){
 		case MotionEvent.ACTION_DOWN:
 			mTopHeigh = mOnTop?mRootLayout.getHeight():OVERLAY_HEIGHT;
-			mBottomWidth = OVERLAY_WIDTH;
 
 			mIsFirstTimeMove = true;
 			// Cancel any currently running animations/automatic tray movements.
@@ -344,18 +342,11 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			if (mIsSlidingX) {  
 				mRootLayoutParams.x += deltaX;
 				if (!mOnTop) {
-					int slidingMidleRangeX = mBottomWidth/2;
-					int slidedRangeX = mBottomWidth/3;
-					boolean leftHalf = (mStartDragX<slidingMidleRangeX&&deltaX>slidedRangeX);
-					boolean rightHalf = ((mStartDragX>=slidingMidleRangeX)&&x>=mBottomWidth);
-					//mSlidingStart = mSlidingStart||(!mOnTop);
-					
-					int correctDeltaX = mStartDragX<slidingMidleRangeX?mRootLayout.getWidth()/2:mRootLayout.getWidth();
-					int slideXDelata = slidingMidleRangeX;
+					int slideXDelata = mStartDragX - (mAppLayout.getWidth() - OVERLAY_WIDTH );
 					mXAxis = x - slideXDelata;
 					int screenWidth = mAppLayout.getWidth();
-					mXAxis = Math.min(mXAxis, screenWidth-OVERLAY_WIDTH);
-					mXAxis = Math.max(mXAxis, 0);
+					mXAxis = Math.min(mXAxis, screenWidth+OVERLAY_WIDTH);
+					mXAxis = Math.max(mXAxis, -1*OVERLAY_WIDTH);
 				}
 				else return;
 			}
@@ -461,7 +452,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			}
 			else{
 				mYAxis=screenHeight-OVERLAY_HEIGHT;
-				mXAxis = mClosed?0:screenWidth-OVERLAY_WIDTH; 
+				mXAxis = mClosed?-1*OVERLAY_HEIGHT:screenWidth-OVERLAY_WIDTH; 
 			}
 		}
 
@@ -481,17 +472,16 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 
 					int screenHeigh = mAppLayout.getHeight();
-					int screenWidht = mAppLayout.getWidth();
+					int screenWidth = mAppLayout.getWidth();
 					updateViewLayout();
 					animateButtons();
-
+					
 					// Cancel animation when the destination is reached
-					if (mYAxis==0 || mYAxis == (screenHeigh-OVERLAY_HEIGHT)||mXAxis ==0 || mXAxis == (screenWidht - OVERLAY_WIDTH)){
-						TrayAnimationTimerTask.this.cancel();
-						mTrayAnimationTimer.cancel();
-						if (mClosed) {
-							//stopSelf();
-						}
+					TrayAnimationTimerTask.this.cancel();
+					mTrayAnimationTimer.cancel();
+					if (mClosed) {
+						//stopSelf();
+						//mRootLayout.setVisibility(View.GONE);
 					}
 					/*if (Math.abs(mRootLayoutParams.x-mDestX)<2 && Math.abs(mRootLayoutParams.y-mDestY)<2){
 						TrayAnimationTimerTask.this.cancel();
@@ -505,6 +495,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		}
 	}
 
+	@SuppressLint("NewApi")
 	private void updateViewLayout() {
 		try {
 			int screenWidth = mAppLayout.getWidth();
@@ -531,13 +522,21 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 				}
 			}
 			else{
-				mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(OVERLAY_WIDTH,OVERLAY_HEIGHT);
-				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-				mRootRelativeLayoutParams.rightMargin = screenWidth - OVERLAY_WIDTH - mXAxis;
+				if (mClosed) {
+					mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(OVERLAY_WIDTH,OVERLAY_HEIGHT);
+					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+					mRootRelativeLayoutParams.rightMargin =  -1* OVERLAY_WIDTH;
+				}
+				else{
+					mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(OVERLAY_WIDTH,OVERLAY_HEIGHT);
+					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+					mRootRelativeLayoutParams.rightMargin = screenWidth - OVERLAY_WIDTH - mXAxis;
+				}
 			}
 			
-			Log.i("hung", "widthn "+mRootRelativeLayoutParams.width+ " heighn "+mRootRelativeLayoutParams.height+ " mYAxis "+mYAxis+ " rightMargin "+mRootRelativeLayoutParams.rightMargin+" bottomMargin"+mRootRelativeLayoutParams.bottomMargin);
+			//Log.i("hung", "widthn "+mRootRelativeLayoutParams.width+ " heighn "+mRootRelativeLayoutParams.height+ " mYAxis "+mYAxis+ " rightMargin "+mRootRelativeLayoutParams.rightMargin+" bottomMargin"+mRootRelativeLayoutParams.bottomMargin);
 			mRootLayout.setLayoutParams(mRootRelativeLayoutParams);
 			mRootLayout.requestLayout();
 			//mAppLayout.updateViewLayout(mRootLayout, mRootRelativeLayoutParams);
@@ -545,48 +544,56 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		} catch (java.lang.IllegalArgumentException e) {
 			e.printStackTrace();
 		}
+		
+		if (mIsSlidingX) {
+			float fromAlpha = 1.0f;
+			float distance = 1;
+			float remain = 1;
+			switch (mOverlayMode) {
+			case APP:
+				int landMarkX = getResources().getDisplayMetrics().widthPixels -mRootLayoutParams.width;
+				if (mRootLayoutParams.x-landMarkX>0) {
+					distance = mRootLayoutParams.width;
+					remain = getResources().getDisplayMetrics().widthPixels - mRootLayoutParams.x;
+				}
+				else{
+					distance  = landMarkX;
+					remain = mRootLayoutParams.x;
+				}
 
-		float alpha = 1.0f;
-		float distance = 1;
-		float remain = 1;
-		switch (mOverlayMode) {
-		case APP:
-			int landMarkX = getResources().getDisplayMetrics().widthPixels -mRootLayoutParams.width;
-			if (mRootLayoutParams.x-landMarkX>0) {
-				distance = mRootLayoutParams.width;
-				remain = getResources().getDisplayMetrics().widthPixels - mRootLayoutParams.x;
+				break;
+			case HOME_SHOW:
+				//int screenHeight = getResources().getDisplayMetrics().heightPixels;
+				int screenHeight = mAppLayout.getHeight();
+
+				distance = screenHeight/TRAY_MOVEMENT_REGION_FRACTION+mRootLayoutParams.width;
+				remain = screenHeight-mRootLayoutParams.y;
+				//(mRootLayoutParams.y>((TRAY_MOVEMENT_REGION_FRACTION-1)*screenHeight)/TRAY_MOVEMENT_REGION_FRACTION-mRootLayoutParams.width);
+
+				break;
+			default:
+				break;
+
+
 			}
-			else{
-				distance  = landMarkX;
-				remain = mRootLayoutParams.x;
+			int screenWidth = mAppLayout.getWidth();
+			fromAlpha = (screenWidth - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth))/(float)screenWidth;
+			fromAlpha = Math.max(fromAlpha, 0);
+			fromAlpha = Math.min(fromAlpha, 1);
+			//Log.i("hung", "translate fromAlpha "+fromAlpha +" mXAxis "+mXAxis+" screenWidth "+ screenWidth);
+
+			//alpha = alpha<0.0000001?0:alpha;
+			if (Build.VERSION.SDK_INT < 11) {
+				final AlphaAnimation animation = new AlphaAnimation(fromAlpha, fromAlpha);
+				long duration = 0;
+				animation.setDuration(duration );
+				animation.setFillAfter(true);
+				//mRootLayout.startAnimation(animation);
+			}else{
+				//mRootLayout.setAlpha(fromAlpha);
 			}
-
-			break;
-		case HOME_SHOW:
-			//int screenHeight = getResources().getDisplayMetrics().heightPixels;
-			int screenHeight = mAppLayout.getHeight();
-
-			distance = screenHeight/TRAY_MOVEMENT_REGION_FRACTION+mRootLayoutParams.width;
-			remain = screenHeight-mRootLayoutParams.y;
-			//(mRootLayoutParams.y>((TRAY_MOVEMENT_REGION_FRACTION-1)*screenHeight)/TRAY_MOVEMENT_REGION_FRACTION-mRootLayoutParams.width);
-
-			break;
-		default:
-			break;
-
-
 		}
-		alpha = remain/distance;
-		alpha = alpha<0.0000001?0:alpha;
-		if (Build.VERSION.SDK_INT < 11) {
-			final AlphaAnimation animation = new AlphaAnimation(alpha, alpha);
-			long duration = 0;
-			animation.setDuration(duration );
-			animation.setFillAfter(true);
-			//mContentContainerLayout.startAnimation(animation);
-		}else{
-			//mContentContainerLayout.setAlpha(alpha);
-		}
+		
 	}
 	// This function animates the buttons based on the position of the tray.
 	private void animateButtons(){
@@ -639,25 +646,19 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		//float relativeDistance = (mRootLayoutParams.x + mLogoLayout.getWidth())/(float)(-mRootLayout.getWidth()/TRAY_HIDDEN_FRACTION + mLogoLayout.getWidth());
 		int screenHeight = mAppLayout.getHeight();
 		int screenWidth = mAppLayout.getWidth();
-
+		float fromTranslateX = 0;
+		float toTranslateX = 0;
 		float relativeDistance = (screenHeight- mYAxis)/(float)screenHeight;
 
 		// Limit it to 0-1 if it goes beyond 0-1 for any reason.
 		relativeDistance=Math.max(relativeDistance, 0);
 		relativeDistance=Math.min(relativeDistance, 1);
 
-		// Setup animations
-		float fromAlpha = relativeDistance;
-		float toAlpha = 1;
+		long duration = 400;
 		AnimationSet animations = new AnimationSet(true);
 		animations.setFillAfter(true);
-		long duration = 140;
 		animations.setDuration(duration);
-		Animation animationAlpha = new AlphaAnimation(
-				fromAlpha, 
-				toAlpha);
-		//animations.addAnimation(animationAlpha);
-
+		
 		if (mOnTop) {
 			mLastY -= 30*mLastY/duration;
 		}
@@ -688,18 +689,33 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			marginLeft = OVERLAY_WIDTH - widthn;
 
 			if (mIsSlidingX) {
+				// Setup animations
+				float fromAlpha = relativeDistance;
+				float toAlpha = 1;
+				
 				marginTop = 0;					
 				if (mClosed) {
 					marginLeft = mLastX;
+					toTranslateX = -1*OVERLAY_WIDTH;
+					toAlpha = 0;
 				}
 				else{
 					marginLeft = OVERLAY_WIDTH + mLastX - screenWidth;
+					toAlpha = 1;
 				}
-				Log.i("hung", "translate marginLeft "+marginLeft);
+				//marginLeft = OVERLAY_WIDTH + mLastX - screenWidth;
+
+				fromAlpha = (screenWidth - Math.abs(mLastX+OVERLAY_WIDTH-screenWidth))/(float)screenWidth;
+				fromAlpha = Math.max(fromAlpha, 0);
+				fromAlpha = Math.min(fromAlpha, 1);
+				
+				Animation animationAlpha = new AlphaAnimation(
+						fromAlpha, 
+						toAlpha);
+				//animations.addAnimation(animationAlpha);
+				
 			}
-			
 		}
-		
 		
 		float fromX = (screenWidth - (screenWidth-OVERLAY_WIDTH)*mLastY/(float)(screenHeight-OVERLAY_HEIGHT))/targetW;
 		float toX = 1.0f;
@@ -707,16 +723,34 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		float toY = 1.0f;
 		
 		
-		//Log.i("hung", "relativeDistance "+relativeDistance);
 		if (!mIsSlidingX) {
 			Animation animationScale = new ScaleAnimation(fromX, toX, fromY, toY);			
 			animations.addAnimation(animationScale);
 		}
 
-		TranslateAnimation translate = new TranslateAnimation( marginLeft, 0 , marginTop,0 );
+		fromTranslateX = marginLeft;
+		TranslateAnimation translate = new TranslateAnimation( fromTranslateX , toTranslateX , marginTop,0 );
+		translate.setAnimationListener(new Animation.AnimationListener(){
+		    @Override
+		    public void onAnimationStart(Animation arg0) {
+		    }           
+		    @Override
+		    public void onAnimationRepeat(Animation arg0) {
+		    }           
+		    @Override
+		    public void onAnimationEnd(Animation arg0) {
+	    		mRootLayout.clearAnimation();
+		    	if (mClosed) {
+					//stopSelf();
+					mRootLayout.setVisibility(View.GONE);
+					//mainListView.setVisibility(View.GONE);
+				}
+		    }
+		});
 		animations.addAnimation(translate);
 		// Play the animations
 		//mWindowManager.updateViewLayout(mRootLayout, mRootLayoutParams);
+		Log.i("hung", "fromXfromX "+fromX+" fromTranslateX "+fromTranslateX+" toTranslateX "+toTranslateX);
 		mRootLayout.startAnimation(animations);
 	}
 
@@ -833,11 +867,11 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		else{
 			mOnTop = (mRootRelativeLayoutParams.bottomMargin)>DRAG_MOVE_RANGE;
 			int screenWidth = mAppLayout.getWidth();
-			mClosed = x<screenWidth/2;
+			int leftPointerX = mStartDragX - (mAppLayout.getWidth() - OVERLAY_WIDTH/2 );
+			mClosed = (x - leftPointerX)<screenWidth/2;
 		}
 		
 	}
-
 
 
 	@Override
