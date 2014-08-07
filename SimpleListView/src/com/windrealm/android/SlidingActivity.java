@@ -105,6 +105,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private boolean mDoAnimation = true;
 	private boolean mSlidingStart = false;
 	private int mTopHeigh;
+	private boolean mCloseOnRight = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -473,7 +474,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 					int screenHeigh = mAppLayout.getHeight();
 					int screenWidth = mAppLayout.getWidth();
-					updateViewLayout();
+					//updateViewLayout();
 					animateButtons();
 					
 					// Cancel animation when the destination is reached
@@ -525,20 +526,27 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 				if (mClosed) {
 					mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(OVERLAY_WIDTH,OVERLAY_HEIGHT);
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-					mRootRelativeLayoutParams.rightMargin =  -1* OVERLAY_WIDTH;
+					if (mCloseOnRight ) {
+						mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+						mRootRelativeLayoutParams.leftMargin =  -1* OVERLAY_WIDTH;												
+					}
+					else{
+						mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+						mRootRelativeLayoutParams.rightMargin =  -1* OVERLAY_WIDTH;						
+					}
 				}
 				else{
-					mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(OVERLAY_WIDTH,OVERLAY_HEIGHT);
+					mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,OVERLAY_HEIGHT);
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-					mRootRelativeLayoutParams.rightMargin = screenWidth - OVERLAY_WIDTH - mXAxis;
+					mRootRelativeLayoutParams.setMargins(mXAxis, 0, screenWidth - OVERLAY_WIDTH - mXAxis, 0);
 				}
 			}
 			
 			//Log.i("hung", "widthn "+mRootRelativeLayoutParams.width+ " heighn "+mRootRelativeLayoutParams.height+ " mYAxis "+mYAxis+ " rightMargin "+mRootRelativeLayoutParams.rightMargin+" bottomMargin"+mRootRelativeLayoutParams.bottomMargin);
 			mRootLayout.setLayoutParams(mRootRelativeLayoutParams);
-			mRootLayout.requestLayout();
+			//mRootLayout.invalidate();
+			//mRootLayout.requestLayout();
 			//mAppLayout.updateViewLayout(mRootLayout, mRootRelativeLayoutParams);
 
 		} catch (java.lang.IllegalArgumentException e) {
@@ -578,9 +586,12 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			}
 			int screenWidth = mAppLayout.getWidth();
 			fromAlpha = (screenWidth - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth))/(float)screenWidth;
+			float length = screenWidth;
+			distance = (screenWidth - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth));
+			fromAlpha = distance/length ;
 			fromAlpha = Math.max(fromAlpha, 0);
 			fromAlpha = Math.min(fromAlpha, 1);
-			//Log.i("hung", "translate fromAlpha "+fromAlpha +" mXAxis "+mXAxis+" screenWidth "+ screenWidth);
+			Log.i("hung", "translate fromAlpha "+fromAlpha +" mXAxis "+mXAxis+" screenWidth "+ screenWidth);
 
 			//alpha = alpha<0.0000001?0:alpha;
 			if (Build.VERSION.SDK_INT < 11) {
@@ -588,9 +599,9 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 				long duration = 0;
 				animation.setDuration(duration );
 				animation.setFillAfter(true);
-				//mRootLayout.startAnimation(animation);
+				mRootLayout.startAnimation(animation);
 			}else{
-				//mRootLayout.setAlpha(fromAlpha);
+				mRootLayout.setAlpha(fromAlpha);
 			}
 		}
 		
@@ -654,7 +665,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		relativeDistance=Math.max(relativeDistance, 0);
 		relativeDistance=Math.min(relativeDistance, 1);
 
-		long duration = 400;
+		long duration = 800;
 		AnimationSet animations = new AnimationSet(true);
 		animations.setFillAfter(true);
 		animations.setDuration(duration);
@@ -695,8 +706,14 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 				
 				marginTop = 0;					
 				if (mClosed) {
-					marginLeft = mLastX;
-					toTranslateX = -1*OVERLAY_WIDTH;
+					if (mCloseOnRight) {
+						toTranslateX = OVERLAY_WIDTH;	
+						marginLeft = mLastX - screenWidth + OVERLAY_WIDTH;
+					}
+					else{
+						toTranslateX = -1*OVERLAY_WIDTH;						
+						marginLeft = mLastX;
+					}
 					toAlpha = 0;
 				}
 				else{
@@ -740,6 +757,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		    @Override
 		    public void onAnimationEnd(Animation arg0) {
 	    		mRootLayout.clearAnimation();
+				updateViewLayout();
 		    	if (mClosed) {
 					//stopSelf();
 					mRootLayout.setVisibility(View.GONE);
@@ -867,8 +885,9 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		else{
 			mOnTop = (mRootRelativeLayoutParams.bottomMargin)>DRAG_MOVE_RANGE;
 			int screenWidth = mAppLayout.getWidth();
-			int leftPointerX = mStartDragX - (mAppLayout.getWidth() - OVERLAY_WIDTH/2 );
-			mClosed = (x - leftPointerX)<screenWidth/2;
+			int leftPointerX = mStartDragX - (screenWidth - OVERLAY_WIDTH/2 );
+			mCloseOnRight = (x - leftPointerX)>=screenWidth/2&&mRootRelativeLayoutParams.leftMargin>=(screenWidth - 2*OVERLAY_WIDTH/3 );
+			mClosed = (x - leftPointerX)<screenWidth/2||mCloseOnRight;
 		}
 		
 	}
