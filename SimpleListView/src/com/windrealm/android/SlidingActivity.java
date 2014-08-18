@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -591,7 +592,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			fromAlpha = distance/length ;
 			fromAlpha = Math.max(fromAlpha, 0);
 			fromAlpha = Math.min(fromAlpha, 1);
-			Log.i("hung", "translate fromAlpha "+fromAlpha +" mXAxis "+mXAxis+" screenWidth "+ screenWidth);
+			//Log.i("hung", "translate fromAlpha "+fromAlpha +" mXAxis "+mXAxis+" screenWidth "+ screenWidth);
 
 			//alpha = alpha<0.0000001?0:alpha;
 			if (Build.VERSION.SDK_INT < 11) {
@@ -769,7 +770,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		animations.addAnimation(translate);
 		// Play the animations
 		//mWindowManager.updateViewLayout(mRootLayout, mRootLayoutParams);
-		Log.i("hung", "fromXfromX "+fromX+" fromTranslateX "+fromTranslateX+" toTranslateX "+toTranslateX);
+		//Log.i("hung", "fromXfromX "+fromX+" fromTranslateX "+fromTranslateX+" toTranslateX "+toTranslateX);
 		mRootLayout.startAnimation(animations);
 	}
 
@@ -807,19 +808,22 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 			if (mIsSlidingX) {
 				// Setup animations
+				float toAlpha = mClosed?0:1;
+				float fromAlpha = (screenWidth - Math.abs(mLastX+OVERLAY_WIDTH-screenWidth))/(float)screenWidth;
 				if (mClosed) {
-					toTranslateX = mCloseOnRight?screenWidth - mLastX:-1*(mLastX+OVERLAY_WIDTH);	
+					toTranslateX = mCloseOnRight?screenWidth - mLastX:-1*(mLastX+OVERLAY_WIDTH);
 				}
 				else{
 					toTranslateX = screenWidth - OVERLAY_WIDTH - mLastX;
 				}
 
-				float toAlpha = mClosed?0:1;
-				float fromAlpha = (screenWidth - Math.abs(mLastX+OVERLAY_WIDTH-screenWidth))/(float)screenWidth;
+				fromAlpha = mCloseOnRight?Math.abs(screenWidth - mLastX)/(float)OVERLAY_WIDTH:(OVERLAY_WIDTH + mLastX)/(float)screenWidth;
 				fromAlpha = Math.max(fromAlpha, 0);
 				fromAlpha = Math.min(fromAlpha, 1);
 
 				Animation animationAlpha = new AlphaAnimation(fromAlpha,toAlpha);
+				animationAlpha.setInterpolator(new AccelerateInterpolator()); //and this
+				Log.i("hung", "animationAlpha from  "+fromAlpha+" toAlpha "+toAlpha);
 				animations.addAnimation(animationAlpha);
 			}
 		}
@@ -855,7 +859,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		});
 		animations.addAnimation(translate);
 		// Play the animations
-		Log.i("hung", "fromXfromX "+fromX+" fromTranslateX "+fromTranslateX+" toTranslateX "+toTranslateX);
+		//Log.i("hung", "fromXfromX "+fromX+" fromTranslateX "+fromTranslateX+" toTranslateX "+toTranslateX);
 		mRootLayout.startAnimation(animations);
 	}
 
@@ -975,6 +979,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			int leftPointerX = mStartDragX - (screenWidth - OVERLAY_WIDTH/2 );
 			mCloseOnRight = (x - leftPointerX)>=screenWidth/2&&mRootRelativeLayoutParams.leftMargin>=(screenWidth - 2*OVERLAY_WIDTH/3 );
 			mClosed = (x - leftPointerX)<screenWidth/2||mCloseOnRight;
+			mClosed = false;
 		}
 
 	}
