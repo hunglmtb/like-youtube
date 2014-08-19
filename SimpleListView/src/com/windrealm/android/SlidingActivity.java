@@ -107,6 +107,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private boolean mSlidingStart = false;
 	private int mTopHeigh;
 	private boolean mCloseOnRight = false;
+	private boolean mEnableTouch = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -285,7 +286,9 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		public boolean onTouch(View v, MotionEvent event) {
 
 			final int action = event.getActionMasked();
-
+			if (!mEnableTouch||(mRootLayout.getAnimation()!=null&&!mRootLayout.getAnimation().hasEnded())) {
+				return false;
+			}
 			switch (action) {
 			case MotionEvent.ACTION_DOWN: 
 			case MotionEvent.ACTION_MOVE:
@@ -305,6 +308,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 	// Drags the tray as per touch info
 	private void dragTray(int action, int x, int y){
+		
 		switch (action){
 		case MotionEvent.ACTION_DOWN:
 			mTopHeigh = mOnTop?mRootLayout.getHeight():OVERLAY_HEIGHT;
@@ -315,6 +319,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 				mTrayAnimationTimerTask.cancel();
 				mTrayAnimationTimer.cancel();
 			}
+			
+			mRootLayout.clearAnimation();
 
 			// Store the start points
 			mStartDragX = x;
@@ -326,7 +332,6 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			break;
 
 		case MotionEvent.ACTION_MOVE:
-
 			// Calculate position of the whole tray according to the drag, and update layout.
 			float deltaX = x-mPrevDragX;
 			float deltaY = y-mPrevDragY;
@@ -388,8 +393,11 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		case MotionEvent.ACTION_CANCEL:
 			mIsFirstTimeMove = true;
 			mSlidingStart = false;
-			setOverlayPlace(x,y);
-			doAnimation();
+			//mEnableTouch = true;
+			if (mEnableTouch) {
+				setOverlayPlace(x,y);
+				doAnimation();				
+			}
 			break;
 		}
 	}
@@ -467,6 +475,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			mAnimationHandler.post(new Runnable() {
 				@Override
 				public void run() {
+					mEnableTouch = false;
 
 					// Update coordinates of the tray
 					mRootLayoutParams.x = (2*(mRootLayoutParams.x-mDestX))/3 + mDestX;
@@ -850,8 +859,10 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			public void onAnimationEnd(Animation arg0) {
 				mRootLayout.clearAnimation();
 				updateViewLayout();
+				mEnableTouch = true;					
 				if (mClosed) {
 					//stopSelf();
+					mEnableTouch = false;					
 					mRootLayout.setVisibility(View.GONE);
 					//mainListView.setVisibility(View.GONE);
 				}
