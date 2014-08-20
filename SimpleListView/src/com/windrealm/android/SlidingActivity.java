@@ -599,6 +599,9 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			float length = screenWidth;
 			distance = (screenWidth - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth));
 			fromAlpha = distance/length ;
+			
+			distance = mXAxis>(screenWidth-OVERLAY_WIDTH)?OVERLAY_WIDTH:screenWidth;
+			fromAlpha = (1 - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth)/(float)distance);
 			fromAlpha = Math.max(fromAlpha, 0);
 			fromAlpha = Math.min(fromAlpha, 1);
 			//Log.i("hung", "translate fromAlpha "+fromAlpha +" mXAxis "+mXAxis+" screenWidth "+ screenWidth);
