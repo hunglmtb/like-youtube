@@ -108,6 +108,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private int mTopHeigh;
 	private boolean mCloseOnRight = false;
 	private boolean mEnableTouch = true;
+	private float mLastAlpha = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -604,6 +605,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			fromAlpha = (1 - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth)/(float)distance);
 			fromAlpha = Math.max(fromAlpha, 0);
 			fromAlpha = Math.min(fromAlpha, 1);
+			mLastAlpha = fromAlpha;
 			//Log.i("hung", "translate fromAlpha "+fromAlpha +" mXAxis "+mXAxis+" screenWidth "+ screenWidth);
 
 			//alpha = alpha<0.0000001?0:alpha;
@@ -801,8 +803,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		float toTranslateY = 0;
 
 
-		long duration = 800;
-		AnimationSet animations = new AnimationSet(true);
+		long duration = 250;
+		AnimationSet animations = new AnimationSet(false);
 		animations.setFillAfter(true);
 		animations.setDuration(duration);
 
@@ -830,6 +832,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 				}
 
 				fromAlpha = mCloseOnRight?Math.abs(screenWidth - mLastX)/(float)OVERLAY_WIDTH:(OVERLAY_WIDTH + mLastX)/(float)screenWidth;
+				fromAlpha = mLastAlpha;
+				//toAlpha = mLastAlpha>0?1/mLastAlpha:1;
 				fromAlpha = Math.max(fromAlpha, 0);
 				fromAlpha = Math.min(fromAlpha, 1);
 
@@ -867,7 +871,6 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 					//stopSelf();
 					mEnableTouch = false;					
 					mRootLayout.setVisibility(View.GONE);
-					//mainListView.setVisibility(View.GONE);
 				}
 			}
 		});
@@ -993,7 +996,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			int leftPointerX = mStartDragX - (screenWidth - OVERLAY_WIDTH/2 );
 			mCloseOnRight = (x - leftPointerX)>=screenWidth/2&&mRootRelativeLayoutParams.leftMargin>=(screenWidth - 2*OVERLAY_WIDTH/3 );
 			mClosed = (x - leftPointerX)<screenWidth/2||mCloseOnRight;
-			mClosed = false;
+			//mClosed = false;
 		}
 
 	}
