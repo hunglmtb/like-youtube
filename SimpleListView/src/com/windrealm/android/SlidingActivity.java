@@ -109,7 +109,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private boolean mCloseOnRight = false;
 	private boolean mEnableTouch = true;
 	private float mLastAlpha = 1;
-	private int mMargin = 50;
+	private int mMargin = 100;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -519,12 +519,13 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			if (!mIsSlidingX) {
 
 
-				int widthn = (int) (screenWidth - (screenWidth-OVERLAY_WIDTH)*mYAxis/(float)(screenHeight-OVERLAY_HEIGHT));
+				int widthn = (int) (screenWidth - (screenWidth-OVERLAY_WIDTH+mMargin)*mYAxis/(float)(screenHeight-OVERLAY_HEIGHT));
+				widthn = (int) (screenWidth - (screenWidth-OVERLAY_WIDTH)*mYAxis/(float)(screenHeight-OVERLAY_HEIGHT-mMargin));
 				widthn = Math.max(widthn, OVERLAY_WIDTH);
 				widthn = Math.min(widthn, screenWidth);
 				int heighn = (int) (widthn*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH);
 				int margin = (int) (screenHeight - mYAxis - heighn);
-
+				
 				mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(widthn,heighn);
 
 				if (mYAxis == screenHeight) {
@@ -557,7 +558,6 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 					mRootRelativeLayoutParams.setMargins(mXAxis, 0, screenWidth - OVERLAY_WIDTH - mXAxis, mMargin);
-					//mRootRelativeLayoutParams.rightMargin = rightMargin;
 				}
 			}
 
@@ -816,6 +816,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		animations.setDuration(duration);
 
 		float targetW = screenWidth;
+		float currentW = (float)(mRootRelativeLayoutParams.width);
 		if (mOnTop) {
 			targetW = screenWidth;
 			toTranslateX = mRootRelativeLayoutParams.width + mRootRelativeLayoutParams.rightMargin -screenWidth;
@@ -823,9 +824,12 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 		}
 		else{
+			targetW = OVERLAY_WIDTH+mMargin;
 			targetW = OVERLAY_WIDTH;
+			//currentW +=  mMargin;
 			toTranslateY = mRootLayout.getHeight() + mRootRelativeLayoutParams.bottomMargin  - OVERLAY_HEIGHT - mMargin ;
-			toTranslateX = mRootLayout.getWidth() - OVERLAY_WIDTH -mMargin;
+			toTranslateX = mRootLayout.getWidth() - OVERLAY_WIDTH +mMargin;
+			toTranslateX = mRootRelativeLayoutParams.width - OVERLAY_WIDTH -(mMargin - mRootRelativeLayoutParams.rightMargin);
 
 			if (mIsSlidingX) {
 				// Setup animations
@@ -840,7 +844,6 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 				fromAlpha = mCloseOnRight?Math.abs(screenWidth - mLastX)/(float)OVERLAY_WIDTH:(OVERLAY_WIDTH + mLastX)/(float)screenWidth;
 				fromAlpha = mLastAlpha;
-				//toAlpha = mLastAlpha>0?1/mLastAlpha:1;
 				fromAlpha = Math.max(fromAlpha, 0);
 				fromAlpha = Math.min(fromAlpha, 1);
 
@@ -853,7 +856,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 
 		float fromY = 1;
-		float toX = targetW/(float)(mRootRelativeLayoutParams.width);
+		float toX = targetW/currentW;
 		float toY = toX;
 		float fromX = 1;
 		if (!mIsSlidingX) {
