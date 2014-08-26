@@ -108,7 +108,6 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private int mTopHeigh;
 	private boolean mCloseOnRight = false;
 	private boolean mEnableTouch = true;
-	private float mLastAlpha = 1;
 	private int mMargin = 50;
 
 	@Override
@@ -188,96 +187,22 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		 */
 		mPlaylist = new MockPlaylist(this);
 		// Post these actions at the end of looper message queue so that the layout is
-		/*	// fully inflated once these functions execute
-		mRootLayout.postDelayed(new Runnable() {
+			// fully inflated once these functions execute
+		/*mRootLayout.postDelayed(new Runnable() {
 			@Override
 			public void run() {
 
-				// Reusable variables
-				RelativeLayout.LayoutParams params;
-				InputStream is;
-				Bitmap bmap;
-
-				//tray opener
-				params = (RelativeLayout.LayoutParams) mTrayOpener.getLayoutParams();
-				params.width = mRootLayoutParams.width/TRAY_HIDDEN_FRACTION;
-				params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,0);
-				mTrayOpener.setLayoutParams(params);
-				mTrayOpener.requestLayout();
-
-				is = getResources().openRawResource(R.drawable.spot_bg);
-				int containerNewWidth = (TRAY_CROP_FRACTION-1)*mLogoLayout.getHeight()/TRAY_CROP_FRACTION;
-				bmap = Utils.loadMaskedBitmap(is, mLogoLayout.getHeight(), containerNewWidth);
-				params = (RelativeLayout.LayoutParams) mLogoLayout.getLayoutParams();
-				params.width = (bmap.getWidth() * mLogoLayout.getHeight()) / bmap.getHeight();
-				//params.addRule(RelativeLayout.ALIGN_PARENT_LEFT,0);
-				params.addRule(RelativeLayout.RIGHT_OF,R.id.tray_opener);
-				mLogoLayout.setLayoutParams(params);
-				mLogoLayout.requestLayout();
-				mLogoLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), bmap));
-
-				// Setup background album cover
-				is=null;
-				try {
-					is = getAssets().open(mPlaylist.getCurrentSongInfo().mAlbumCoverPath);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-				bmap = Utils.loadMaskedBitmap(is, mAlbumCoverLayout.getHeight(), containerNewWidth);
-				params = (RelativeLayout.LayoutParams) mAlbumCoverLayout.getLayoutParams();
-				params.width = (bmap.getWidth() * mAlbumCoverLayout.getHeight()) / bmap.getHeight();
-				//params.addRule(RelativeLayout.ALIGN_PARENT_LEFT,0);
-				params.addRule(RelativeLayout.RIGHT_OF,R.id.tray_opener);
-				mAlbumCoverLayout.setLayoutParams(params);
-				mAlbumCoverLayout.requestLayout();
-				mAlbumCoverHelperLayout.setLayoutParams(params);
-				mAlbumCoverHelperLayout.requestLayout();
-				mAlbumCoverLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), bmap));
-
-				// Setup playback buttons
-				params = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.MATCH_PARENT, 
-						Utils.dpToPixels(BUTTONS_DIM_Y_DP, getResources()));
-				params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-				params.leftMargin = mRootLayout.getWidth()/TRAY_HIDDEN_FRACTION;
-				mRootLayout.updateViewLayout(mPlayerButtonsLayout, params);
-
-				// setup song info views
-				params = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.MATCH_PARENT, 
-						RelativeLayout.LayoutParams.WRAP_CONTENT);
-				//params.addRule(RelativeLayout.ALIGN_RIGHT, R.id.tray_opener);
-				params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-				int marg = Utils.dpToPixels(5, getResources());
-				params.setMargins(
-						marg/2 + mRootLayout.getWidth()/TRAY_HIDDEN_FRACTION, 
-						marg, 
-						marg*3, 
-						marg);
-				mRootLayout.updateViewLayout(mSongInfoLayout, params);
-				mSongTitleView.setText(mPlaylist.getCurrentSongInfo().mTitle);
-				mSingerView.setText(mPlaylist.getCurrentSongInfo().mSinger);
-
-
-				// Setup the root layout
-				mRootLayoutParams.x = getResources().getDisplayMetrics().widthPixels -mRootLayoutParams.width;
-				mRootLayoutParams.y = getApplicationContext().getResources().getDisplayMetrics().heightPixels - 2*mLogoLayout.getHeight()-PADDING;
-
-				int screenHeight = getResources().getDisplayMetrics().heightPixels;
-				mYAxis = screenHeight- OVERLAY_HEIGHT;
-				updateViewLayout();
-
-				// Make everything visible
-				mRootLayout.setVisibility(View.VISIBLE);
-
-				// Animate the Tray
-				mTrayAnimationTimerTask = new TrayAnimationTimerTask();
-				mTrayAnimationTimer = new Timer();
-				mTrayAnimationTimer.schedule(mTrayAnimationTimerTask, 0, ANIMATION_FRAME_RATE);
+				
+				
 			}
-		}, ANIMATION_FRAME_RATE);
-		 */
+		}, ANIMATION_FRAME_RATE);*/
+		
+		mOnTop = false;
+		mIsSlidingX = true;
+		mClosed = false;
+		mXAxis = mAppLayout.getWidth() - OVERLAY_WIDTH - mMargin;
+		updateViewLayout();
+		 
 	}
 
 
@@ -603,16 +528,10 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 
 			}
 			int screenWidth = mAppLayout.getWidth();
-			fromAlpha = (screenWidth - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth))/(float)screenWidth;
-			float length = screenWidth;
-			distance = (screenWidth - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth));
-			fromAlpha = distance/length ;
-			
 			distance = mXAxis>(screenWidth-OVERLAY_WIDTH)?(OVERLAY_WIDTH+mMargin):(screenWidth);
 			fromAlpha = (1 - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth+mMargin)/(float)distance);
 			fromAlpha = Math.max(fromAlpha, 0);
 			fromAlpha = Math.min(fromAlpha, 1);
-			mLastAlpha = fromAlpha;
 			//Log.i("hung", "translate fromAlpha "+fromAlpha +" mXAxis "+mXAxis+" screenWidth "+ screenWidth);
 
 			//alpha = alpha<0.0000001?0:alpha;
