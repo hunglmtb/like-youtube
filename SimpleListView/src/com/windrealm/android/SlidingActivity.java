@@ -109,7 +109,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private boolean mCloseOnRight = false;
 	private boolean mEnableTouch = true;
 	private float mLastAlpha = 1;
-	private int mMargin = 100;
+	private int mMargin = 50;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -571,8 +571,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			e.printStackTrace();
 		}
 
+		float fromAlpha = 1.0f;
 		if (mIsSlidingX) {
-			float fromAlpha = 1.0f;
 			float distance = 1;
 			float remain = 1;
 			switch (mOverlayMode) {
@@ -608,25 +608,25 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			distance = (screenWidth - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth));
 			fromAlpha = distance/length ;
 			
-			distance = mXAxis>(screenWidth-OVERLAY_WIDTH)?OVERLAY_WIDTH:screenWidth;
-			fromAlpha = (1 - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth)/(float)distance);
+			distance = mXAxis>(screenWidth-OVERLAY_WIDTH)?(OVERLAY_WIDTH+mMargin):(screenWidth);
+			fromAlpha = (1 - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth+mMargin)/(float)distance);
 			fromAlpha = Math.max(fromAlpha, 0);
 			fromAlpha = Math.min(fromAlpha, 1);
 			mLastAlpha = fromAlpha;
 			//Log.i("hung", "translate fromAlpha "+fromAlpha +" mXAxis "+mXAxis+" screenWidth "+ screenWidth);
 
 			//alpha = alpha<0.0000001?0:alpha;
-			if (Build.VERSION.SDK_INT < 11) {
-				final AlphaAnimation animation = new AlphaAnimation(fromAlpha, fromAlpha);
-				long duration = 0;
-				animation.setDuration(duration );
-				animation.setFillAfter(true);
-				mRootLayout.startAnimation(animation);
-			}else{
-				mRootLayout.setAlpha(fromAlpha);
-			}
 		}
 
+		if (Build.VERSION.SDK_INT < 11) {
+			final AlphaAnimation animation = new AlphaAnimation(fromAlpha, fromAlpha);
+			long duration = 0;
+			animation.setDuration(duration );
+			animation.setFillAfter(true);
+			mRootLayout.startAnimation(animation);
+		}else{
+			mRootLayout.setAlpha(fromAlpha);
+		}
 	}
 
 	// This function animates the buttons based on the position of the tray.
@@ -842,8 +842,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 					toTranslateX = screenWidth - OVERLAY_WIDTH - mMargin - mLastX;
 				}
 
-				fromAlpha = mCloseOnRight?Math.abs(screenWidth - mLastX)/(float)OVERLAY_WIDTH:(OVERLAY_WIDTH + mLastX)/(float)screenWidth;
-				fromAlpha = mLastAlpha;
+				//fromAlpha = mCloseOnRight?Math.abs(screenWidth - mLastX)/(float)OVERLAY_WIDTH:(OVERLAY_WIDTH + mLastX)/(float)screenWidth;
+				//fromAlpha = mLastAlpha;
 				fromAlpha = Math.max(fromAlpha, 0);
 				fromAlpha = Math.min(fromAlpha, 1);
 
