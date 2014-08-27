@@ -30,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.windrealm.android.MockPlaylist.MockPlaylistListener;
@@ -109,6 +110,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 	private boolean mCloseOnRight = false;
 	private boolean mEnableTouch = true;
 	private int mMargin = 50;
+	private RelativeLayout mSecondaryLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +152,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 				inflate(R.layout.service_player, null);*/
 
 		mRootLayout = (RelativeLayout) findViewById(R.id.root_layout);
+		mSecondaryLayout = (RelativeLayout) findViewById(R.id.secondary_layout);
 
 		//mContentContainerLayout = (RelativeLayout) mRootLayout.findViewById(R.id.content_container);
 		mRootLayout.setOnTouchListener(new TrayTouchListener());
@@ -197,12 +200,18 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			}
 		}, ANIMATION_FRAME_RATE);*/
 		
+		
+		setOriginalPosition();		 
+	}
+
+
+
+	private void setOriginalPosition() {
 		mOnTop = false;
 		mIsSlidingX = true;
 		mClosed = false;
 		mXAxis = mAppLayout.getWidth() - OVERLAY_WIDTH - mMargin;
-		updateViewLayout();
-		 
+		updateViewLayout();		
 	}
 
 
@@ -440,6 +449,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			int screenWidth = mAppLayout.getWidth();
 			int screenHeight = mAppLayout.getHeight();
 			int rightMargin = 0;
+			int bottomMargin = 0;
 
 			if (!mIsSlidingX) {
 
@@ -460,7 +470,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 				else{
 					mRootRelativeLayoutParams.bottomMargin = margin;
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);				
+					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 				}
 				rightMargin = mYAxis*mMargin/(screenHeight - OVERLAY_HEIGHT - mMargin);
 				mRootRelativeLayoutParams.rightMargin = rightMargin;
@@ -491,6 +501,17 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 			//mRootLayout.invalidate();
 			//mRootLayout.requestLayout();
 			//mAppLayout.updateViewLayout(mRootLayout, mRootRelativeLayoutParams);
+			
+			LayoutParams mSecondaryLayoutParams = new RelativeLayout.LayoutParams(OVERLAY_WIDTH,OVERLAY_HEIGHT);
+			mSecondaryLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			mSecondaryLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+			mSecondaryLayoutParams.addRule(RelativeLayout.BELOW,R.id.root_layout);
+			mSecondaryLayoutParams.topMargin = -bottomMargin;
+			mSecondaryLayout.setLayoutParams(mSecondaryLayoutParams);
+			mSecondaryLayout.requestLayout();
+			mAppLayout.updateViewLayout(mSecondaryLayout, mSecondaryLayoutParams);
+			//updateSecondaryLayout();
+
 
 		} catch (java.lang.IllegalArgumentException e) {
 			e.printStackTrace();
@@ -546,7 +567,19 @@ public class SlidingActivity extends Activity implements MockPlaylistListener, O
 		}else{
 			mRootLayout.setAlpha(fromAlpha);
 		}
+		
 	}
+
+	private void updateSecondaryLayout() {
+		LayoutParams mSecondaryLayoutParams = new RelativeLayout.LayoutParams(OVERLAY_WIDTH,OVERLAY_HEIGHT);
+		mSecondaryLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		mSecondaryLayoutParams.addRule(RelativeLayout.BELOW,R.id.root_layout);
+		mSecondaryLayout.setLayoutParams(mSecondaryLayoutParams);
+		mSecondaryLayout.requestLayout();
+		mAppLayout.updateViewLayout(mSecondaryLayout, mSecondaryLayoutParams);
+	}
+
+
 
 	// This function animates the buttons based on the position of the tray.
 	private void animateButtons(){
