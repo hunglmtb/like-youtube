@@ -13,7 +13,34 @@
     </ListView>
 
     <RelativeLayout
-        android:id="@+id/root_layout"
+        android:id="@+id/secondary_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/root_layout"
+        android:background="#d0c599" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/bg_song_info" />
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/secondListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="@android:color/transparent" >
+        </ListView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/root_layout"
         android:layout_width="200dp"
         android:layout_height="150dp"
         android:layout_alignParentBottom="true"
@@ -22,8 +49,9 @@
 
         <RelativeLayout
             android:id="@+id/content_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_centerVertical="true" >
 
             <ImageView
