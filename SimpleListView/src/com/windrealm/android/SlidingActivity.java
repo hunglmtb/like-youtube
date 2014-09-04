@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
@@ -54,6 +55,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 	private static final float DRAG_MOVE_RANGE = 3*OVERLAY_HEIGHT/4;
 	private static final int MARGIN_TOP_OVERLAY = 150;
 	private static final int OVERLAY_BOTTOM_MARGIN = 50;
+	private static final long ANIMATION_DURATION = 800;
 
 	// Layout containers for various widgets
 	private WindowManager.LayoutParams 	mRootLayoutParams;		// Parameters of the root layout
@@ -112,6 +114,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 	private RelativeLayout mSecondaryLayout;
 	private ListView mSecondListView;
 	private int mSecondTopMargin = 0;
+	private float mSecondLastAlpha = 1;
 	
 
 	@Override
@@ -488,7 +491,9 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 
 			//Log.i("hung", "widthn "+mRootRelativeLayoutParams.width+ " heighn "+mRootRelativeLayoutParams.height+ " mYAxis "+mYAxis+ " rightMargin "+mRootRelativeLayoutParams.rightMargin+" bottomMargin"+mRootRelativeLayoutParams.bottomMargin);
 			mRootLayout.setLayoutParams(mRootRelativeLayoutParams);
-			updateSecondaryLayout(mSecondTopMargin);
+
+			mSecondLastAlpha  = (screenHeight-OVERLAY_HEIGHT-OVERLAY_BOTTOM_MARGIN-mYAxis)/(float)(screenHeight-OVERLAY_HEIGHT-OVERLAY_BOTTOM_MARGIN);
+			updateSecondaryLayout(mSecondTopMargin,mSecondLastAlpha);
 
 		} catch (java.lang.IllegalArgumentException e) {
 			e.printStackTrace();
@@ -547,11 +552,24 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 		
 	}
 
-	private void updateSecondaryLayout(int margin) {
+	@SuppressLint("NewApi")
+	private void updateSecondaryLayout(int margin, float fromAlpha) {
 		if (!mIsSlidingX) {
 			LayoutParams mSecondaryLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
 			mSecondaryLayoutParams.addRule(RelativeLayout.BELOW,R.id.root_layout);
 			mSecondaryLayoutParams.topMargin = -(((RelativeLayout.LayoutParams)mRootLayout.getLayoutParams()).bottomMargin - margin);
+			
+			if (Build.VERSION.SDK_INT < 11) {
+				final AlphaAnimation animation = new AlphaAnimation(fromAlpha, fromAlpha);
+				long duration = 0;
+				animation.setDuration(duration );
+				animation.setFillAfter(true);
+				mSecondaryLayout.startAnimation(animation);
+			}else{
+				mSecondaryLayout.setAlpha(fromAlpha);
+			}
+			
+			
 			mSecondaryLayout.setLayoutParams(mSecondaryLayoutParams);
 			mSecondaryLayout.requestLayout();
 			mAppLayout.updateViewLayout(mSecondaryLayout, mSecondaryLayoutParams);			
@@ -726,11 +744,14 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 		mRootLayout.startAnimation(animations);
 	}
 
-
-
-	// This function animates the buttons based on the position of the tray.
-	//@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void animate2Destination(){
+		animateRootLayout();
+		animateSecondLayout();
+	}
+
+
+
+	private void animateRootLayout() {
 
 
 		// Scale the distance between open and close states to 0-1. 
@@ -741,11 +762,9 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 		float fromTranslateY = 0;
 		float toTranslateY = 0;
 
-
-		long duration = 800;
 		AnimationSet animations = new AnimationSet(false);
 		animations.setFillAfter(true);
-		animations.setDuration(duration);
+		animations.setDuration(ANIMATION_DURATION);
 
 		float targetW = screenWidth;
 		float currentW = (float)(mRootRelativeLayoutParams.width);
@@ -793,30 +812,6 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 		if (!mIsSlidingX) {
 			Animation animationScale = new ScaleAnimation(fromX, toX, fromY, toY);			
 			animations.addAnimation(animationScale);
-			
-			// secondary
-			AnimationSet secondAnimations = new AnimationSet(false);
-			secondAnimations.setFillAfter(true);
-			secondAnimations.setDuration(duration);
-
-			TranslateAnimation secondTranslate = new TranslateAnimation( 0 , 0 , 0,0){
-
-				@Override
-				protected void applyTransformation(float interpolatedTime,
-						Transformation t) {
-					int secondDeltaMargin  =mOnTop?((int) (screenWidth*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH) -  mLastY - mRootRelativeLayoutParams.height -mSecondTopMargin):MARGIN_TOP_OVERLAY+mRootRelativeLayoutParams.bottomMargin ;
-					int margin = (int) (secondDeltaMargin*interpolatedTime + mSecondTopMargin);
-					Log.i("hung", "interpolatedTime   "+interpolatedTime+" margin "+margin);
-					updateSecondaryLayout(margin);
-				}
-
-		          @Override
-		          public boolean willChangeBounds() {
-		              return true;
-		          }
-			};
-			secondAnimations.addAnimation(secondTranslate);
-			mSecondaryLayout.startAnimation(secondAnimations);
 		}
 		
 		TranslateAnimation translate = new TranslateAnimation( fromTranslateX , toTranslateX , fromTranslateY,toTranslateY);
@@ -844,8 +839,58 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 		animations.addAnimation(translate);
 		// Play the animations
 		mRootLayout.startAnimation(animations);
-		
 	}
+
+
+	private void animateSecondLayout() {
+		if (!mIsSlidingX) {
+			final int screenWidth = mAppLayout.getWidth();
+			
+			// secondary
+			AnimationSet secondAnimations = new AnimationSet(false);
+			secondAnimations.setFillAfter(true);
+			secondAnimations.setDuration(ANIMATION_DURATION);
+
+			//translate
+			TranslateAnimation secondTranslate = new TranslateAnimation( 0 , 0 , 0,0){
+
+				@Override
+				protected void applyTransformation(float interpolatedTime,
+						Transformation t) {
+					int secondDeltaMargin  =mOnTop?((int) (screenWidth*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH) -  mLastY - mRootRelativeLayoutParams.height -mSecondTopMargin):MARGIN_TOP_OVERLAY+mRootRelativeLayoutParams.bottomMargin ;
+					int margin = (int) (secondDeltaMargin*interpolatedTime + mSecondTopMargin);
+					int destinateAlpha = mOnTop?1:0;
+					float alpha = (destinateAlpha  - mSecondLastAlpha)*interpolatedTime + mSecondLastAlpha;
+					updateSecondaryLayout(margin,alpha);
+					Log.i("hung", "interpolatedTime   "+interpolatedTime+" margin "+margin);
+					if (interpolatedTime==1) {
+						mSecondaryLayout.clearAnimation();
+					}
+				}
+
+		          @Override
+		          public boolean willChangeBounds() {
+		              return true;
+		          }
+			};
+			
+			secondAnimations.addAnimation(secondTranslate);
+			
+			//alpha
+			// Setup animations
+			float toAlpha = mClosed?0:1;
+			float fromAlpha = (screenWidth - Math.abs(mLastX+OVERLAY_WIDTH-screenWidth))/(float)screenWidth;
+			fromAlpha = Math.max(fromAlpha, 0);
+			fromAlpha = Math.min(fromAlpha, 1);
+
+			Animation animationAlpha = new AlphaAnimation(fromAlpha,toAlpha);
+			animationAlpha.setInterpolator(new AccelerateInterpolator()); //and this
+			//Log.i("hung", "animationAlpha from  "+fromAlpha+" toAlpha "+toAlpha);
+			//secondAnimations.addAnimation(animationAlpha);
+			mSecondaryLayout.startAnimation(secondAnimations);
+		}
+	}
+
 
 	// Load new album cover image
 	private void changeSongDisplayInfo(){
