@@ -113,6 +113,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 	private boolean mEnableTouch = true;
 	private RelativeLayout mSecondaryLayout;
 	private ListView mSecondListView;
+	private View mBackView;
 	private int mSecondTopMargin = 0;
 	private float mSecondLastAlpha = 1;
 	
@@ -155,6 +156,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 
 		mRootLayout = (RelativeLayout) findViewById(R.id.root_layout);
 		mSecondaryLayout = (RelativeLayout) findViewById(R.id.secondary_layout);
+		mBackView = findViewById(R.id.backView);
 
 		//mContentContainerLayout = (RelativeLayout) mRootLayout.findViewById(R.id.content_container);
 		mRootLayout.setOnTouchListener(new TrayTouchListener());
@@ -215,7 +217,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 		mIsSlidingX = true;
 		mClosed = false;
 		mXAxis = mAppLayout.getWidth() - OVERLAY_WIDTH - OVERLAY_BOTTOM_MARGIN;
-		updateViewLayout();		
+		updateViewLayout();
+		mBackView.setVisibility(View.GONE);
 	}
 
 
@@ -565,14 +568,25 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 				animation.setDuration(duration );
 				animation.setFillAfter(true);
 				mSecondaryLayout.startAnimation(animation);
+				mBackView.startAnimation(animation);
 			}else{
 				mSecondaryLayout.setAlpha(fromAlpha);
+				mBackView.setAlpha(fromAlpha);
 			}
 			
 			
 			mSecondaryLayout.setLayoutParams(mSecondaryLayoutParams);
 			mSecondaryLayout.requestLayout();
-			mAppLayout.updateViewLayout(mSecondaryLayout, mSecondaryLayoutParams);			
+			mAppLayout.updateViewLayout(mSecondaryLayout, mSecondaryLayoutParams);
+			
+			//back view
+			LayoutParams backViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
+			backViewParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+			backViewParams.addRule(RelativeLayout.ALIGN_BOTTOM,R.id.root_layout);
+			backViewParams.bottomMargin = -margin;
+			mBackView.setVisibility(View.VISIBLE);
+			mBackView.setLayoutParams(backViewParams);
+			//mAppLayout.updateViewLayout(mBackView, backViewParams);
 		}
 	}
 
