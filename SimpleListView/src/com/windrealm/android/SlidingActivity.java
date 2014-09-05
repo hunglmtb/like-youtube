@@ -56,6 +56,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 	private static final int MARGIN_TOP_OVERLAY = 150;
 	private static final int OVERLAY_BOTTOM_MARGIN = 50;
 	private static final long ANIMATION_DURATION = 800;
+	private static final int MENU_WIDTH = 600;
 
 	// Layout containers for various widgets
 	private WindowManager.LayoutParams 	mRootLayoutParams;		// Parameters of the root layout
@@ -114,6 +115,8 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 	private RelativeLayout mSecondaryLayout;
 	private ListView mSecondListView;
 	private View mBackView;
+	private RelativeLayout mSlidingMenuLayout;
+	private ListView mMenuListView ;
 	private int mSecondTopMargin = 0;
 	private float mSecondLastAlpha = 1;
 	
@@ -157,9 +160,65 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 		mRootLayout = (RelativeLayout) findViewById(R.id.root_layout);
 		mSecondaryLayout = (RelativeLayout) findViewById(R.id.secondary_layout);
 		mBackView = findViewById(R.id.backView);
+		mSlidingMenuLayout = (RelativeLayout) findViewById(R.id.menu_layout);
+		mMenuListView = (ListView) findViewById( R.id.menuListView );
+		mMenuListView.setAdapter( listAdapter );  
 
-		//mContentContainerLayout = (RelativeLayout) mRootLayout.findViewById(R.id.content_container);
 		mRootLayout.setOnTouchListener(new TrayTouchListener());
+		mMenuListView.setOnTouchListener(new OnTouchListener() {
+
+			private boolean mFirstTimeMove = false;
+			private boolean mSlidingX = false;
+			private int mStartDownX;
+			private int mStartDownY;
+			private int mSlideXDelata = 40;
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				final int action = event.getActionMasked();
+				int x = (int)event.getRawX();
+				int y = (int)event.getRawY();
+
+				switch (action) {
+				case MotionEvent.ACTION_DOWN: 
+					mFirstTimeMove = true;
+					mStartDownX = x;
+					mStartDownY = y;
+					return true;
+				case MotionEvent.ACTION_MOVE:
+					// Filter and redirect the events to dragTray()
+
+					// Calculate position of the whole tray according to the drag, and update layout.
+					float deltaX = x-mStartDownX;
+					float deltaY = y-mStartDownY;
+
+					if (mFirstTimeMove ) {
+						mSlidingX =  Math.abs(deltaY)<=Math.abs(deltaX);
+						mFirstTimeMove = false;
+						LayoutParams lparams = ((LayoutParams)mSlidingMenuLayout.getLayoutParams());
+						mSlideXDelata = mStartDownX - (lparams.width + lparams.leftMargin);
+					}
+
+					if (mSlidingX) {
+						int xPosition = x - mSlideXDelata;
+						xPosition = Math.min(xPosition, MENU_WIDTH);
+						xPosition = Math.max(xPosition, 0);
+						updateSlidingMenu(xPosition);
+						return true;
+					}
+					else return false;
+
+				case MotionEvent.ACTION_UP:
+				case MotionEvent.ACTION_CANCEL:
+					boolean result = mSlidingX;
+					mSlidingX = false;
+					return result;
+				default:
+					return false;
+				}
+			}
+		});
+		
 
 		//mLogoLayout = (RelativeLayout) mRootLayout.findViewById(R.id.logo_layout);
 		/*mAlbumCoverLayout = (RelativeLayout) mRootLayout.findViewById(R.id.cover_layout);
@@ -212,6 +271,17 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 
 
 
+	protected void updateSlidingMenu(int x) {
+		LayoutParams menuParams = new RelativeLayout.LayoutParams(MENU_WIDTH,RelativeLayout.LayoutParams.MATCH_PARENT);
+		menuParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		menuParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+		menuParams.leftMargin = x>=MENU_WIDTH?0:x - MENU_WIDTH;
+		mSlidingMenuLayout.setLayoutParams(menuParams);
+		mSlidingMenuLayout.setVisibility(View.VISIBLE);
+	}
+
+
+
 	private void setOriginalPosition() {
 		mOnTop = false;
 		mIsSlidingX = true;
@@ -219,6 +289,7 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 		mXAxis = mAppLayout.getWidth() - OVERLAY_WIDTH - OVERLAY_BOTTOM_MARGIN;
 		updateViewLayout();
 		mBackView.setVisibility(View.GONE);
+		updateSlidingMenu(100);
 	}
 
 
@@ -558,9 +629,9 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 	@SuppressLint("NewApi")
 	private void updateSecondaryLayout(int margin, float fromAlpha) {
 		if (!mIsSlidingX) {
-			LayoutParams mSecondaryLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
-			mSecondaryLayoutParams.addRule(RelativeLayout.BELOW,R.id.root_layout);
-			mSecondaryLayoutParams.topMargin = -(((RelativeLayout.LayoutParams)mRootLayout.getLayoutParams()).bottomMargin - margin);
+			LayoutParams secondaryLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
+			secondaryLayoutParams.addRule(RelativeLayout.BELOW,R.id.root_layout);
+			secondaryLayoutParams.topMargin = -(((RelativeLayout.LayoutParams)mRootLayout.getLayoutParams()).bottomMargin - margin);
 			
 			if (Build.VERSION.SDK_INT < 11) {
 				final AlphaAnimation animation = new AlphaAnimation(fromAlpha, fromAlpha);
@@ -575,9 +646,9 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 			}
 			
 			
-			mSecondaryLayout.setLayoutParams(mSecondaryLayoutParams);
+			mSecondaryLayout.setLayoutParams(secondaryLayoutParams);
 			mSecondaryLayout.requestLayout();
-			mAppLayout.updateViewLayout(mSecondaryLayout, mSecondaryLayoutParams);
+			mAppLayout.updateViewLayout(mSecondaryLayout, secondaryLayoutParams);
 			
 			//back view
 			LayoutParams backViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -984,4 +1055,20 @@ public class SlidingActivity extends Activity implements MockPlaylistListener {
 		}
 
 	}
+
+
+
+	@Override
+	public void onBackPressed() {
+		if (mOnTop) {
+			mDoAnimation = true;
+			mOnTop = false;
+			doAnimation();							
+		}
+		else{
+			super.onBackPressed();
+		}
+	}
+	
+	
 }
