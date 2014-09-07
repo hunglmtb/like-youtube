@@ -77,6 +77,8 @@ public class SlidingActivity extends Activity {
 	private int mTopHeigh;
 	private boolean mCloseOnRight = false;
 	private boolean mMenuHiden = true;
+	private boolean mIsRootLayoutAnimating = false;
+	
 	private RelativeLayout mSecondaryLayout;
 	private ListView mSecondListView;
 	private View mBackView;
@@ -93,9 +95,13 @@ public class SlidingActivity extends Activity {
 		private int mStartDownY;
 		private int mSlideXDelata = 40;
 		private int mLastXposition;
+		
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
+			if (mIsRootLayoutAnimating) {
+				return true;
+			}
 			final int action = event.getActionMasked();
 			int x = (int)event.getRawX();
 			int y = (int)event.getRawY();
@@ -239,6 +245,7 @@ public class SlidingActivity extends Activity {
 		};
 		
 		menuAnimations.addAnimation(menuTranslate);
+		mMenuHiden = false;
 		mMenuLayout.startAnimation(menuAnimations);
 	}
 
@@ -332,7 +339,7 @@ public class SlidingActivity extends Activity {
 
 			final int action = event.getActionMasked();
 			if ((mRootLayout.getAnimation()!=null&&!mRootLayout.getAnimation().hasEnded())) {
-				return false;
+				return true;
 			}
 			switch (action) {
 			case MotionEvent.ACTION_DOWN: 
@@ -477,6 +484,7 @@ public class SlidingActivity extends Activity {
 				//updateSecondaryLayout(margin, fromAlpha);
 				if (interpolatedTime==1) {
 					mRootLayout.clearAnimation();
+					mIsRootLayoutAnimating = false;
 					updateBackView(true,BACK_VIEW_WIDTH,0);
 				}
 			}
@@ -489,6 +497,7 @@ public class SlidingActivity extends Activity {
 		
 		animations.addAnimation(animation);
 		// Play the animations
+		mIsRootLayoutAnimating = true;
 		mRootLayout.startAnimation(animations);
 	}
 
