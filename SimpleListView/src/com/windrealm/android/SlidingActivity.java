@@ -32,13 +32,9 @@ public class SlidingActivity extends Activity {
 	}
 
 	// 
-	private static final int TRAY_HIDDEN_FRACTION 			= 6; 	// Controls fraction of the tray hidden when open
 	private static final int TRAY_MOVEMENT_REGION_FRACTION 	= 6;	// Controls fraction of y-axis on screen within which the tray stays.
-	private static final int TRAY_CROP_FRACTION 			= 12;	// Controls fraction of the tray chipped at the right end.
-	private static final int ANIMATION_FRAME_RATE 			= 30;	// Animation frame rate per second.
 	private static final int TRAY_DIM_X_DP 					= 170;	// Width of the tray in dps
 	private static final int TRAY_DIM_Y_DP 					= 160; 	// Height of the tray in dps
-	private static final int BUTTONS_DIM_Y_DP 				= 27;	// Height of the buttons in dps
 	public static final int PADDING = 5;
 	private static final int OVERLAY_HEIGHT = 210;
 	private static final int OVERLAY_WIDTH = 280;
@@ -88,7 +84,64 @@ public class SlidingActivity extends Activity {
 	private ListView mMenuListView ;
 	private int mSecondTopMargin = 0;
 	private float mSecondLastAlpha = 1;
-	private OnTouchListener mListener;
+	
+	private OnTouchListener mTouchListener = new OnTouchListener() {
+
+		private boolean mFirstTimeMove = false;
+		private boolean mSlidingX = false;
+		private int mStartDownX;
+		private int mStartDownY;
+		private int mSlideXDelata = 40;
+		private int mLastXposition;
+
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			final int action = event.getActionMasked();
+			int x = (int)event.getRawX();
+			int y = (int)event.getRawY();
+
+			switch (action) {
+			case MotionEvent.ACTION_DOWN: 
+				mFirstTimeMove = true;
+				mStartDownX = x;
+				mStartDownY = y;
+				mLastXposition = x;
+				return true;
+			case MotionEvent.ACTION_MOVE:
+				// Filter and redirect the events to dragTray()
+
+				// Calculate position of the whole tray according to the drag, and update layout.
+				float deltaX = x-mStartDownX;
+				float deltaY = y-mStartDownY;
+
+				if (mFirstTimeMove ) {
+					mSlidingX =  Math.abs(deltaY)<=Math.abs(deltaX);
+					mFirstTimeMove = false;
+					LayoutParams lparams = ((LayoutParams)mMenuLayout.getLayoutParams());
+					mSlideXDelata = mStartDownX - (lparams.width + lparams.leftMargin);
+				}
+
+				if (mSlidingX) {
+					int xPosition = x - mSlideXDelata;
+					mLastXposition = xPosition;
+					updateMenu(xPosition);
+					return true;
+				}
+				else return false;
+
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				if(mSlidingX){
+					animateMenu(mLastXposition);						
+				}
+				boolean result = mSlidingX;
+				mSlidingX = false;
+				return result;
+			default:
+				return false;
+			}
+		}
+	};
 	
 
 	@Override
@@ -131,66 +184,10 @@ public class SlidingActivity extends Activity {
 		mMenuListView.setAdapter( listAdapter );  
 
 		mRootLayout.setOnTouchListener(new TrayTouchListener());
-		mListener = new OnTouchListener() {
-
-			private boolean mFirstTimeMove = false;
-			private boolean mSlidingX = false;
-			private int mStartDownX;
-			private int mStartDownY;
-			private int mSlideXDelata = 40;
-			private int mLastXposition;
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				final int action = event.getActionMasked();
-				int x = (int)event.getRawX();
-				int y = (int)event.getRawY();
-
-				switch (action) {
-				case MotionEvent.ACTION_DOWN: 
-					mFirstTimeMove = true;
-					mStartDownX = x;
-					mStartDownY = y;
-					mLastXposition = x;
-					return true;
-				case MotionEvent.ACTION_MOVE:
-					// Filter and redirect the events to dragTray()
-
-					// Calculate position of the whole tray according to the drag, and update layout.
-					float deltaX = x-mStartDownX;
-					float deltaY = y-mStartDownY;
-
-					if (mFirstTimeMove ) {
-						mSlidingX =  Math.abs(deltaY)<=Math.abs(deltaX);
-						mFirstTimeMove = false;
-						LayoutParams lparams = ((LayoutParams)mMenuLayout.getLayoutParams());
-						mSlideXDelata = mStartDownX - (lparams.width + lparams.leftMargin);
-					}
-
-					if (mSlidingX) {
-						int xPosition = x - mSlideXDelata;
-						mLastXposition = xPosition;
-						updateMenu(xPosition);
-						return true;
-					}
-					else return false;
-
-				case MotionEvent.ACTION_UP:
-				case MotionEvent.ACTION_CANCEL:
-					if(mSlidingX){
-						animateMenu(mLastXposition);						
-					}
-					boolean result = mSlidingX;
-					mSlidingX = false;
-					return result;
-				default:
-					return false;
-				}
-			}
-		};
 		
-		mMenuListView.setOnTouchListener(mListener);
-		mBackView.setOnTouchListener(mListener);
+		
+		mMenuListView.setOnTouchListener(mTouchListener);
+		mBackView.setOnTouchListener(mTouchListener);
 
 		
 		mRootLayoutParams = new WindowManager.LayoutParams(
@@ -248,8 +245,6 @@ public class SlidingActivity extends Activity {
 		mMenuLayout.startAnimation(menuAnimations);
 	}
 
-
-
 	protected void updateBackView(boolean hiden, int margin, float fromAlpha) {
 		mBackView.setVisibility(View.VISIBLE);
 		LayoutParams backViewParams = null;
@@ -274,18 +269,18 @@ public class SlidingActivity extends Activity {
 
 
 	@SuppressLint("NewApi")
-	private void setAlphaValue(View aBackView, float fromAlpha) {
-		fromAlpha = Math.max(fromAlpha, 0);
-		fromAlpha = Math.min(fromAlpha, 1);
+	private void setAlphaValue(View aView, float alpha) {
+		alpha = Math.max(alpha, 0);
+		alpha = Math.min(alpha, 1);
 		
 		if (Build.VERSION.SDK_INT < 11) {
-			final AlphaAnimation animation = new AlphaAnimation(fromAlpha, fromAlpha);
+			final AlphaAnimation animation = new AlphaAnimation(alpha, alpha);
 			long duration = 0;
-			animation.setDuration(duration );
+			animation.setDuration(duration);
 			animation.setFillAfter(true);
-			aBackView.startAnimation(animation);
+			aView.startAnimation(animation);
 		}else{
-			aBackView.setAlpha(fromAlpha);
+			aView.setAlpha(alpha);
 		}
 	}
 
@@ -315,7 +310,7 @@ public class SlidingActivity extends Activity {
 			if (screenWidth>0) {
 				mXAxis = Math.max(xPosition+OVERLAY_MENU_MARGIN_LEFT, screenWidth-OVERLAY_WIDTH-OVERLAY_BOTTOM_MARGIN);
 				mIsSlidingX = true;
-				updateViewLayout();				
+				updateViewLayout(false);				
 			}
 		}
 	}
@@ -327,7 +322,7 @@ public class SlidingActivity extends Activity {
 		mIsSlidingX = true;
 		mClosed = false;
 		mXAxis = mAppLayout.getWidth() - OVERLAY_WIDTH - OVERLAY_BOTTOM_MARGIN;
-		updateViewLayout();
+		updateViewLayout(false);
 		updateMenu(150);
 	}
 
@@ -425,23 +420,15 @@ public class SlidingActivity extends Activity {
 
 			mPrevDragX = x;
 			mPrevDragY = y;
-			updateViewLayout();
+			updateViewLayout(true);
 			break;
 
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_CANCEL:
-			
 			if (mIsSlidingX&&mOnTop) return;
-			
 			mIsFirstTimeMove = true;
 			mSlidingStart = false;
 			setOverlayPlace(x,y);
-			//mEnableTouch = true;
-			/*if (mEnableTouch) {
-				setOverlayPlace(x,y);
-				doAnimation();				
-			}*/
-			
 			animateRootLayout();
 			break;
 		}
@@ -476,7 +463,7 @@ public class SlidingActivity extends Activity {
 					delta  =mClosed?(mCloseOnRight?screenWidth-mX0:-OVERLAY_WIDTH-mX0):screenWidth-OVERLAY_WIDTH-OVERLAY_BOTTOM_MARGIN-mX0;
 					mXAxis = (int) (delta*interpolatedTime + mX0);					
 				}
-				updateViewLayout();
+				updateViewLayout(true);
 				//updateSecondaryLayout(margin, fromAlpha);
 				if (interpolatedTime==1) {
 					mRootLayout.clearAnimation();
@@ -497,7 +484,7 @@ public class SlidingActivity extends Activity {
 
 
 	@SuppressLint("NewApi")
-	private void updateViewLayout() {
+	private void updateViewLayout(boolean aWithAlpha) {
 		try {
 			int screenWidth = mAppLayout.getWidth();
 			int screenHeight = mAppLayout.getHeight();
@@ -586,7 +573,9 @@ public class SlidingActivity extends Activity {
 			}
 			int screenWidth = mAppLayout.getWidth();
 			distance = mXAxis>(screenWidth-OVERLAY_WIDTH)?(OVERLAY_WIDTH+OVERLAY_BOTTOM_MARGIN):(screenWidth);
-			fromAlpha = (1 - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth+OVERLAY_BOTTOM_MARGIN)/(float)distance);
+			if (aWithAlpha) {
+				fromAlpha = (1 - Math.abs(mXAxis+OVERLAY_WIDTH-screenWidth+OVERLAY_BOTTOM_MARGIN)/(float)distance);
+			}
 		}
 		setAlphaValue(mRootLayout, fromAlpha);
 	}
