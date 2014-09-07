@@ -76,7 +76,7 @@ public class SlidingActivity extends Activity {
 	private boolean mSlidingStart = false;
 	private int mTopHeigh;
 	private boolean mCloseOnRight = false;
-	private boolean mEnableTouch = true;
+	private boolean mMenuHiden = true;
 	private RelativeLayout mSecondaryLayout;
 	private ListView mSecondListView;
 	private View mBackView;
@@ -108,8 +108,6 @@ public class SlidingActivity extends Activity {
 				mLastXposition = x;
 				return true;
 			case MotionEvent.ACTION_MOVE:
-				// Filter and redirect the events to dragTray()
-
 				// Calculate position of the whole tray according to the drag, and update layout.
 				float deltaX = x-mStartDownX;
 				float deltaY = y-mStartDownY;
@@ -132,7 +130,7 @@ public class SlidingActivity extends Activity {
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_CANCEL:
 				if(mSlidingX){
-					animateMenu(mLastXposition);						
+					animateMenu(mLastXposition,mLastXposition<MENU_WIDTH/2);						
 				}
 				boolean result = mSlidingX;
 				mSlidingX = false;
@@ -210,7 +208,7 @@ public class SlidingActivity extends Activity {
 
 
 
-	protected void animateMenu(final int mLastXposition) {		
+	protected void animateMenu(final int aLastXposition, final boolean aHiden) {		
 		// secondary
 		AnimationSet menuAnimations = new AnimationSet(false);
 		menuAnimations.setFillAfter(true);
@@ -222,16 +220,15 @@ public class SlidingActivity extends Activity {
 			@Override
 			protected void applyTransformation(float interpolatedTime,
 					Transformation t) {
-				int secondDeltaMargin  =mLastXposition<MENU_WIDTH/2?-MENU_WIDTH:MENU_WIDTH -mLastXposition ;
-				int xPosition = (int) (secondDeltaMargin*interpolatedTime + mLastXposition);
+				int secondDeltaMargin  =aHiden?-MENU_WIDTH:MENU_WIDTH -aLastXposition ;
+				int xPosition = (int) (secondDeltaMargin*interpolatedTime + aLastXposition);
 				updateMenu(xPosition);
 				Log.i("hung", "interpolatedTime   "+interpolatedTime+" margin "+xPosition);
 				if (interpolatedTime==1) {
 					mMenuLayout.clearAnimation();
-					boolean hiden = xPosition<=BACK_VIEW_WIDTH;
-					float alpha = hiden?0:BACKVIEW_ALPHA_MAX;
-					updateBackView(hiden,OVERLAY_BOTTOM_MARGIN,alpha);
-					mEnableTouch = hiden;
+					float alpha = aHiden?0:BACKVIEW_ALPHA_MAX;
+					updateBackView(aHiden,OVERLAY_BOTTOM_MARGIN,alpha);
+					mMenuHiden = aHiden;
 				}
 			}
 
@@ -334,7 +331,7 @@ public class SlidingActivity extends Activity {
 		public boolean onTouch(View v, MotionEvent event) {
 
 			final int action = event.getActionMasked();
-			if (!mEnableTouch||(mRootLayout.getAnimation()!=null&&!mRootLayout.getAnimation().hasEnded())) {
+			if ((mRootLayout.getAnimation()!=null&&!mRootLayout.getAnimation().hasEnded())) {
 				return false;
 			}
 			switch (action) {
@@ -384,6 +381,10 @@ public class SlidingActivity extends Activity {
 				mIsSlidingX =  Math.abs(deltaY)<=Math.abs(deltaX);
 				mIsFirstTimeMove = false;
 			}
+			
+			if (!mMenuHiden) {
+				return;
+			}
 
 			if (mIsSlidingX) {  
 				mRootLayoutParams.x += deltaX;
@@ -425,9 +426,18 @@ public class SlidingActivity extends Activity {
 
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_CANCEL:
-			if (mIsSlidingX&&mOnTop) return;
 			mIsFirstTimeMove = true;
 			mSlidingStart = false;
+			if (mIsSlidingX&&mOnTop) return;
+			
+			if (!mMenuHiden) {
+				if ((mIsSlidingX&&x-mStartDragX>0)||(!mIsSlidingX&&y-mStartDragY>0)) {
+					LayoutParams lparams = ((LayoutParams)mMenuLayout.getLayoutParams());
+					animateMenu(lparams.width,true);
+				}
+				return;
+			}
+			
 			setOverlayPlace(x,y);
 			animateRootLayout();
 			break;
