@@ -41,30 +41,26 @@ public class SlidingActivity extends Activity {
 	private static final int OVERLAY_MENU_MARGIN_LEFT = 20;
 
 	// Layout containers for various widgets
-	private RelativeLayout 				mRootLayout;			// Root layout
 
 	protected boolean mOnTop = true;
 	protected boolean mClosed = false;
+	private boolean mCloseOnRight = false;
+	private boolean mMenuHiden = true;
+	private boolean mIsRootLayoutAnimating = false;
 	protected OverlayMode mOverlayMode = OverlayMode.APP;
 
+	private RelativeLayout 				mRootLayout;			// Root layout
 	private RelativeLayout 				mAppLayout;			// Reference to the window
 	private ListView mMainListView ;
 	private ArrayAdapter<String> listAdapter ;
 	private RelativeLayout.LayoutParams mRootRelativeLayoutParams;
 
-	private boolean mSlidingStart = false;
-	private int mTopHeigh;
-	private boolean mCloseOnRight = false;
-	private boolean mMenuHiden = true;
-	private boolean mIsRootLayoutAnimating = false;
 
 	private RelativeLayout mSecondaryLayout;
 	private ListView mSecondListView;
 	private View mBackView;
 	private RelativeLayout mMenuLayout;
 	private ListView mMenuListView ;
-	private int mSecondTopMargin = 0;
-	private float mSecondLastAlpha = 1;
 
 	private OnTouchListener mTouchListener = new OnTouchListener() {
 
@@ -115,7 +111,10 @@ public class SlidingActivity extends Activity {
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_CANCEL:
 				if(mSlidingX){
-					animateMenu(mLastXposition,mLastXposition<MENU_WIDTH/2);						
+					boolean hide = (!mMenuHiden&& mLastXposition<mStartDownX&&(Math.abs(mLastXposition-mStartDownX)>=MENU_WIDTH/5||mLastXposition<MENU_WIDTH/5));
+					boolean show = (!mMenuHiden&&(mLastXposition>mStartDownX||Math.abs(mLastXposition-mStartDownX)<MENU_WIDTH/5||mLastXposition>4*MENU_WIDTH/5))||
+							(mMenuHiden&& mLastXposition>mStartDownX&&(Math.abs(mLastXposition-mStartDownX)>=MENU_WIDTH/5||mLastXposition>MENU_WIDTH/5));
+					animateMenu(mLastXposition,hide||!show);						
 				}
 				boolean result = mSlidingX;
 				mSlidingX = false;
@@ -309,10 +308,12 @@ public class SlidingActivity extends Activity {
 		private int mPrevDragX;
 		private int mPrevDragY;
 		private boolean mIsSlidingX = true;
+		private boolean mSlidingStart = false;
 
 		private int mYAxis = 0;
 		private int mXAxis = 0;
-
+		private int mTopHeigh;
+		
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 
@@ -493,7 +494,7 @@ public class SlidingActivity extends Activity {
 		int screenWidth = mAppLayout.getWidth();
 		int screenHeight = mAppLayout.getHeight();
 		int rightMargin = 0;
-
+		int secondTopMargin = 0;
 		if (!aIsSlidingX) {
 
 
@@ -515,7 +516,7 @@ public class SlidingActivity extends Activity {
 				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
-				mSecondTopMargin = mYAxis*MARGIN_TOP_OVERLAY/(screenHeight-OVERLAY_HEIGHT-OVERLAY_BOTTOM_MARGIN);
+				secondTopMargin = mYAxis*MARGIN_TOP_OVERLAY/(screenHeight-OVERLAY_HEIGHT-OVERLAY_BOTTOM_MARGIN);
 			}
 			rightMargin = mYAxis*OVERLAY_BOTTOM_MARGIN/(screenHeight - OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN);
 			mRootRelativeLayoutParams.rightMargin = rightMargin;
@@ -543,8 +544,8 @@ public class SlidingActivity extends Activity {
 
 		mRootLayout.setLayoutParams(mRootRelativeLayoutParams);
 
-		mSecondLastAlpha  = (screenHeight-OVERLAY_HEIGHT-OVERLAY_BOTTOM_MARGIN-mYAxis)/(float)(screenHeight-OVERLAY_HEIGHT-OVERLAY_BOTTOM_MARGIN);
-		updateSecondaryLayout(mSecondTopMargin,mSecondLastAlpha,aIsSlidingX);
+		float secondLastAlpha = (screenHeight-OVERLAY_HEIGHT-OVERLAY_BOTTOM_MARGIN-mYAxis)/(float)(screenHeight-OVERLAY_HEIGHT-OVERLAY_BOTTOM_MARGIN);
+		updateSecondaryLayout(secondTopMargin,secondLastAlpha,aIsSlidingX);
 
 		float fromAlpha = 1.0f;
 		if (aIsSlidingX) {
