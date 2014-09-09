@@ -39,6 +39,7 @@ public class SlidingActivity extends Activity {
 	private static final float BACKVIEW_ALPHA_MAX = 0.8f;
 	private static final int BACK_VIEW_WIDTH = 50;
 	private static final int OVERLAY_MENU_MARGIN_LEFT = 20;
+	protected static final int SWITCH_RANGE = 90;
 
 	// Layout containers for various widgets
 
@@ -69,7 +70,7 @@ public class SlidingActivity extends Activity {
 		private int mStartDownX;
 		private int mStartDownY;
 		private int mSlideXDelata = 40;
-		private int mLastXposition;
+		private int mLastXposition = mStartDownX;
 
 
 		@Override
@@ -82,7 +83,10 @@ public class SlidingActivity extends Activity {
 			int y = (int)event.getRawY();
 
 			switch (action) {
-			case MotionEvent.ACTION_DOWN: 
+			case MotionEvent.ACTION_DOWN:
+				mMenuLayout.clearAnimation();
+				mBackView.clearAnimation();
+				mRootLayout.clearAnimation();
 				mFirstTimeMove = true;
 				mStartDownX = x;
 				mStartDownY = y;
@@ -98,6 +102,7 @@ public class SlidingActivity extends Activity {
 					mFirstTimeMove = false;
 					LayoutParams lparams = ((LayoutParams)mMenuLayout.getLayoutParams());
 					mSlideXDelata = mStartDownX - (lparams.width + lparams.leftMargin);
+					mStartDownX = x - mSlideXDelata;
 				}
 
 				if (mSlidingX) {
@@ -111,10 +116,9 @@ public class SlidingActivity extends Activity {
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_CANCEL:
 				if(mSlidingX){
-					boolean hide = (!mMenuHiden&& mLastXposition<mStartDownX&&(Math.abs(mLastXposition-mStartDownX)>=MENU_WIDTH/5||mLastXposition<MENU_WIDTH/5));
-					boolean show = (!mMenuHiden&&(mLastXposition>mStartDownX||Math.abs(mLastXposition-mStartDownX)<MENU_WIDTH/5||mLastXposition>4*MENU_WIDTH/5))||
-							(mMenuHiden&& mLastXposition>mStartDownX&&(Math.abs(mLastXposition-mStartDownX)>=MENU_WIDTH/5||mLastXposition>MENU_WIDTH/5));
-					animateMenu(mLastXposition,hide||!show);						
+					boolean switched = Math.abs(mLastXposition-mStartDownX)>=SWITCH_RANGE&&((mMenuHiden&&mLastXposition>mStartDownX)||(!mMenuHiden&&mLastXposition<mStartDownX)); 
+					boolean hiden = (mMenuHiden&&!switched)||(!mMenuHiden&&switched);
+					animateMenu(mLastXposition,hiden);						
 				}
 				boolean result = mSlidingX;
 				mSlidingX = false;
@@ -327,8 +331,11 @@ public class SlidingActivity extends Activity {
 
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
+				mMenuLayout.clearAnimation();
+				mBackView.clearAnimation();
+				mRootLayout.clearAnimation();
+				
 				mTopHeigh = mOnTop?mRootLayout.getHeight():OVERLAY_HEIGHT;
-
 				mIsFirstTimeMove = true;
 				mRootLayout.clearAnimation();
 				// Store the start points
@@ -588,6 +595,7 @@ public class SlidingActivity extends Activity {
 			}
 			else{
 				animateMenu(MENU_WIDTH, true);
+				mMenuHiden = true;
 			}
 		}
 	}
