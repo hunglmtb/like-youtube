@@ -3,7 +3,7 @@
     android:id="@+id/app_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#d4c0ff" >
+    android:background="@color/bg_media_list" >
 
     <fragment
         android:id="@+id/mainFragment"
@@ -11,7 +11,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="?attr/actionBarSize" />
 
     <RelativeLayout
         android:id="@+id/secondary_layout"
@@ -44,25 +45,15 @@
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:background="#9050b1ff"
+        android:layout_alignParentTop="true"
+        android:background="@null"
         android:visibility="gone" >
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/bg_selected_category_item" />
-        </RelativeLayout>
 
         <ListView
             android:id="@+id/menuListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
             android:background="@color/bg_menu"
             android:cacheColorHint="@null"
             android:divider="@null"
@@ -140,8 +131,8 @@
                     android:layout_toRightOf="@id/download_position"
                     android:paddingBottom="10dp"
                     android:paddingLeft="30dip"
-                    android:paddingTop="10dp"
-                    android:paddingRight="30dip" />
+                    android:paddingRight="30dip"
+                    android:paddingTop="10dp" />
             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
