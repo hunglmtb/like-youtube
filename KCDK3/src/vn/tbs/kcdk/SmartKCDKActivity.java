@@ -3,7 +3,7 @@ package vn.tbs.kcdk;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import android.app.Activity;
+import vn.tbs.kcdk.SmartViewWithMenu.OnTopListener;
 import android.app.SearchManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
-public class SmartKCDKActivity  extends ActionBarActivity {
+public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListener {
 
 	private static final String TAG = SmartKCDKActivity.class.getSimpleName();
 	private Fragment mContentFragment;
@@ -52,12 +52,25 @@ public class SmartKCDKActivity  extends ActionBarActivity {
 		
 		//----------------------------------------------------------------------------
 		mSmartViewWithMenu  = new SmartViewWithMenu(this, listAdapter);
+		mSmartViewWithMenu.setOnTopListener(this);
 		View view = mSmartViewWithMenu.getView();
 		setContentView(view);
 	}
 	public void onBackPressed() {
 		if (mSmartViewWithMenu==null||(mSmartViewWithMenu!=null&&mSmartViewWithMenu.onBackPressed())) {
 			super.onBackPressed();
+		}
+	}
+	@Override
+	public void doSmartViewOnTop(boolean onTop) {
+		android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+		if (actionBar!=null) {
+			if (onTop) {
+				actionBar.hide();				
+			}
+			else{
+				actionBar.show();
+			}
 		}
 	}
 }

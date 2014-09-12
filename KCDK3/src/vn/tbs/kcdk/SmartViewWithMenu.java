@@ -22,6 +22,12 @@ import android.widget.RelativeLayout.LayoutParams;
 
 public class SmartViewWithMenu  {
 
+	public interface OnTopListener {
+
+		void doSmartViewOnTop(boolean onTop);
+
+	}
+
 	public enum OverlayMode {
 		APP,
 		HOME_SHOW
@@ -133,6 +139,7 @@ public class SmartViewWithMenu  {
 	//kcdk data
 	private SmartMenu mSmartMenu;
 	private KCDKMediaPlayer sKCDKMediaPlayer;
+	private OnTopListener mOnTopListener;
 
 	public RelativeLayout getView() {
 		return mMainLayout;
@@ -582,6 +589,10 @@ public class SmartViewWithMenu  {
 		setAlphaValue(mRootLayout, fromAlpha);
 		
 		sKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&mYAxis==0));
+		
+		if (mOnTopListener!=null) {
+			mOnTopListener.doSmartViewOnTop(mOnTop);
+		}
 	}
 
 	@SuppressLint("NewApi")
@@ -618,5 +629,9 @@ public class SmartViewWithMenu  {
 			}
 		}
 		return false;
+	}
+
+	public void setOnTopListener(OnTopListener aOnTopListener) {
+		this.mOnTopListener = aOnTopListener;
 	}
 }
