@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    class="vn.tbs.kcdk.global.PinnedHeaderListView"
+    android:background="@color/bg_media_list"
+    android:cacheColorHint="@null"
+    android:divider="@null"
+    android:drawSelectorOnTop="false"
+    android:listSelector="@android:color/transparent" />
