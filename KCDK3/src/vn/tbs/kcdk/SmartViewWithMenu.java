@@ -1,6 +1,7 @@
 package vn.tbs.kcdk;
 
 
+import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
@@ -131,6 +132,7 @@ public class SmartViewWithMenu  {
 	
 	//kcdk data
 	private SmartMenu mSmartMenu;
+	private KCDKMediaPlayer sKCDKMediaPlayer;
 
 	public RelativeLayout getView() {
 		return mMainLayout;
@@ -141,6 +143,11 @@ public class SmartViewWithMenu  {
 		this.mContext = aContext;
 		
 		mMainLayout = (RelativeLayout) LayoutInflater.from(mContext).inflate(R.layout.main_sliding, null);
+		//View playerNavigation = LayoutInflater.from(mContext).inflate(R.layout.media_player_panel_layout, null);
+
+		View playerNavigation = mMainLayout.findViewById(R.id.media_player_layout);
+		sKCDKMediaPlayer = new KCDKMediaPlayer(mContext,playerNavigation);
+
 		
 		//mMainListView = (ListView) mMainLayout.findViewById( R.id.mainListView );
 		// Set the ArrayAdapter as the ListView's adapter.
@@ -408,7 +415,7 @@ public class SmartViewWithMenu  {
 				mInSimpleMode = mInSimpleMode||(!mIsSlidingX&&(mOnTop&&y<=mStartDragY));
 				
 				setOverlayPlace(x,y);
-				animateRootLayout(mIsSlidingX,mXAxis,mYAxis,simpleModeSwitched,mTopHeigh);
+				animateRootLayout(mIsSlidingX,mXAxis,mYAxis,simpleModeSwitched);
 				break;
 			default:
 				return false;
@@ -438,7 +445,7 @@ public class SmartViewWithMenu  {
 		}
 	}
 
-	private void animateRootLayout(final boolean aIsSlidingX,final int aXAxis,final int aYAxis, final boolean simpleModeSwitched,final int topHeight) {
+	private void animateRootLayout(final boolean aIsSlidingX,final int aXAxis,final int aYAxis, final boolean simpleModeSwitched) {
 
 		// Scale the distance between open and close states to 0-1. 
 		final int screenHeight = mAppLayout.getHeight();
@@ -453,7 +460,8 @@ public class SmartViewWithMenu  {
 		Animation animation = new Animation(){
 
 			private int mY0 = aYAxis;
-			private int mY1 = simpleModeSwitched?(int) (screenWidth*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH):SIMPLE_MODE_HEIGHT;
+			private int mY1 = simpleModeSwitched?(int) (screenWidth*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH):
+				(sKCDKMediaPlayer==null?SIMPLE_MODE_HEIGHT:sKCDKMediaPlayer.getSimpleModeHeight());
 			private int mX0 = aXAxis;
 
 			@Override
@@ -572,6 +580,8 @@ public class SmartViewWithMenu  {
 			}
 		}
 		setAlphaValue(mRootLayout, fromAlpha);
+		
+		sKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&mYAxis==0));
 	}
 
 	@SuppressLint("NewApi")
@@ -595,7 +605,7 @@ public class SmartViewWithMenu  {
 	public boolean onBackPressed() {
 		if (mOnTop) {
 			int y0 = mInSimpleMode?SIMPLE_MODE_HEIGHT:0;
-			animateRootLayout(false,0,y0,mInSimpleMode,0);							
+			animateRootLayout(false,0,y0,mInSimpleMode);							
 			mOnTop = mInSimpleMode;
 		}
 		else{
