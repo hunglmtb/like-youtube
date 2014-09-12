@@ -1,0 +1,184 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    
+    <!-- Holo-style seekbar -->
+    <style name="SeekBar">
+        <item name="android:paddingLeft">16.0dip</item>
+        <item name="android:paddingRight">16.0dip</item>
+        <item name="android:focusable">true</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:indeterminateDrawable">@drawable/scrubber_progress_horizontal_holo_dark</item>
+        <item name="android:progressDrawable">@drawable/scrubber_progress_horizontal_holo_dark</item>
+        <item name="android:thumb">@drawable/scrubber_control_selector_holo</item>
+        <item name="android:thumbOffset">16.0dip</item>
+        <item name="android:height">@dimen/seek_time_height</item>
+    </style>
+
+    <style name="PlaybackControl">
+        <item name="android:background">@drawable/media_button</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:paddingLeft">@dimen/btn_media_control_panel_pading</item>
+        <item name="android:paddingRight">@dimen/btn_media_control_panel_pading</item>
+        <item name="android:paddingBottom">@dimen/btn_media_control_panel_pading</item>
+        <item name="android:paddingTop">@dimen/btn_media_control_panel_pading</item>
+        <item name="android:layout_width">@dimen/btn_media_control_panel_size</item>
+        <item name="android:layout_height">@dimen/btn_media_control_panel_size</item>
+        <item name="android:contentDescription">@null</item>
+    </style>
+
+    <style name="PlaybackControl.Small" parent="@style/PlaybackControl">
+        <item name="android:layout_width">@dimen/btn_media_control_panel_size</item>
+        <item name="android:layout_height">@dimen/btn_media_control_panel_size</item>
+    </style>
+
+    <style name="media_caption_text_style">
+        <item name="android:gravity">center</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/media_content_item_text_size</item>
+    </style>
+
+    <style name="detail_media_additional_text_style" parent="@style/media_note_text_style">
+        <item name="android:textColor">@color/addition_text_color</item>
+    </style>
+
+    <style name="detaiL_media_content_style">
+        <item name="android:textSize">@dimen/detail_media_content_text_size</item>
+    </style>
+
+    <style name="media_title_text_style">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/media_title_text_size</item>
+        <item name="android:gravity">left</item>
+    </style>
+
+    <style name="detail_media_title_style" parent="@style/media_title_text_style">
+        <item name="android:textSize">@dimen/media_title_text_size</item>
+    </style>
+
+    <style name="media_note_text_style" parent="@style/media_title_text_style">
+        <item name="android:textSize">@dimen/media_note_text_size</item>
+    </style>
+
+    <style name="category_header_text_style" parent="@style/media_title_text_style">
+        <item name="android:textSize">@dimen/category_header_text_size</item>
+        <item name="android:padding">@dimen/menu_header_text_pading</item>
+        <item name="android:background">@drawable/bg_plugin</item>
+    </style>
+
+    <style name="media_header_text_style" parent="@style/media_title_text_style">
+        <item name="android:textSize">@dimen/media_header_text_size</item>
+        <item name="android:padding">@dimen/media_header_text_pading</item>
+        <item name="android:textColor">@color/abs__holo_blue_light</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="facebook_text_style">
+        <item name="android:textColor">@color/facebook_color</item>
+        <item name="android:textSize">@dimen/facebook_plugin_text_size</item>
+    </style>
+
+    <style name="menu_text_style" parent="@android:style/TextAppearance.Widget.TextView">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/menu_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">@dimen/margin_left_menu_text</item>
+    </style>
+
+    <style name="menu_header_text_style">
+        <item name="android:textColor">@color/menu_header_text_color</item>
+        <item name="android:textSize">@dimen/menu_header_text_size</item>
+        <item name="android:paddingBottom">@dimen/menu_header_text_pading</item>
+        <item name="android:paddingLeft">@dimen/menu_header_text_pading</item>
+        <item name="android:paddingRight">@dimen/menu_header_text_pading</item>
+        <item name="android:paddingTop">@dimen/menu_header_text_pading_top</item>
+    </style>
+
+    <style name="media_header_item_style">
+        <item name="android:paddingLeft">@dimen/media_content_item_pading_horizontal</item>
+        <item name="android:paddingRight">@dimen/media_content_item_pading_horizontal</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="media_item_style" parent="@style/media_header_item_style">
+        <item name="android:paddingBottom">@dimen/media_content_item_pading_vertical</item>
+    </style>
+
+    <style name="media_content_style" parent="@style/media_item_style">
+        <item name="android:paddingBottom">@dimen/media_content_item_pading_vertical</item>
+        <item name="android:paddingTop">@dimen/media_content_item_pading_vertical</item>
+        <item name="android:background">@color/bg_media_list</item>
+    </style>
+
+    <style name="media_image_layout_style">
+        <item name="android:paddingBottom">1dp</item>
+        <item name="android:paddingRight">1dp</item>
+        <item name="android:background">@drawable/bg_plugin</item>
+        <item name="android:textColor">@color/abs__holo_blue_light</item>
+        <item name="android:textSize">@dimen/media_title_text_size</item>
+    </style>
+
+    <style name="timer_button_style" parent="@style/media_image_layout_style">
+        <item name="android:paddingBottom">@dimen/timer_button_pading</item>
+        <item name="android:paddingTop">@dimen/timer_button_pading</item>
+        <item name="android:background">@drawable/bg_time_btn</item>
+    </style>
+
+    <style name="timer_on_off_button_style" parent="@style/timer_button_style">
+        <item name="android:background">@drawable/bg_time_btn</item>
+        <item name="android:textSize">@dimen/timer_text_size</item>
+    </style>
+
+    <style name="more_button_style" parent="@style/media_image_layout_style">
+        <item name="android:background">@drawable/bg_more_button</item>
+        <item name="android:textColor">@color/abs__holo_blue_light</item>
+        <item name="android:textSize">@dimen/media_title_text_size</item>
+        <item name="android:padding">@dimen/button_padding</item>
+        <item name="android:gravity">left|center_vertical</item>
+    </style>
+
+    <style name="like_plugin_style" parent="@style/media_image_layout_style">
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingLeft">3dp</item>
+    </style>
+
+    <style name="content_pager_title_layout_style" parent="@style/media_image_layout_style">
+        <item name="android:paddingLeft">1dp</item>
+        <item name="android:background">@color/shadow_color</item>
+    </style>
+
+    <style name="avatar_style" parent="@style/media_image_layout_style">
+        <item name="android:paddingRight">1dp</item>
+    </style>
+
+    <style name="header_text_style">
+        <item name="android:textColor">@color/menu_header_text_color</item>
+        <item name="android:textSize">@dimen/category_header_text_size</item>
+        <item name="android:paddingLeft">@dimen/menu_header_text_pading</item>
+        <item name="android:paddingRight">@dimen/menu_header_text_pading</item>
+    </style>
+
+    <style name="media_player_title_style">
+        <item name="android:background">@drawable/media_button</item>
+        <item name="android:paddingLeft">@dimen/btn_media_control_panel_pading</item>
+        <item name="android:paddingRight">@dimen/btn_media_control_panel_pading</item>
+        <item name="android:paddingTop">@dimen/btn_media_control_panel_pading</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:text"></item>
+        <item name="android:textColor">@color/White</item>
+        <item name="android:textSize">@dimen/media_player_title_size</item>
+    </style>
+
+</resources>

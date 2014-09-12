@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/bg_media_list" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/media_content_item_pading_vertical" >
+
+        <TextView
+            android:id="@+id/time_label"
+            style="@style/timer_button_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="0:10"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <ToggleButton
+            android:id="@+id/time_on_off"
+            style="@style/timer_on_off_button_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/media_content_item_pading_vertical"
+            android:layout_marginTop="@dimen/media_content_item_pading_vertical"
+            android:text="ToggleButton" />
+
+        <LinearLayout
+            android:id="@+id/time_on_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/time_picker_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/time_done"
+                        style="@style/timer_button_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:text="DONE" />
+
+                    <Button
+                        android:id="@+id/time_reset"
+                        style="@style/timer_button_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:text="RESET" />
+                </LinearLayout>
+
+                <TimePicker
+                    android:id="@+id/time_picker"
+                    style="@style/timer_button_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/media_content_item_pading_vertical" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/time_specific_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/time_10mins"
+                        style="@style/timer_button_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:text="10&apos;" />
+
+                    <Button
+                        android:id="@+id/time_20mins"
+                        style="@style/timer_button_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="20&apos;" />
+
+                    <Button
+                        android:id="@+id/time_30mins"
+                        style="@style/timer_button_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:text="30&apos;" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/time_45mins"
+                        style="@style/timer_button_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4.5"
+                        android:text="45&apos;" />
+
+                    <Button
+                        android:id="@+id/time_15mins"
+                        style="@style/timer_button_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="15&apos;" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/time_1h"
+                    style="@style/timer_button_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1h" />
+
+                <Button
+                    android:id="@+id/time_more"
+                    style="@style/timer_button_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="MORE" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

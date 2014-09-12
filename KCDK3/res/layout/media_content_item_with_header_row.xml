@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/category_layout"
+    style="@style/media_item_style"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <RelativeLayout
+        android:id="@+id/pin_header_view"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_header" >
+
+        <include
+            layout="@layout/header"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/media_content_item"
+        style="@style/media_image_layout_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pin_header_view"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/media_item_image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/media_item_image_height"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/media_user_view_status"
+                style="@style/media_caption_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/media_item_image"
+                android:layout_alignTop="@id/media_item_image"
+                android:layout_marginLeft="@dimen/media_item_avartar_margin"
+                android:layout_marginTop="@dimen/media_item_avartar_margin"
+                android:background="@drawable/bg_media_avatar_duration"
+                android:text="5hours ago, 80% done"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/media_duration_text"
+                style="@style/media_caption_text_style"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/media_item_image"
+                android:layout_alignRight="@id/media_item_image"
+                android:layout_marginBottom="@dimen/media_item_avartar_margin"
+                android:layout_marginRight="@dimen/media_item_avartar_margin"
+                android:background="@drawable/bg_media_avatar_duration"
+                android:text="36:45" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/media_image_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/White"
+            android:baselineAligned="false" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="5.0"
+                android:orientation="vertical"
+                android:padding="@dimen/media_content_item_pading" >
+
+                <TextView
+                    android:id="@+id/media_title_text"
+                    style="@style/media_title_text_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="Tiếng Gọi Nơi Hoang Dã" />
+
+                <TextView
+                    android:id="@+id/media_bonus_info_text"
+                    style="@style/media_note_text_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="giọng đọc Việt Hùng" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.3"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/media_content_item_pading"
+                android:paddingRight="@dimen/media_content_item_pading"
+                android:paddingTop="@dimen/media_content_item_pading" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/media_content_item_pading"
+                    android:gravity="center_vertical" >
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:src="@drawable/ic_fblike" />
+
+                    <TextView
+                        android:id="@+id/fb_like_count_text"
+                        style="@style/facebook_text_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2.0"
+                        android:gravity="right"
+                        android:paddingLeft="2dp"
+                        android:text="..."
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical" >
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:src="@drawable/ic_fbcomment" />
+
+                    <TextView
+                        android:id="@+id/fb_comment_count_text"
+                        style="@style/facebook_text_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2.0"
+                        android:gravity="right"
+                        android:paddingLeft="2dp"
+                        android:text="..."
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/media_content_item"
+        android:layout_alignLeft="@id/media_content_item"
+        android:layout_alignRight="@id/media_content_item"
+        android:layout_alignTop="@id/pin_header_view"
+        android:background="@drawable/bg_media_item"
+        android:visibility="visible" />
+
+</RelativeLayout>

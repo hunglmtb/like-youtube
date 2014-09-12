@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">KCDK</string>
+    <string name="search_hint">input text</string>
+    <!-- <string name="url_domain">http://9.9.0.101:8888</string> -->
+<!--     <string name="url_domain">http://mutikcdk.appspot.com</string>
+ 	<string name="url_domain">http://hunglmbk.com:8888</string>
+ -->
+    <string name="url_domain">http://kcdkv2.appspot.com</string>
+    <string name="url_categories">/category/get</string>
+    <string name="url_mediaList">/media/all</string>
+    <string name="action_url">http://kcdkv2.appspot.com/media/play?key=</string>
+    <string name="action_url_social">/media/social?</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">TRY THE BEST!</string>
+    <string name="comment_fragment_title">BÌNH LUẬN</string>
+    <string name="description_fragment_title">CHI TIẾT</string>
+    <string name="relate_fragment_title">RELATIVE</string>
+    <string name="mp3_url_test">http://s71.stream.nixcdn.com/feb7713303a9c6b38599a37cd13ccbd1/5227e999/NhacCuaTui076/Zhiyaoyouni-DengChaoJiMinJia_dxdu.mp3</string>
+    <string name="clear_cache_menu">Clear Caches</string>
+    <string name="clear_cache_complete_toast">Caches have been cleared</string>
+    <string name="imageview_description">Image Thumbnail</string>
+    <string name="no_network_connection_toast">No network connection found</string>
+    <string name="more_suggestion">XEM THÊM</string>
+    <string name="less_suggestion">ẨN BỚT</string>
+</resources>
