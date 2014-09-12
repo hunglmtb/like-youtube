@@ -432,7 +432,7 @@ public class SmartViewWithMenu  {
 				int leftPointerX = mStartDragX - (screenWidth - OVERLAY_WIDTH/2 );
 				mCloseOnRight = (x - leftPointerX)>=screenWidth/2&&mRootRelativeLayoutParams.leftMargin>=(screenWidth - 2*OVERLAY_WIDTH/3 );
 				mClosed = (x - leftPointerX)<screenWidth/2||mCloseOnRight;
-				mClosed = false;
+				//mClosed = false;
 			}
 			mOnTop= mInSimpleMode||mOnTop;
 		}
@@ -475,6 +475,8 @@ public class SmartViewWithMenu  {
 				//updateSecondaryLayout(margin, fromAlpha);
 				if (interpolatedTime==1) {
 					mRootLayout.clearAnimation();
+					mRootLayout.setVisibility(mClosed?View.GONE:View.VISIBLE);
+					mSecondaryLayout.setVisibility(mClosed?View.GONE:View.VISIBLE);
 					mIsRootLayoutAnimating = false;
 					updateBackView(true,BACK_VIEW_WIDTH,0);
 					mInSimpleMode = mInSimpleMode&&!simpleModeSwitched;
@@ -542,12 +544,11 @@ public class SmartViewWithMenu  {
 				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 				if (mCloseOnRight ) {
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-					mRootRelativeLayoutParams.leftMargin =  -1* OVERLAY_WIDTH;												
 				}
 				else{
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-					mRootRelativeLayoutParams.rightMargin =  -1* OVERLAY_WIDTH;						
 				}
+				mRootRelativeLayoutParams.setMargins(mXAxis, 0, screenWidth - OVERLAY_WIDTH - mXAxis, OVERLAY_BOTTOM_MARGIN);
 			}
 			else{
 				mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(OVERLAY_WIDTH,OVERLAY_HEIGHT);
@@ -595,7 +596,7 @@ public class SmartViewWithMenu  {
 		if (mOnTop) {
 			int y0 = mInSimpleMode?SIMPLE_MODE_HEIGHT:0;
 			animateRootLayout(false,0,y0,mInSimpleMode,0);							
-			mOnTop = false;
+			mOnTop = mInSimpleMode;
 		}
 		else{
 			if (mMenuHiden) {
