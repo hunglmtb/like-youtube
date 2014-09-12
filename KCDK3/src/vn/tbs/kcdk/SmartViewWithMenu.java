@@ -41,7 +41,7 @@ public class SmartViewWithMenu  {
 	protected static final int SIMPLE_MODE_HEIGHT = 150;
 
 	//fields
-	protected boolean mSimpleMode = false;
+	protected boolean mInSimpleMode = false;
 	protected boolean mOnTop = true;
 	protected boolean mClosed = false;
 	private boolean mCloseOnRight = false;
@@ -349,7 +349,7 @@ public class SmartViewWithMenu  {
 					mIsFirstTimeMove = false;
 				}
 
-				if (!mMenuHiden) {
+				if (!mMenuHiden||mInSimpleMode) {
 					return true;
 				}
 
@@ -402,10 +402,13 @@ public class SmartViewWithMenu  {
 					}
 					return true;
 				}
-				else if (!mIsSlidingX&&((!mOnTop&&y>=mStartDragY)||(mSimpleMode&&y<=mStartDragY))) return true;
+				else if (!mIsSlidingX&&((!mOnTop&&y>=mStartDragY)||(mInSimpleMode&&y<=mStartDragY))) return true;
 
+				boolean simpleModeSwitched = mInSimpleMode&&!mIsSlidingX&&(y>mStartDragY);
+				mInSimpleMode = mInSimpleMode||(!mIsSlidingX&&(mOnTop&&y<=mStartDragY));
+				
 				setOverlayPlace(x,y);
-				animateRootLayout(mIsSlidingX,mXAxis,mYAxis);
+				animateRootLayout(mIsSlidingX,mXAxis,mYAxis,simpleModeSwitched,mTopHeigh);
 				break;
 			default:
 				return false;
@@ -416,8 +419,7 @@ public class SmartViewWithMenu  {
 
 
 		private void setOverlayPlace(int x, int y) {
-			mSimpleMode = !mIsSlidingX&&(mOnTop&&y<=mStartDragY);
-			mYAxis = mSimpleMode?mTopHeigh:mYAxis;
+			mYAxis = mInSimpleMode?mTopHeigh:mYAxis;
 			
 			if (mOnTop) {
 				int screenHeight = mAppLayout.getHeight();
@@ -432,11 +434,11 @@ public class SmartViewWithMenu  {
 				mClosed = (x - leftPointerX)<screenWidth/2||mCloseOnRight;
 				mClosed = false;
 			}
-
+			mOnTop= mInSimpleMode||mOnTop;
 		}
 	}
 
-	private void animateRootLayout(final boolean aIsSlidingX,final int aXAxis,final int aYAxis) {
+	private void animateRootLayout(final boolean aIsSlidingX,final int aXAxis,final int aYAxis, final boolean simpleModeSwitched,final int topHeight) {
 
 		// Scale the distance between open and close states to 0-1. 
 		final int screenHeight = mAppLayout.getHeight();
@@ -451,6 +453,7 @@ public class SmartViewWithMenu  {
 		Animation animation = new Animation(){
 
 			private int mY0 = aYAxis;
+			private int mY1 = simpleModeSwitched?(int) (screenWidth*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH):SIMPLE_MODE_HEIGHT;
 			private int mX0 = aXAxis;
 
 			@Override
@@ -461,7 +464,7 @@ public class SmartViewWithMenu  {
 				int newXAxis =  aXAxis;
 				if (!aIsSlidingX) {
 					delta  =mOnTop?-mY0:screenHeight-OVERLAY_HEIGHT-OVERLAY_BOTTOM_MARGIN-mY0;
-					delta  =mSimpleMode?SIMPLE_MODE_HEIGHT-mY0:delta;
+					delta  =mInSimpleMode?mY1-mY0:delta;
 					newYAxis = (int) (delta*interpolatedTime + mY0);					
 				}
 				else{
@@ -474,6 +477,8 @@ public class SmartViewWithMenu  {
 					mRootLayout.clearAnimation();
 					mIsRootLayoutAnimating = false;
 					updateBackView(true,BACK_VIEW_WIDTH,0);
+					mInSimpleMode = mInSimpleMode&&!simpleModeSwitched;
+					mOnTop = mInSimpleMode||mOnTop;
 				}
 			}
 
@@ -506,8 +511,8 @@ public class SmartViewWithMenu  {
 			int height = (int) (widthn*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH);
 			int margin = (int) (screenHeight - mYAxis - height);
 			
-			height = mSimpleMode?mYAxis:height;
-			widthn = mSimpleMode?screenWidth:widthn;
+			height = mInSimpleMode?mYAxis:height;
+			widthn = mInSimpleMode?screenWidth:widthn;
 
 			mRootRelativeLayoutParams =  new RelativeLayout.LayoutParams(widthn,height);
 
@@ -518,7 +523,7 @@ public class SmartViewWithMenu  {
 			else{
 				mRootRelativeLayoutParams.bottomMargin = margin;
 				
-				if (mSimpleMode) {
+				if (mInSimpleMode) {
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 				}
@@ -555,7 +560,7 @@ public class SmartViewWithMenu  {
 		mRootLayout.setLayoutParams(mRootRelativeLayoutParams);
 
 		float secondLastAlpha = (screenHeight-OVERLAY_HEIGHT-OVERLAY_BOTTOM_MARGIN-mYAxis)/(float)(screenHeight-OVERLAY_HEIGHT-OVERLAY_BOTTOM_MARGIN);
-		secondLastAlpha = mSimpleMode?1:secondLastAlpha;
+		secondLastAlpha = mInSimpleMode?1:secondLastAlpha;
 		updateSecondaryLayout(secondTopMargin,secondLastAlpha,aIsSlidingX);
 
 		float fromAlpha = 1.0f;
@@ -588,8 +593,9 @@ public class SmartViewWithMenu  {
 
 	public boolean onBackPressed() {
 		if (mOnTop) {
+			int y0 = mInSimpleMode?SIMPLE_MODE_HEIGHT:0;
+			animateRootLayout(false,0,y0,mInSimpleMode,0);							
 			mOnTop = false;
-			animateRootLayout(false,0,0);							
 		}
 		else{
 			if (mMenuHiden) {
