@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import vn.tbs.kcdk.SmartViewWithMenu.OnTopListener;
+import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment;
+import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
+import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import android.app.SearchManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -13,7 +16,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
-public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListener {
+public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListener, ItemSelectionListener {
 
 	private static final String TAG = SmartKCDKActivity.class.getSimpleName();
 	private Fragment mContentFragment;
@@ -34,6 +37,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	
 	
 	private SmartViewWithMenu mSmartViewWithMenu;
+	private PinnedHeaderMediaListFragment mPinnedHeaderMediaListFragment;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,9 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		mSmartViewWithMenu.setOnTopListener(this);
 		View view = mSmartViewWithMenu.getView();
 		setContentView(view);
+		
+		mPinnedHeaderMediaListFragment = (PinnedHeaderMediaListFragment)getSupportFragmentManager().findFragmentById(R.id.mainFragment);
+		mPinnedHeaderMediaListFragment.setOnItemSelectionListener(this);
 	}
 	public void onBackPressed() {
 		if (mSmartViewWithMenu==null||(mSmartViewWithMenu!=null&&mSmartViewWithMenu.onBackPressed())) {
@@ -71,6 +78,12 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 			else{
 				actionBar.show();
 			}
+		}
+	}
+	@Override
+	public void doItemSelection(MediaInfo item) {
+		if (mSmartViewWithMenu!=null) {
+			mSmartViewWithMenu.showMediaContent(item);			
 		}
 	}
 }
