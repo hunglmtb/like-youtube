@@ -158,7 +158,7 @@
         android:layout_alignBottom="@id/media_content_item"
         android:layout_alignLeft="@id/media_content_item"
         android:layout_alignRight="@id/media_content_item"
-        android:layout_alignTop="@id/pin_header_view"
+        android:layout_alignTop="@id/media_content_item"
         android:background="@drawable/bg_media_item"
         android:visibility="visible" />
 
