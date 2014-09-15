@@ -1,6 +1,7 @@
 package vn.tbs.kcdk;
 
 
+import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -633,5 +634,15 @@ public class SmartViewWithMenu  {
 
 	public void setOnTopListener(OnTopListener aOnTopListener) {
 		this.mOnTopListener = aOnTopListener;
+	}
+
+	public void showMediaContent(MediaInfo item) {
+		// TODO Auto-generated method stub
+		mClosed = false;
+		mOnTop = true;
+		mRootLayout.setVisibility(View.VISIBLE);
+		mSecondaryLayout.setVisibility(View.VISIBLE);
+		int screenHeight = mAppLayout.getHeight();
+		animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);							
 	}
 }

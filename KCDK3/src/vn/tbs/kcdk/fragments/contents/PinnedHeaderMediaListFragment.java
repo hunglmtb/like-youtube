@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.SmartKCDKActivity;
+import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.global.Common;
 import vn.tbs.kcdk.global.PinnedHeaderListView;
 import android.graphics.Typeface;
@@ -15,11 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.android.bitmapfun.util.ImageCache.ImageCacheParams;
 import com.example.android.bitmapfun.util.ImageFetcher;
 
 public class PinnedHeaderMediaListFragment extends ListFragment {
+	public interface ItemSelectionListener {
+
+		void doItemSelection(MediaInfo item);
+
+	}
+
 	private static final String TAG = PinnedHeaderMediaListFragment.class.getSimpleName();
 
 	private PinnedHeaderMediaAdapter mPinnedHeaderMediaAdapter;
@@ -33,6 +41,8 @@ public class PinnedHeaderMediaListFragment extends ListFragment {
 	private static final String IMAGE_CACHE_DIR = "thumbs";
 	private int mImageThumbSize;
 	private ImageFetcher mImageFetcher;
+
+	private ItemSelectionListener mItemListerner;
 
 ;
 
@@ -206,6 +216,9 @@ public class PinnedHeaderMediaListFragment extends ListFragment {
 	public void onListItemClick(ListView lv, View view, int position, long id) {
 		Log.i(TAG, "onListItemClick start" +position);
 
+		if (mItemListerner!=null) {
+			mItemListerner.doItemSelection(mPinnedHeaderMediaAdapter.getItem(position));			
+		}
 		//Common.showMediaPage(mPinnedHeaderMediaAdapter.getItem(position),mKCDKActivity);
 		//		Common.showMediaContent(mMediaAdapter.getItem(position),mKCDKActivity);
 
@@ -231,5 +244,10 @@ public class PinnedHeaderMediaListFragment extends ListFragment {
 	public void onDestroy() {
 		super.onDestroy();
 		mImageFetcher.closeCache();
+	}
+
+
+	public void setOnItemSelectionListener(ItemSelectionListener alistener) {
+		this.mItemListerner = alistener;
 	}
 }
