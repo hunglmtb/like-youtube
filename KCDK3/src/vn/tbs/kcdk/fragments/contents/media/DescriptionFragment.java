@@ -378,4 +378,24 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 
 		Log.i(TAG, "initRelativeMedia end");
 	}
+
+	public void updateData(MediaInfo item) {
+		if (item!=null) {
+			Typeface tf=Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");
+
+			mContent.setText(item.getContentInfo());
+			mTitleTextView.setText(item.getTitle());
+			mAuthorTextView.setText(item.getAuthor());
+			mSpeakerTextView.setText(item.getSpeaker());
+			mPublishedDateTextView.setText(item.getPublishedDate());
+			mViewCountTextView.setText(item.getCommentCount());
+
+			mContent.setTypeface(tf); 
+			mTitleTextView.setTypeface(tf);
+			mAuthorTextView.setTypeface(tf);
+			mSpeakerTextView.setTypeface(tf);
+			mPublishedDateTextView.setTypeface(tf);
+			mViewCountTextView.setTypeface(tf);
+		}
+	}
 }

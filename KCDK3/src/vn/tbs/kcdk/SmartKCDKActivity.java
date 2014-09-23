@@ -6,6 +6,7 @@ import java.util.Arrays;
 import vn.tbs.kcdk.SmartViewWithMenu.OnTopListener;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
+import vn.tbs.kcdk.fragments.contents.media.DescriptionFragment;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import android.app.SearchManager;
 import android.graphics.Typeface;
@@ -38,6 +39,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	
 	private SmartViewWithMenu mSmartViewWithMenu;
 	private PinnedHeaderMediaListFragment mPinnedHeaderMediaListFragment;
+	private DescriptionFragment mDescriptionFragment;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,8 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		setContentView(view);
 		
 		mPinnedHeaderMediaListFragment = (PinnedHeaderMediaListFragment)getSupportFragmentManager().findFragmentById(R.id.mainFragment);
+		mDescriptionFragment = (DescriptionFragment)getSupportFragmentManager().findFragmentById(R.id.secondFragment);
+		
 		mPinnedHeaderMediaListFragment.setOnItemSelectionListener(this);
 	}
 	public void onBackPressed() {
@@ -83,7 +87,10 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	@Override
 	public void doItemSelection(MediaInfo item) {
 		if (mSmartViewWithMenu!=null) {
-			mSmartViewWithMenu.showMediaContent(item);			
+			mSmartViewWithMenu.showMediaContent(item);
+		}
+		if(mDescriptionFragment!=null){
+			mDescriptionFragment.updateData(item);			
 		}
 	}
 }
