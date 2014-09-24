@@ -34,15 +34,16 @@ import android.widget.TextView;
 
 import com.example.android.bitmapfun.util.ImageCache;
 import com.example.android.bitmapfun.util.ImageFetcher;
+import com.example.android.bitmapfun.util.ImageWorker;
 import com.example.android.bitmapfun.util.LoadingDoneListener;
 
 public class DescriptionFragment extends Fragment implements OnClickListener, LoadingDoneListener {
 	private static final String TAG = DescriptionFragment.class.getName();
 
 	private String mMediaImageUrl;
-	//private ImageView mMediaImageView;
+	private ImageView mMediaImageView;
 
-	private static final String IMAGE_CACHE_DIR = "images";
+	public static final String IMAGE_CACHE_DIR = "images";
 
 	private ImageFetcher mImageFetcher;
 
@@ -239,11 +240,11 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 		super.onDestroy();
 		//TODO use it for fetch image for smart media player
 
-		/*if (mMediaImageView != null) {
+		if (mMediaImageView != null) {
 			// Cancel any pending image work
 			ImageWorker.cancelWork(mMediaImageView);
 			mMediaImageView.setImageDrawable(null);
-		}*/
+		}
 		mImageFetcher.closeCache();
 	}
 
@@ -379,8 +380,15 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 		Log.i(TAG, "initRelativeMedia end");
 	}
 
-	public void updateData(MediaInfo item) {
+	public void updateData(MediaInfo item, ImageView imageView) {
 		if (item!=null) {
+			if (mImageFetcher!=null&&imageView!=null) {
+				mMediaImageUrl = item.getMediaImageUrl();
+				mMediaImageView = imageView;
+				mImageFetcher.setEnableOtherLoad(true);
+				mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);
+			}
+			
 			Typeface tf=Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");
 
 			mContent.setText(item.getContentInfo());

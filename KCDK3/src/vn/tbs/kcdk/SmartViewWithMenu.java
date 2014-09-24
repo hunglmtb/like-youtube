@@ -17,9 +17,12 @@ import android.view.animation.AnimationSet;
 import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+
+import com.example.android.bitmapfun.util.ImageFetcher;
 
 public class SmartViewWithMenu  {
 
@@ -59,6 +62,7 @@ public class SmartViewWithMenu  {
 
 	// Layout containers for various widgets
 	private RelativeLayout 					mRootLayout;			// Root layout
+	private ImageView 						mMediaImage;
 	private RelativeLayout 					mAppLayout;			// Reference to the window
 	//private ListView						mMainListView ;
 	private RelativeLayout.LayoutParams 	mRootRelativeLayoutParams;
@@ -69,9 +73,10 @@ public class SmartViewWithMenu  {
 	private ListView 						mMenuListView ;
 	private Context 						mContext;
 	private RelativeLayout 					mMainLayout;
-	
+	private ImageFetcher					mImageFetcher;
+
 	//listener
-	private OnTouchListener mTouchListener = new OnTouchListener() {
+	private OnTouchListener 				mTouchListener = new OnTouchListener() {
 
 		private boolean mFirstTimeMove = false;
 		private boolean mSlidingX = false;
@@ -142,6 +147,11 @@ public class SmartViewWithMenu  {
 	private KCDKMediaPlayer sKCDKMediaPlayer;
 	private OnTopListener mOnTopListener;
 
+	
+	public ImageView getMediaImage() {
+		return mMediaImage;
+	}
+
 	public RelativeLayout getView() {
 		return mMainLayout;
 	}
@@ -166,6 +176,7 @@ public class SmartViewWithMenu  {
 		// Get references to all the views and add them to root view as needed.
 		mAppLayout = (RelativeLayout) mMainLayout.findViewById(R.id.app_layout);
 		mRootLayout = (RelativeLayout) mMainLayout.findViewById(R.id.root_layout);
+		mMediaImage = (ImageView) mMainLayout.findViewById(R.id.media_image);
 		mSecondaryLayout = (RelativeLayout) mMainLayout.findViewById(R.id.secondary_layout);
 		mBackView = mMainLayout.findViewById(R.id.backView);
 		mMenuLayout = (RelativeLayout) mMainLayout.findViewById(R.id.menu_layout);
@@ -638,6 +649,7 @@ public class SmartViewWithMenu  {
 
 	public void showMediaContent(MediaInfo item) {
 		// TODO Auto-generated method stub
+		//loadImage(item);
 		mClosed = false;
 		mOnTop = true;
 		mRootLayout.setVisibility(View.VISIBLE);
@@ -645,4 +657,46 @@ public class SmartViewWithMenu  {
 		int screenHeight = mAppLayout.getHeight();
 		animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);							
 	}
+
+/*	private void loadImage(MediaInfo item) {
+		if (mImageFetcher==null) {
+			mImageFetcher = new ImageFetcher(mContext, longest);
+			mImageFetcher.setStandardWidth(width);
+			mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
+			mImageFetcher.setLoadingImage(R.drawable.empty_photo);
+			mImageFetcher.setImageFadeIn(true);
+			mImageFetcher.setLoadingDoneListener(this);
+			mImageFetcher.setEnableResizeImageView(true);
+		}
+		mImageFetcher.setEnableOtherLoad(true);
+		mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);
+	}
+	
+	private void iniLrucache() {
+
+		// Fetch screen height and width, to use as our max size when loading images as this
+		// activity runs full screen
+		final int height = mRootLayout.getHeight();
+		final int width = mRootLayout.getWidth();
+
+		// For this sample we'll use half of the longest width to resize our images. As the
+		// image scaling ensures the image is larger than this, we should be left with a
+		// resolution that is appropriate for both portrait and landscape. For best image quality
+		// we shouldn't divide by 2, but this will use more memory and require a larger memory
+		// cache.
+		final int longest = (height > width ? height : width) / 2;
+
+		ImageCache.ImageCacheParams cacheParams =
+				new ImageCache.ImageCacheParams(mContext, DescriptionFragment.IMAGE_CACHE_DIR);
+		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
+
+		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
+		mImageFetcher = new ImageFetcher(mContext, longest);
+		mImageFetcher.setStandardWidth(width);
+		mImageFetcher.addImageCache(mContext.getSupportFragmentManager(), cacheParams);
+		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
+		mImageFetcher.setImageFadeIn(true);
+		//mImageFetcher.setLoadingDoneListener(this);
+		mImageFetcher.setEnableResizeImageView(true);
+	}*/
 }
