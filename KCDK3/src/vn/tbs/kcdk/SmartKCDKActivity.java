@@ -86,11 +86,9 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	}
 	@Override
 	public void doItemSelection(MediaInfo item) {
-		if (mSmartViewWithMenu!=null) {
+		if(mDescriptionFragment!=null&&mSmartViewWithMenu!=null){
+			mDescriptionFragment.updateData(item,mSmartViewWithMenu.getMediaImage());
 			mSmartViewWithMenu.showMediaContent(item);
-		}
-		if(mDescriptionFragment!=null){
-			mDescriptionFragment.updateData(item);			
 		}
 	}
 }
