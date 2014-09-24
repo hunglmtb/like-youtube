@@ -37,7 +37,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	//media player 
 	private MediaPlayer mMediaPlayer;
 	// this value contains the song duration in milliseconds. Look at getDuration() method in MediaPlayer class
-	private int mMediaFileLengthInMilliseconds;
+	private int mMediaFileLengthInMilliseconds = 300000;
 
 	private final Handler mHandler = new Handler();
 
@@ -224,7 +224,9 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	/** Method which updates the SeekBar primary progress by current song playing position*/
 	private void primarySeekBarProgressUpdater() {
 		if (mMediaPlayer!=null) {
-			int progress = (int)(((float)mMediaPlayer.getCurrentPosition()/mMediaFileLengthInMilliseconds)*SEEKBAR_MAX);
+			float duration = mMediaFileLengthInMilliseconds;
+			duration = duration>0?duration:300000;
+			int progress = (int)(((float)mMediaPlayer.getCurrentPosition()/duration )*SEEKBAR_MAX);
 			updateCurrentPlayingTime();
 
 			mSeekBarProgress.setProgress(progress ); // This math construction give a percentage of "was playing"/"song length"
@@ -296,7 +298,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			this.mMediaInfoItem = item;
 			String url = mContext.getString(R.string.action_url)+item.getMediaFileUrl();
 			//String url = "http://stream2.r15s91.vcdn.vn/fsfsdfdsfdserwrwq3/6de9da3107e057671ecb386c5c8bb797/539814e6/2013/12/15/4/b/4b896ff9151263672609e9cb9cc04c00.mp3";
-			
+			//url = "http://download.a1.nixcdn.com/3a027d2becd785fc25ae3f0e47581ce3/54228a5b/NhacCuaTui038/CatbuiTrinhCongSon1987-KhanhLy_6r5p.mp3";
 			boolean ok = playMedia(url );
 			ok = true;
 			if (ok) {

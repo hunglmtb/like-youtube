@@ -655,48 +655,9 @@ public class SmartViewWithMenu  {
 		mRootLayout.setVisibility(View.VISIBLE);
 		mSecondaryLayout.setVisibility(View.VISIBLE);
 		int screenHeight = mAppLayout.getHeight();
-		animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);							
-	}
-
-/*	private void loadImage(MediaInfo item) {
-		if (mImageFetcher==null) {
-			mImageFetcher = new ImageFetcher(mContext, longest);
-			mImageFetcher.setStandardWidth(width);
-			mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
-			mImageFetcher.setLoadingImage(R.drawable.empty_photo);
-			mImageFetcher.setImageFadeIn(true);
-			mImageFetcher.setLoadingDoneListener(this);
-			mImageFetcher.setEnableResizeImageView(true);
+		animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);
+		if (sKCDKMediaPlayer!=null) {
+			sKCDKMediaPlayer.playMedia(item);						
 		}
-		mImageFetcher.setEnableOtherLoad(true);
-		mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);
 	}
-	
-	private void iniLrucache() {
-
-		// Fetch screen height and width, to use as our max size when loading images as this
-		// activity runs full screen
-		final int height = mRootLayout.getHeight();
-		final int width = mRootLayout.getWidth();
-
-		// For this sample we'll use half of the longest width to resize our images. As the
-		// image scaling ensures the image is larger than this, we should be left with a
-		// resolution that is appropriate for both portrait and landscape. For best image quality
-		// we shouldn't divide by 2, but this will use more memory and require a larger memory
-		// cache.
-		final int longest = (height > width ? height : width) / 2;
-
-		ImageCache.ImageCacheParams cacheParams =
-				new ImageCache.ImageCacheParams(mContext, DescriptionFragment.IMAGE_CACHE_DIR);
-		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
-
-		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
-		mImageFetcher = new ImageFetcher(mContext, longest);
-		mImageFetcher.setStandardWidth(width);
-		mImageFetcher.addImageCache(mContext.getSupportFragmentManager(), cacheParams);
-		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
-		mImageFetcher.setImageFadeIn(true);
-		//mImageFetcher.setLoadingDoneListener(this);
-		mImageFetcher.setEnableResizeImageView(true);
-	}*/
 }
