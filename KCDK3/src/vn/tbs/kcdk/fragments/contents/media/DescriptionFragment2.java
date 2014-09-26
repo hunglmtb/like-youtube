@@ -9,6 +9,7 @@ import static vn.tbs.kcdk.global.Common.MEDIA_SPEAKER_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_TITLE_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_VIEWCOUNT_KEY;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import vn.tbs.kcdk.R;
@@ -16,12 +17,14 @@ import vn.tbs.kcdk.SmartKCDKActivity;
 import vn.tbs.kcdk.global.Common;
 import vn.tbs.kcdk.global.ServerConnection;
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -29,9 +32,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -40,8 +47,35 @@ import com.example.android.bitmapfun.util.ImageFetcher;
 import com.example.android.bitmapfun.util.ImageWorker;
 import com.example.android.bitmapfun.util.LoadingDoneListener;
 
-public class DescriptionFragment extends Fragment implements OnClickListener, LoadingDoneListener {
-	private static final String TAG = DescriptionFragment.class.getName();
+public class DescriptionFragment2 extends ListFragment implements OnClickListener, LoadingDoneListener {
+	public class DescriptionAdapter extends BaseAdapter {
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return 2;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			// TODO Auto-generated method stub
+			return mViews[position];
+		}
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+	}
+	private View[] mViews;
+
+	private static final String TAG = DescriptionFragment2.class.getName();
 
 	private String mMediaImageUrl;
 	private ImageView mMediaImageView;
@@ -74,15 +108,43 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 	private View mEndView;
 
 	private ViewPager mViewPager;
-	
 
 
+
+	private ListView mMediaContentListView;
+	private ArrayList<String> mRelativeAdapter;
+
+	private ListAdapter mDescriptionAdapter;
+
+	/*	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		mMediaContentListView = (ListView) inflater.inflate(R.layout.pinned_header_list, null);
+
+
+		return mMediaContentListView;
+	}
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		initUrlData();
-		iniLrucache();
+		String[] countries = new String[] {
+				"India",
+				"Pakistan",
+				"Sri Lanka",
+				"China",
+				"Bangladesh",
+				"Nepal",
+				"Afghanistan",
+				"North Korea",
+				"South Korea",
+				"Japan"
+		};
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,countries);
+
+		mDescriptionAdapter = new DescriptionAdapter();
+
+		setListAdapter(mDescriptionAdapter);
 	}
 
 	private void loadFromServer() {
@@ -131,7 +193,11 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View view = inflater.inflate(R.layout.media_detail_layout, null);
+		View view = inflater.inflate(R.layout.listview_detail, null);
+
+		View descriptionView = inflater.inflate(R.layout.description_layout, null);
+		View viewPagerView = inflater.inflate(R.layout.description_layout, null);
+		/*View view = inflater.inflate(R.layout.media_detail_layout, null);
 
 		//mMediaImageView = (ImageView)view.findViewById(R.id.media_imageview);
 
@@ -157,7 +223,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 		mEndView = view.findViewById(R.id.end_view);
 
 		hide2SampleMedia();
-		
+
 		//
         AppSectionsPagerAdapter mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
 
@@ -173,6 +239,8 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
             }
         });
         //
+		 */		
+		mViews =  new View[]{descriptionView,viewPagerView};
 		return view;
 
 	}
@@ -180,7 +248,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		matchData();
+		//matchData();
 		//TODO use it for fetch image for smart media player
 		//mImageFetcher.setEnableOtherLoad(true);
 		//mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);
@@ -245,15 +313,15 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 	@Override
 	public void onResume() {
 		super.onResume();
-		mImageFetcher.setExitTasksEarly(false);
+		//mImageFetcher.setExitTasksEarly(false);
 		//		loadRelativeMedia();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		mImageFetcher.setExitTasksEarly(true);
-		mImageFetcher.flushCache();
+		//mImageFetcher.setExitTasksEarly(true);
+		//mImageFetcher.flushCache();
 	}
 
 	@Override
@@ -314,7 +382,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 
 		if (mRelativeMediaLayout!=null) {
 			int visibility = mIsMore?View.VISIBLE:View.GONE;
-			
+
 			for (int i = 3; i < mRelativeMediaLayout.getChildCount(); i++) {
 				mRelativeMediaLayout.getChildAt(i).setVisibility(visibility);
 			}
@@ -333,7 +401,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 
 		@Override
 		protected List<MediaInfo> doInBackground(Void... params) {
-//			return ServerConnection.getRelativeMedia(getString(R.string.url_domain)+data.getString(MEDIA_ID_KEY));
+			//			return ServerConnection.getRelativeMedia(getString(R.string.url_domain)+data.getString(MEDIA_ID_KEY));
 			return ServerConnection.getRelativeMedia(getString(R.string.url_domain)+"/media/all?limit=10&offset=0");
 
 		}
@@ -406,14 +474,14 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 	}
 
 	public void updateData(MediaInfo item, ImageView imageView) {
-		if (item!=null) {
+		/*if (item!=null) {
 			if (mImageFetcher!=null&&imageView!=null) {
 				mMediaImageUrl = item.getMediaImageUrl();
 				mMediaImageView = imageView;
 				mImageFetcher.setEnableOtherLoad(true);
 				mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);
 			}
-			
+
 			Typeface tf=Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");
 
 			mContent.setText(item.getContentInfo());
@@ -429,64 +497,64 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 			mSpeakerTextView.setTypeface(tf);
 			mPublishedDateTextView.setTypeface(tf);
 			mViewCountTextView.setTypeface(tf);
+		}*/
+	}
+
+
+	/**
+	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
+	 * sections of the app.
+	 */
+	public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
+
+		public AppSectionsPagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public Fragment getItem(int i) {
+			switch (i) {
+			case 0:
+				// The first section of the app is the most interesting -- it offers
+				// a launchpad into the other demonstrations in this example application.
+				return new FacebookPluginFragment();
+
+			default:
+				// The other sections of the app are dummy placeholders.
+				Fragment fragment = new DummySectionFragment();
+				Bundle args = new Bundle();
+				args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
+				fragment.setArguments(args);
+				return fragment;
+			}
+		}
+
+		@Override
+		public int getCount() {
+			return 2;
+		}
+
+		@Override
+		public CharSequence getPageTitle(int position) {
+			return "Section " + (position + 1);
 		}
 	}
-	
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
-     * sections of the app.
-     */
-    public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
+	/**
+	 * A dummy fragment representing a section of the app, but that simply displays dummy text.
+	 */
+	public static class DummySectionFragment extends Fragment {
 
-        public AppSectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+		public static final String ARG_SECTION_NUMBER = "section_number";
 
-        @Override
-        public Fragment getItem(int i) {
-            switch (i) {
-                case 0:
-                    // The first section of the app is the most interesting -- it offers
-                    // a launchpad into the other demonstrations in this example application.
-                    return new FacebookPluginFragment();
-
-                default:
-                    // The other sections of the app are dummy placeholders.
-                    Fragment fragment = new DummySectionFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
-                    fragment.setArguments(args);
-                    return fragment;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "Section " + (position + 1);
-        }
-    }
-    
-    /**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
-    public static class DummySectionFragment extends Fragment {
-
-        public static final String ARG_SECTION_NUMBER = "section_number";
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
-            Bundle args = getArguments();
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
-    }
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
+			Bundle args = getArguments();
+			((TextView) rootView.findViewById(android.R.id.text1)).setText(
+					getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
+			return rootView;
+		}
+	}
 }
