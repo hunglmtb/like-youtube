@@ -138,6 +138,12 @@ Một chốc, chất độc thâm nhập vào cơ thể, xua đuổi chất đ�
             android:layout_height="@dimen/media_content_item_pading_vertical"
             android:background="@android:color/transparent"
             android:visibility="gone" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
     </LinearLayout>
 
 </ScrollView>
