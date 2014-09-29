@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/media_content_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/relative_media_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/media_content_item_pading_vertical"
+        android:layout_marginRight="@dimen/media_content_item_pading_vertical"
+        android:background="@drawable/bg_plugin"
+        android:orientation="vertical"
+        android:visibility="visible" >
+
+        <ProgressBar
+            android:id="@+id/relative_media_progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/more_relative_media"
+        style="@style/more_button_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/media_content_item_pading_vertical"
+        android:layout_marginLeft="@dimen/media_content_item_pading_vertical"
+        android:layout_marginRight="@dimen/media_content_item_pading_vertical"
+        android:gravity="left|center_vertical"
+        android:text="@string/more_suggestion" >
+    </Button>
+
+    <View
+        android:id="@+id/end_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/media_content_item_pading_vertical"
+        android:background="@android:color/transparent"
+        android:visibility="gone" />
+
+</LinearLayout>

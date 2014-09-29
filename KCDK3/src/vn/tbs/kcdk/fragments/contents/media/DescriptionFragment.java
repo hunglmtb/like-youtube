@@ -40,7 +40,7 @@ import com.example.android.bitmapfun.util.ImageFetcher;
 import com.example.android.bitmapfun.util.ImageWorker;
 import com.example.android.bitmapfun.util.LoadingDoneListener;
 
-public class DescriptionFragment extends Fragment implements OnClickListener, LoadingDoneListener {
+public class DescriptionFragment extends Fragment implements OnClickListener {
 	private static final String TAG = DescriptionFragment.class.getName();
 
 	private String mMediaImageUrl;
@@ -48,7 +48,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 
 	public static final String IMAGE_CACHE_DIR = "images";
 
-	private ImageFetcher mImageFetcher;
+	private static ImageFetcher mImageFetcher;
 
 	private Bundle data;
 
@@ -61,19 +61,13 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 	private View mContentLayout;
 	private View mDivider;
 	private View mComma;
-	private Button mMoreSuggestion;
-	private LinearLayout mRelativeMediaLayout;
-	private ProgressBar mProgressBar;
 
-	private RelativeAsyntask mLoadRelativeAsyntask;
 
-	private List<MediaInfo> mRelativeMediaList;
 
-	private boolean mIsMore = true;
-
-	private View mEndView;
 
 	private ViewPager mViewPager;
+
+	private static RelateMediaFragment mRelateMediaFragment;
 	
 
 
@@ -85,36 +79,6 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 		iniLrucache();
 	}
 
-	private void loadFromServer() {
-		Log.i(TAG, "loadFromServer start");
-
-		if (mLoadRelativeAsyntask==null||mRelativeMediaList==null){
-			mLoadRelativeAsyntask = new RelativeAsyntask();			
-			mLoadRelativeAsyntask.execute();			
-		}
-		else{
-			showRelativeMedia(mRelativeMediaList);				
-		}
-
-		Log.i(TAG, "loadFromServer end");
-	}
-
-	private void hide2SampleMedia() {
-		Log.i(TAG, "hide2SampleMedia start");
-
-		setRelativeLayoutVisibility(mRelativeMediaLayout,View.VISIBLE);
-		mMoreSuggestion.setVisibility(View.GONE);
-
-
-		Log.i(TAG, "hide2SampleMedia end");
-	}
-
-	private void setRelativeLayoutVisibility(View view,int visibility) {
-
-		if (view!=null) {
-			view.setVisibility(visibility);
-		}		
-	}
 
 	private void initUrlData() {
 		Log.i(TAG, "initUrlData start");
@@ -149,14 +113,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 		mSpeakerTextView = (TextView)view.findViewById(R.id.media_speaker_tv);
 		mPublishedDateTextView = (TextView)view.findViewById(R.id.media_publisheddate_tv);
 
-		mMoreSuggestion = (Button)view.findViewById(R.id.more_relative_media);
-		mRelativeMediaLayout = (LinearLayout)view.findViewById(R.id.relative_media_layout);
-		mMoreSuggestion.setOnClickListener(this);
-		mProgressBar = (ProgressBar)view.findViewById(R.id.relative_media_progressBar);
-		mProgressBar.setVisibility(View.VISIBLE);
-		mEndView = view.findViewById(R.id.end_view);
-
-		hide2SampleMedia();
+		
 		
 		//
         AppSectionsPagerAdapter mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
@@ -237,8 +194,11 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 		mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
 		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
 		mImageFetcher.setImageFadeIn(true);
-		mImageFetcher.setLoadingDoneListener(this);
 		mImageFetcher.setEnableResizeImageView(true);
+		
+        mRelateMediaFragment = new RelateMediaFragment(mImageFetcher);
+        mImageFetcher.setLoadingDoneListener(mRelateMediaFragment);
+
 	}
 
 
@@ -286,124 +246,13 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 				mComma.setVisibility(View.GONE);
 			}
 			return;
-		case R.id.more_relative_media:
-			mMoreSuggestion.setEnabled(false);
-			if (isAddMore()) {
-				showRelativeMedia(mRelativeMediaList);		
-				mViewPager.getLayoutParams().height = 600;
-			}
-			else{
-				hideRelativeMedia();
-				mViewPager.getLayoutParams().height = 400;
-			}
-			mViewPager.requestLayout();
-			String text = mIsMore?getString(R.string.less_suggestion):getString(R.string.more_suggestion);
-			mMoreSuggestion.setText(text);
-			mIsMore = ! mIsMore;
-			mMoreSuggestion.setEnabled(true);
-
-			return;
 		default:
 			break;
 		}
 	}
 
 
-	private void hideRelativeMedia() {
-		Log.i(TAG, "hideRelativeMedia start");
 
-		if (mRelativeMediaLayout!=null) {
-			int visibility = mIsMore?View.VISIBLE:View.GONE;
-			
-			for (int i = 3; i < mRelativeMediaLayout.getChildCount(); i++) {
-				mRelativeMediaLayout.getChildAt(i).setVisibility(visibility);
-			}
-		}
-		Log.i(TAG, "hideRelativeMedia end");
-	}
-
-	private boolean isAddMore() {
-
-		return (mRelativeMediaLayout!=null&&mRelativeMediaLayout.getChildCount()<MAX_NUM_RELATIVE_MEDIA);
-
-	}
-
-
-	private class RelativeAsyntask extends AsyncTask<Void, Void, List<MediaInfo>>{
-
-		@Override
-		protected List<MediaInfo> doInBackground(Void... params) {
-//			return ServerConnection.getRelativeMedia(getString(R.string.url_domain)+data.getString(MEDIA_ID_KEY));
-			return ServerConnection.getRelativeMedia(getString(R.string.url_domain)+"/media/all?limit=10&offset=0");
-
-		}
-
-		@Override
-		protected void onPostExecute(List<MediaInfo> mediaList) {
-			Log.i(TAG, "onPostExecute start");
-			mRelativeMediaList = mediaList;
-			showRelativeMedia(mediaList);
-			super.onPostExecute(mediaList);
-			mLoadRelativeAsyntask.cancel(false);
-			Log.i(TAG, "onPostExecute end");
-		}
-
-	}
-
-	@Override
-	public void loadOtherComponent() {
-		Log.i(TAG, "loadOtherComponent start");
-
-		loadFromServer();
-
-		Log.i(TAG, "loadOtherComponent end");
-	}
-
-	public void showRelativeMedia(List<MediaInfo> result) {
-		Log.i(TAG, "initRelativeMedia start");
-		Context context = getActivity();
-
-		if (context!=null&&result!=null&&result.size()>0&&mRelativeMediaLayout!=null) {
-			setRelativeLayoutVisibility(mRelativeMediaLayout,View.VISIBLE);
-			mMoreSuggestion.setVisibility(result.size()<=2?View.GONE:View.VISIBLE);
-
-			LayoutInflater inflater = LayoutInflater.from(context);
-			View child = null;
-			mImageFetcher.setEnableResizeImageView(false);
-
-			int start = mRelativeMediaLayout.getChildCount()>1?2:0;
-
-			int size = result.size()<=2?result.size():2;
-
-			size = start!=0?result.size():size;
-			size = size>MAX_NUM_RELATIVE_MEDIA?MAX_NUM_RELATIVE_MEDIA:size;
-
-			if (mRelativeMediaLayout.getChildCount()<MAX_NUM_RELATIVE_MEDIA) {
-				for (int i = start; i < size ; i++) {
-					final MediaInfo media = result.get(i);
-					child =  inflater.inflate(R.layout.media_content_item_row, null);
-					child.findViewById(R.id.relative_media_button).setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							//TODO comment for later 
-							//Common.showMediaPage(media,(KCDKActivity) getActivity());
-						}
-					});
-					mRelativeMediaLayout.addView(child);
-					Common.bindTextValue(child,media,false,SmartKCDKActivity.sFont);
-					mImageFetcher.setEnableOtherLoad(false);
-					mImageFetcher.loadImage(media.getMediaImageThumbUrl(), (ImageView) child.findViewById(R.id.media_item_image));
-				}
-			}
-			if (mMoreSuggestion.getVisibility()==View.GONE) {
-				mEndView.setVisibility(View.VISIBLE);
-			}
-
-		}
-		mProgressBar.setVisibility(View.GONE);
-
-		Log.i(TAG, "initRelativeMedia end");
-	}
 
 	public void updateData(MediaInfo item, ImageView imageView) {
 		if (item!=null) {
@@ -453,11 +302,11 @@ public class DescriptionFragment extends Fragment implements OnClickListener, Lo
 
                 default:
                     // The other sections of the app are dummy placeholders.
-                    Fragment fragment = new DummySectionFragment();
+                    //Fragment fragment = new RelateMediaFragment(mImageFetcher);
                     Bundle args = new Bundle();
                     args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
-                    fragment.setArguments(args);
-                    return fragment;
+                    mRelateMediaFragment.setArguments(args);
+                    return mRelateMediaFragment;
             }
         }
 
