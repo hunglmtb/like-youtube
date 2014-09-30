@@ -109,7 +109,7 @@ public abstract class ImageWorker {
 		Log.i(TAG, "setImageViewDrawable start");
 
 		imageView.setImageDrawable(value);
-		modifyImageDimen(imageView, value);
+		//modifyImageDimen(imageView, value);
 		
 		if (mEnableOverwrite&&enableContinue&&mLoadingDoneListener!=null) {
 			mLoadingDoneListener.loadOtherComponent();
