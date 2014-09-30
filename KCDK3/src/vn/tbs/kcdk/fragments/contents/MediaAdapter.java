@@ -6,6 +6,7 @@ import static vn.tbs.kcdk.global.Common.MEDIA_TYPE_VIDEO;
 import java.util.ArrayList;
 import java.util.List;
 
+import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.global.Common;
@@ -18,6 +19,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.example.android.bitmapfun.util.ImageFetcher;
+import com.novoda.imageloader.core.ImageManager;
+import com.novoda.imageloader.core.model.ImageTagFactory;
 
 public class MediaAdapter extends BaseAdapter {
 	private static final String TAG = MediaAdapter.class.getSimpleName();
@@ -28,7 +31,9 @@ public class MediaAdapter extends BaseAdapter {
 	private String mMediaGroupMode="";
 	private int mLimit = 10;
 	private int mOffset = 0;
-
+	private ImageManager imageManager;
+	private ImageTagFactory imageTagFactory;
+	
 	//lrucache 
 	private ImageFetcher mImageFetcher;
 
@@ -38,6 +43,8 @@ public class MediaAdapter extends BaseAdapter {
 		this.mMediaList = mCategories;
 		this.mContext = context;
 		this.mImageFetcher = imageFetcher;
+        imageManager = KCDKApplication.getImageLoader();
+        imageTagFactory = KCDKApplication.getImageTagFactory();
 	}
 
 	
@@ -116,7 +123,12 @@ public class MediaAdapter extends BaseAdapter {
 			ImageView imageView = (ImageView) convertView.findViewById(R.id.media_item_image);
 			//TODO update font != null
 			Common.bindTextValue(convertView,media,mIsHistoryAdapterType,null);
-			mImageFetcher.loadImage(media.getMediaImageThumbUrl(), imageView);
+			//mImageFetcher.loadImage(media.getMediaImageThumbUrl(), imageView);
+			imageView.setTag(imageTagFactory.build(media.getMediaImageUrl(), mContext));
+			imageManager.getLoader().load(imageView);
+			Log.e(TAG, "kaka "+media.getMediaImageUrl());
+			
+
 		}
 
 		return convertView;

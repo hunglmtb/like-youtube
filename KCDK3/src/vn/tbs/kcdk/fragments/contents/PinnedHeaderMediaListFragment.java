@@ -223,11 +223,11 @@ public class PinnedHeaderMediaListFragment extends ListFragment {
 		//		Common.showMediaContent(mMediaAdapter.getItem(position),mKCDKActivity);
 
 		//TODO remove later due to lrucache clear
-		/*if (position==0) {
+		if (position==0) {
 			mImageFetcher.clearCache();
 			Toast.makeText(getActivity(), R.string.clear_cache_complete_toast,
 					Toast.LENGTH_SHORT).show();
-		}*/
+		}
 		Log.i(TAG, "onListItemClick end" +position);
 	}
 

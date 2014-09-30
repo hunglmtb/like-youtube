@@ -1,6 +1,5 @@
 package vn.tbs.kcdk.fragments.contents.media;
 
-import static vn.tbs.kcdk.global.Common.MAX_NUM_RELATIVE_MEDIA;
 import static vn.tbs.kcdk.global.Common.MEDIA_AUTHOR_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_CONTENTINFO_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_IMAGEURL_KEY;
@@ -8,16 +7,9 @@ import static vn.tbs.kcdk.global.Common.MEDIA_PUBLISHDATE_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_SPEAKER_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_TITLE_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_VIEWCOUNT_KEY;
-
-import java.util.List;
-
+import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
-import vn.tbs.kcdk.SmartKCDKActivity;
-import vn.tbs.kcdk.global.Common;
-import vn.tbs.kcdk.global.ServerConnection;
-import android.content.Context;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,26 +21,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.bitmapfun.util.ImageCache;
 import com.example.android.bitmapfun.util.ImageFetcher;
 import com.example.android.bitmapfun.util.ImageWorker;
-import com.example.android.bitmapfun.util.LoadingDoneListener;
+import com.novoda.imageloader.core.ImageManager;
+import com.novoda.imageloader.core.model.ImageTagFactory;
 
 public class DescriptionFragment extends Fragment implements OnClickListener {
 	private static final String TAG = DescriptionFragment.class.getName();
 
 	private String mMediaImageUrl;
 	private ImageView mMediaImageView;
+	private ImageManager imageManager;
+	private ImageTagFactory imageTagFactory;
 
 	public static final String IMAGE_CACHE_DIR = "images";
 
-	private static ImageFetcher mImageFetcher;
+	private ImageFetcher mImageFetcher;
 
 	private Bundle data;
 
@@ -79,6 +71,10 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 		initUrlData();
 		iniLrucache();
+		
+        imageManager = KCDKApplication.getImageLoader();
+        imageTagFactory = KCDKApplication.getImageTagFactory();
+        
 	}
 
 
@@ -196,7 +192,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
 		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
 		mImageFetcher.setImageFadeIn(true);
-		mImageFetcher.setEnableResizeImageView(true);
+		mImageFetcher.setEnableResizeImageView(false);
 		
         mRelateMediaFragment = new RelateMediaFragment(mImageFetcher);
         mImageFetcher.setLoadingDoneListener(mRelateMediaFragment);
@@ -262,8 +258,11 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			if (mImageFetcher!=null&&imageView!=null) {
 				mMediaImageUrl = item.getMediaImageUrl();
 				mMediaImageView = imageView;
-				mImageFetcher.setEnableOtherLoad(true);
-				mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);
+				/*mImageFetcher.setEnableOtherLoad(true);
+				mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);*/
+				
+				imageView.setTag(imageTagFactory.build(mMediaImageUrl, getActivity()));
+				imageManager.getLoader().load(imageView);
 			}
 			
 			Typeface tf=Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");

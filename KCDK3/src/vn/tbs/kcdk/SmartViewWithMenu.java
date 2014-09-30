@@ -38,8 +38,8 @@ public class SmartViewWithMenu  {
 	}
 	//values
 	public static final int PADDING = 5;
-	private static final int OVERLAY_HEIGHT = 210;
-	private static final int OVERLAY_WIDTH = 280;
+	private static final int OVERLAY_HEIGHT = 150;
+	private static final int OVERLAY_WIDTH = 270;
 	private static final float DRAG_MOVE_RANGE = 3*OVERLAY_HEIGHT/4;
 	private static final int MARGIN_TOP_OVERLAY = 150;
 	private static final int OVERLAY_BOTTOM_MARGIN = 50;
