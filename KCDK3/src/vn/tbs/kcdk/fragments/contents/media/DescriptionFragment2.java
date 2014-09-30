@@ -517,7 +517,8 @@ public class DescriptionFragment2 extends ListFragment implements OnClickListene
 			case 0:
 				// The first section of the app is the most interesting -- it offers
 				// a launchpad into the other demonstrations in this example application.
-				return new FacebookPluginFragment();
+				//return new FacebookPluginFragment();
+				return null;
 
 			default:
 				// The other sections of the app are dummy placeholders.

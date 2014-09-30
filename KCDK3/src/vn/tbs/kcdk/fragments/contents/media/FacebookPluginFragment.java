@@ -46,6 +46,10 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 
 
 
+	public FacebookPluginFragment(String mediaId) {
+		this.mMediaId = mediaId;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
