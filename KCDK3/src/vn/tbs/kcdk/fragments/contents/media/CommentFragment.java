@@ -5,6 +5,11 @@ import android.os.Bundle;
 
 public class CommentFragment extends FacebookPluginFragment {
 
+	public CommentFragment(String mediaId) {
+		super(mediaId);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		

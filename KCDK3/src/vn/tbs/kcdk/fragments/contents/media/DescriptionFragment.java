@@ -67,7 +67,9 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 	private ViewPager mViewPager;
 
-	private static RelateMediaFragment mRelateMediaFragment;
+	private MediaInfo mMediaItem;
+
+	private RelateMediaFragment mRelateMediaFragment;
 	
 
 
@@ -256,6 +258,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 	public void updateData(MediaInfo item, ImageView imageView) {
 		if (item!=null) {
+			mMediaItem = item;
 			if (mImageFetcher!=null&&imageView!=null) {
 				mMediaImageUrl = item.getMediaImageUrl();
 				mMediaImageView = imageView;
@@ -286,7 +289,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
      * sections of the app.
      */
-    public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
+    public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -296,9 +299,10 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    // The first section of the app is the most interesting -- it offers
-                    // a launchpad into the other demonstrations in this example application.
-                    return new FacebookPluginFragment();
+                	String mediaId = mMediaItem!=null?mMediaItem.getMediaId():"";
+                	// The first section of the app is the most interesting -- it offers
+                	// a launchpad into the other demonstrations in this example application.
+                	return new FacebookPluginFragment(mediaId);
 
                 default:
                     // The other sections of the app are dummy placeholders.

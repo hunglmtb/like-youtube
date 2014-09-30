@@ -49,7 +49,7 @@ public class MediaContentPagerAdapter extends FragmentStatePagerAdapter {
 		desfg.setArguments(mfragment.getArguments());
 		
 		
-		CommentFragment commentfg = new CommentFragment();
+		CommentFragment commentfg = new CommentFragment("test");
 		mViewFragments.add(commentfg);
 		//TODO
 //		Bundle bundle  = new Bundle(mMediaParams);

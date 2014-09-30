@@ -3,12 +3,15 @@
     android:id="@+id/content_frame"
     style="@style/media_image_layout_style"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent" >
 
     <WebView
         android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/media_content_item_pading_vertical"
+        android:layout_marginRight="@dimen/media_content_item_pading_vertical"
         android:background="@android:color/white" />
 
     <FrameLayout
