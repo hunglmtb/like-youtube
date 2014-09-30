@@ -40,7 +40,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 	public static final String IMAGE_CACHE_DIR = "images";
 
-	private ImageFetcher mImageFetcher;
+	//private ImageFetcher mImageFetcher;
 
 	private Bundle data;
 
@@ -187,15 +187,15 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
 
 		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
-		mImageFetcher = new ImageFetcher(getActivity(), longest);
+		/*mImageFetcher = new ImageFetcher(getActivity(), longest);
 		mImageFetcher.setStandardWidth(width);
 		mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
 		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
 		mImageFetcher.setImageFadeIn(true);
 		mImageFetcher.setEnableResizeImageView(false);
 		
-        mRelateMediaFragment = new RelateMediaFragment(mImageFetcher);
-        mImageFetcher.setLoadingDoneListener(mRelateMediaFragment);
+        mImageFetcher.setLoadingDoneListener(mRelateMediaFragment);*/
+		mRelateMediaFragment = new RelateMediaFragment();
 
 	}
 
@@ -203,15 +203,15 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		mImageFetcher.setExitTasksEarly(false);
+		//mImageFetcher.setExitTasksEarly(false);
 		//		loadRelativeMedia();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		mImageFetcher.setExitTasksEarly(true);
-		mImageFetcher.flushCache();
+		//mImageFetcher.setExitTasksEarly(true);
+		//mImageFetcher.flushCache();
 	}
 
 	@Override
@@ -224,7 +224,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			ImageWorker.cancelWork(mMediaImageView);
 			mMediaImageView.setImageDrawable(null);
 		}
-		mImageFetcher.closeCache();
+		//mImageFetcher.closeCache();
 	}
 
 	@Override
@@ -255,7 +255,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	public void updateData(MediaInfo item, ImageView imageView) {
 		if (item!=null) {
 			mMediaItem = item;
-			if (mImageFetcher!=null&&imageView!=null) {
+			if (imageView!=null) {
 				mMediaImageUrl = item.getMediaImageUrl();
 				mMediaImageView = imageView;
 				/*mImageFetcher.setEnableOtherLoad(true);
@@ -263,6 +263,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				
 				imageView.setTag(imageTagFactory.build(mMediaImageUrl, getActivity()));
 				imageManager.getLoader().load(imageView);
+				imageManager.setOnImageLoadedListener(mRelateMediaFragment);
 			}
 			
 			Typeface tf=Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");
