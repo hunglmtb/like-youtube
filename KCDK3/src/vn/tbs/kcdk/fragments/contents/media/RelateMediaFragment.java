@@ -4,6 +4,7 @@ import static vn.tbs.kcdk.global.Common.MAX_NUM_RELATIVE_MEDIA;
 
 import java.util.List;
 
+import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.SmartKCDKActivity;
 import vn.tbs.kcdk.global.Common;
@@ -23,20 +24,26 @@ import android.widget.ProgressBar;
 
 import com.example.android.bitmapfun.util.ImageFetcher;
 import com.example.android.bitmapfun.util.LoadingDoneListener;
+import com.novoda.imageloader.core.ImageManager;
+import com.novoda.imageloader.core.OnImageLoadedListener;
+import com.novoda.imageloader.core.model.ImageTagFactory;
 
-public class RelateMediaFragment extends Fragment implements  LoadingDoneListener, OnClickListener {
+public class RelateMediaFragment extends Fragment implements  OnClickListener, OnImageLoadedListener {
 
 	private LinearLayout mRelativeMediaLayout;
 	private Button mMoreSuggestion;
 	private RelativeAsyntask mLoadRelativeAsyntask;
 	private List<MediaInfo> mRelativeMediaList;
-	private ImageFetcher mImageFetcher;
 	private View mEndView;
 	private ProgressBar mProgressBar;
 	private boolean mIsMore = true;
-
-	public RelateMediaFragment(ImageFetcher aImageFetcher) {
-		this.mImageFetcher = aImageFetcher;
+	private ImageManager imageManager;
+	private ImageTagFactory imageTagFactory;
+	
+	public RelateMediaFragment() {
+		//this.mImageFetcher = aImageFetcher;
+		imageManager = KCDKApplication.getImageLoader();
+		imageTagFactory = KCDKApplication.getImageTagFactory();
 	}
 	
 	@Override
@@ -79,12 +86,7 @@ public class RelateMediaFragment extends Fragment implements  LoadingDoneListene
 		}		
 	}
 
-	@Override
-	public void loadOtherComponent() {
 
-		loadFromServer();
-
-	}
 	private void loadFromServer() {
 
 		if (mLoadRelativeAsyntask==null||mRelativeMediaList==null){
@@ -106,7 +108,7 @@ public class RelateMediaFragment extends Fragment implements  LoadingDoneListene
 
 			LayoutInflater inflater = LayoutInflater.from(context);
 			View child = null;
-			mImageFetcher.setEnableResizeImageView(false);
+			//mImageFetcher.setEnableResizeImageView(false);
 
 			int start = mRelativeMediaLayout.getChildCount()>1?2:0;
 
@@ -128,8 +130,12 @@ public class RelateMediaFragment extends Fragment implements  LoadingDoneListene
 					});
 					mRelativeMediaLayout.addView(child);
 					Common.bindTextValue(child,media,false,SmartKCDKActivity.sFont);
-					mImageFetcher.setEnableOtherLoad(false);
-					mImageFetcher.loadImage(media.getMediaImageThumbUrl(), (ImageView) child.findViewById(R.id.media_item_image));
+//					mImageFetcher.setEnableOtherLoad(false);
+//					mImageFetcher.loadImage(media.getMediaImageThumbUrl(), (ImageView) child.findViewById(R.id.media_item_image));
+					
+					ImageView imageView  = (ImageView) child.findViewById(R.id.media_item_image);
+					imageView.setTag(imageTagFactory.build(media.getMediaImageThumbUrl(), getActivity()));
+					imageManager.getLoader().load(imageView);
 				}
 			}
 			if (mMoreSuggestion.getVisibility()==View.GONE) {
@@ -201,6 +207,11 @@ public class RelateMediaFragment extends Fragment implements  LoadingDoneListene
 
 		return (mRelativeMediaLayout!=null&&mRelativeMediaLayout.getChildCount()<MAX_NUM_RELATIVE_MEDIA);
 
+	}
+
+	@Override
+	public void onImageLoaded(ImageView imageView) {
+		loadFromServer();
 	}
 
 
