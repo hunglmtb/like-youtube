@@ -22,10 +22,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.android.bitmapfun.util.ImageCache;
-import com.example.android.bitmapfun.util.ImageFetcher;
 import com.example.android.bitmapfun.util.ImageWorker;
 import com.novoda.imageloader.core.ImageManager;
 import com.novoda.imageloader.core.model.ImageTagFactory;
@@ -43,6 +43,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	//private ImageFetcher mImageFetcher;
 
 	private Bundle data;
+	private ScrollView mScrollView;
 
 	private TextView mContent;
 	private TextView mTitleTextView;
@@ -62,6 +63,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	private MediaInfo mMediaItem;
 
 	private RelateMediaFragment mRelateMediaFragment;
+
 	
 
 
@@ -93,30 +95,30 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View view = inflater.inflate(R.layout.media_detail_layout, null);
+		mScrollView = (ScrollView) inflater.inflate(R.layout.media_detail_layout, null);
 
 		//mMediaImageView = (ImageView)view.findViewById(R.id.media_imageview);
 
-		mComma = view.findViewById(R.id.three_comma_tv);
-		mDivider = view.findViewById(R.id.divider);
-		mContentLayout = view.findViewById(R.id.media_content_layout);
+		mComma = mScrollView.findViewById(R.id.three_comma_tv);
+		mDivider = mScrollView.findViewById(R.id.divider);
+		mContentLayout = mScrollView.findViewById(R.id.media_content_layout);
 		if (mContentLayout!=null) {
 			mContentLayout.setOnClickListener(this);
 		}
 
-		mContent = (TextView)view.findViewById(R.id.media_content_tv);
-		mTitleTextView = (TextView)view.findViewById(R.id.media_title_tv);
-		mAuthorTextView = (TextView)view.findViewById(R.id.media_author_tv);
-		mViewCountTextView = (TextView)view.findViewById(R.id.media_viewcount_tv);
-		mSpeakerTextView = (TextView)view.findViewById(R.id.media_speaker_tv);
-		mPublishedDateTextView = (TextView)view.findViewById(R.id.media_publisheddate_tv);
+		mContent = (TextView)mScrollView.findViewById(R.id.media_content_tv);
+		mTitleTextView = (TextView)mScrollView.findViewById(R.id.media_title_tv);
+		mAuthorTextView = (TextView)mScrollView.findViewById(R.id.media_author_tv);
+		mViewCountTextView = (TextView)mScrollView.findViewById(R.id.media_viewcount_tv);
+		mSpeakerTextView = (TextView)mScrollView.findViewById(R.id.media_speaker_tv);
+		mPublishedDateTextView = (TextView)mScrollView.findViewById(R.id.media_publisheddate_tv);
 
 		
 		
 		//
         AppSectionsPagerAdapter mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
 
-		mViewPager = (ViewPager) view.findViewById(R.id.pager);
+		mViewPager = (ViewPager) mScrollView.findViewById(R.id.pager);
         mViewPager.setAdapter(mAppSectionsPagerAdapter);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -125,10 +127,13 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
                 // We can also use ActionBar.Tab#select() to do this if we have a reference to the
                 // Tab.
                 //actionBar.setSelectedNavigationItem(position);
+            	if (position==1) {
+    				mRelateMediaFragment.loadFromServer();
+				}
             }
         });
         //
-		return view;
+		return mScrollView;
 
 	}
 
@@ -263,7 +268,6 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				
 				imageView.setTag(imageTagFactory.build(mMediaImageUrl, getActivity()));
 				imageManager.getLoader().load(imageView);
-				imageManager.setOnImageLoadedListener(mRelateMediaFragment);
 			}
 			
 			Typeface tf=Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");
@@ -281,6 +285,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			mSpeakerTextView.setTypeface(tf);
 			mPublishedDateTextView.setTypeface(tf);
 			mViewCountTextView.setTypeface(tf);
+			//mScrollView.fullScroll(ScrollView.FOCUS_UP);
 		}
 	}
 	
