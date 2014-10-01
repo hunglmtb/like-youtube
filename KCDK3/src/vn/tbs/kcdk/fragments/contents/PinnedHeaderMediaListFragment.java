@@ -33,7 +33,7 @@ public class PinnedHeaderMediaListFragment extends ListFragment {
 	private PinnedHeaderMediaAdapter mPinnedHeaderMediaAdapter;
 	private PinnedHeaderListView mMediaContentListView;
 	private EndlessLoadAdapter mEndlessAdapter;
-	protected boolean mEnablePinnedHeader = true;
+	protected boolean mEnablePinnedHeader = false;
 	protected boolean mEnablePercentInfo = false;
 	protected MediaIndexer mIndexer;
 

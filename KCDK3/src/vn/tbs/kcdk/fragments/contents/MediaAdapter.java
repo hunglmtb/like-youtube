@@ -92,7 +92,8 @@ public class MediaAdapter extends BaseAdapter {
 			switch (media.getMediaType()) {
 			case MEDIA_TYPE_AUDIO:
 				//category then select category layout
-				convertView = inflater.inflate(R.layout.media_content_item_with_header_row, null);					
+				//convertView = inflater.inflate(R.layout.media_content_item_with_header_row, null);					
+				convertView = inflater.inflate(R.layout.media_content_item_row_with_header, null);					
 				break;
 			case MEDIA_TYPE_VIDEO:
 				//header then select header layout
@@ -109,15 +110,21 @@ public class MediaAdapter extends BaseAdapter {
 		if (media!=null) {
 			if (position==0) {
 				convertView.setPadding(convertView.getPaddingLeft(),
-						convertView.getPaddingBottom(),
 						convertView.getPaddingRight(),
-						convertView.getPaddingBottom());
+						convertView.getPaddingRight(),
+						0);
 			}
-			else{
+			else if (position==getCount()-1) {
 				convertView.setPadding(convertView.getPaddingLeft(),
 						0,
 						convertView.getPaddingRight(),
-						convertView.getPaddingBottom());
+						convertView.getPaddingRight());
+			}
+			else {
+				convertView.setPadding(convertView.getPaddingLeft(),
+						0,
+						convertView.getPaddingRight(),
+						0);
 			}
 			// Now handle the main ImageView thumbnails
 			ImageView imageView = (ImageView) convertView.findViewById(R.id.media_item_image);
