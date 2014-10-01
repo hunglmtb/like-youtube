@@ -87,7 +87,7 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 	}
 
 
-	private void loadFromServer() {
+	public void loadFromServer() {
 
 		if (mLoadRelativeAsyntask==null||mRelativeMediaList==null){
 			mLoadRelativeAsyntask = new RelativeAsyntask();			

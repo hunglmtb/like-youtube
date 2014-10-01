@@ -615,8 +615,9 @@ public class SmartViewWithMenu  {
 			secondaryLayoutParams.topMargin = -(((RelativeLayout.LayoutParams)mRootLayout.getLayoutParams()).bottomMargin - margin);
 			setAlphaValue(mSecondaryLayout, fromAlpha);
 			mSecondaryLayout.setLayoutParams(secondaryLayoutParams);
-			mSecondaryLayout.requestLayout();
-			mAppLayout.updateViewLayout(mSecondaryLayout, secondaryLayoutParams);
+			//mSecondaryLayout.requestLayout();
+			//mAppLayout.updateViewLayout(mSecondaryLayout, secondaryLayoutParams);
+			Log.e("hung keke", "topmargin "+secondaryLayoutParams.topMargin);
 
 			//back view
 			updateBackView(false,margin,fromAlpha);

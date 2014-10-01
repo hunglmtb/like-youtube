@@ -103,10 +103,11 @@ Một chốc, chất độc thâm nhập vào cơ thể, xua đuổi chất đ�
                 android:visibility="visible" />
         </LinearLayout>
 
-        <android.support.v4.view.ViewPager
+        <vn.tbs.kcdk.global.WrapContentHeightViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="600dp" />
+            android:layout_height="wrap_content" >
+        </vn.tbs.kcdk.global.WrapContentHeightViewPager>
     </LinearLayout>
 
 </ScrollView>
