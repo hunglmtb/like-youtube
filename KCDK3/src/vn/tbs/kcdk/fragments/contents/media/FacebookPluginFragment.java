@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 
 public class FacebookPluginFragment extends Fragment implements Runnable  {
@@ -32,7 +33,7 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 	protected WebView originalWebView;
 	private WebView childView =null;
 	private WebViewClient mWebclient = null;
-	protected FrameLayout parentLayout;
+	protected RelativeLayout mParentLayout;
 	protected String mMediaId = "";
 	protected String mPluginHtml = "likeplugin.html";
 	private Activity mActivity;
@@ -71,11 +72,11 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		parentLayout = (FrameLayout) inflater.inflate(R.layout.media_content_description_layout, null);
-		originalWebView = (WebView)parentLayout.findViewById(R.id.webview);
-		mLoadingLayout = (FrameLayout)parentLayout.findViewById(R.id.fb_loading_layout);
-		mLoadingView = (ProgressBar)parentLayout.findViewById(R.id.fb_loading_view);
-		return parentLayout;
+		mParentLayout = (RelativeLayout) inflater.inflate(R.layout.media_content_description_layout, null);
+		originalWebView = (WebView)mParentLayout.findViewById(R.id.webview);
+		mLoadingLayout = (FrameLayout)mParentLayout.findViewById(R.id.fb_loading_layout);
+		mLoadingView = (ProgressBar)mParentLayout.findViewById(R.id.fb_loading_view);
+		return mParentLayout;
 	}
 
 	@Override
@@ -282,7 +283,7 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 			childView.setWebChromeClient(this);
 			childView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
 
-			parentLayout.addView(childView);
+			mParentLayout.addView(childView);
 
 
 			childView.requestFocus();
@@ -309,7 +310,7 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 		public void onCloseWindow(WebView window) {
 			Log.i("MyChromeClient", "onCloseWindow start");
 
-			parentLayout.removeViewAt(parentLayout.getChildCount()-1);
+			mParentLayout.removeViewAt(mParentLayout.getChildCount()-1);
 			childView =null;
 			originalWebView.setVisibility(View.VISIBLE);
 			originalWebView.requestFocus();
