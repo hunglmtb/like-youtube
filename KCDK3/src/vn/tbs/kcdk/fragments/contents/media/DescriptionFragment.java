@@ -63,6 +63,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	private MediaInfo mMediaItem;
 
 	private RelateMediaFragment mRelateMediaFragment;
+	private FacebookPluginFragment mFacebookPluginFragment;
 
 	
 
@@ -286,6 +287,10 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			mPublishedDateTextView.setTypeface(tf);
 			mViewCountTextView.setTypeface(tf);
 			//mScrollView.fullScroll(ScrollView.FOCUS_UP);
+			if (mFacebookPluginFragment!=null) {
+				mFacebookPluginFragment.setMediaId(item.getMediaId());
+				mFacebookPluginFragment.loadDataFromUrl();
+			}
 		}
 	}
 	
@@ -305,9 +310,15 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
             switch (i) {
                 case 0:
                 	String mediaId = mMediaItem!=null?mMediaItem.getMediaId():"";
+                	if (mFacebookPluginFragment==null) {
+						mFacebookPluginFragment = new FacebookPluginFragment(mediaId);
+					}
+                	else{
+                		mFacebookPluginFragment.setMediaId(mediaId);
+                	}
                 	// The first section of the app is the most interesting -- it offers
                 	// a launchpad into the other demonstrations in this example application.
-                	return new FacebookPluginFragment(mediaId);
+                	return  mFacebookPluginFragment;
 
                 default:
                     // The other sections of the app are dummy placeholders.
