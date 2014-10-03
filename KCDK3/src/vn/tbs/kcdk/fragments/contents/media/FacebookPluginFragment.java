@@ -161,7 +161,7 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 	}
 
 
-	private void loadDataFromUrl() {
+	public void loadDataFromUrl() {
 		Log.i(TAG, "loadDataFromUrl start");
 
 		String url = null;
@@ -418,6 +418,10 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 		}
 
 		Log.i(TAG, "shareMediaLink end");
+	}
+
+	public void setMediaId(String mediaId) {
+		this.mMediaId = mediaId;
 	}
 
 }
