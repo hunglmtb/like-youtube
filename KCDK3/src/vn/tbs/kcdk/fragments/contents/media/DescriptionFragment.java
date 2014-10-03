@@ -65,7 +65,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	private RelateMediaFragment mRelateMediaFragment;
 	private FacebookPluginFragment mFacebookPluginFragment;
 
-	
+
 
 
 	@Override
@@ -74,10 +74,10 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 		initUrlData();
 		iniLrucache();
-		
-        imageManager = KCDKApplication.getImageLoader();
-        imageTagFactory = KCDKApplication.getImageTagFactory();
-        
+
+		imageManager = KCDKApplication.getImageLoader();
+		imageTagFactory = KCDKApplication.getImageTagFactory();
+
 	}
 
 
@@ -114,26 +114,26 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		mSpeakerTextView = (TextView)mScrollView.findViewById(R.id.media_speaker_tv);
 		mPublishedDateTextView = (TextView)mScrollView.findViewById(R.id.media_publisheddate_tv);
 
-		
-		
+
+
 		//
-        AppSectionsPagerAdapter mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
+		AppSectionsPagerAdapter mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
 
 		mViewPager = (ViewPager) mScrollView.findViewById(R.id.pager);
-        mViewPager.setAdapter(mAppSectionsPagerAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                // When swiping between different app sections, select the corresponding tab.
-                // We can also use ActionBar.Tab#select() to do this if we have a reference to the
-                // Tab.
-                //actionBar.setSelectedNavigationItem(position);
-            	if (position==1) {
-    				mRelateMediaFragment.loadFromServer();
+		mViewPager.setAdapter(mAppSectionsPagerAdapter);
+		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				// When swiping between different app sections, select the corresponding tab.
+				// We can also use ActionBar.Tab#select() to do this if we have a reference to the
+				// Tab.
+				//actionBar.setSelectedNavigationItem(position);
+				if (position==1&&mRelateMediaFragment!=null) {
+					mRelateMediaFragment.loadFromServer();
 				}
-            }
-        });
-        //
+			}
+		});
+		//
 		return mScrollView;
 
 	}
@@ -199,10 +199,8 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
 		mImageFetcher.setImageFadeIn(true);
 		mImageFetcher.setEnableResizeImageView(false);
-		
-        mImageFetcher.setLoadingDoneListener(mRelateMediaFragment);*/
-		mRelateMediaFragment = new RelateMediaFragment();
 
+        mImageFetcher.setLoadingDoneListener(mRelateMediaFragment);*/
 	}
 
 
@@ -266,11 +264,11 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				mMediaImageView = imageView;
 				/*mImageFetcher.setEnableOtherLoad(true);
 				mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);*/
-				
+
 				imageView.setTag(imageTagFactory.build(mMediaImageUrl, getActivity()));
 				imageManager.getLoader().load(imageView);
 			}
-			
+
 			Typeface tf=Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");
 
 			mContent.setText(item.getContentInfo());
@@ -293,69 +291,71 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			}
 		}
 	}
-	
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
-     * sections of the app.
-     */
-    public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public AppSectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+	/**
+	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
+	 * sections of the app.
+	 */
+	public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
 
-        @Override
-        public Fragment getItem(int i) {
-            switch (i) {
-                case 0:
-                	String mediaId = mMediaItem!=null?mMediaItem.getMediaId():"";
-                	if (mFacebookPluginFragment==null) {
-						mFacebookPluginFragment = new FacebookPluginFragment(mediaId);
-					}
-                	else{
-                		mFacebookPluginFragment.setMediaId(mediaId);
-                	}
-                	// The first section of the app is the most interesting -- it offers
-                	// a launchpad into the other demonstrations in this example application.
-                	return  mFacebookPluginFragment;
+		public AppSectionsPagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
 
-                default:
-                    // The other sections of the app are dummy placeholders.
-                    //Fragment fragment = new RelateMediaFragment(mImageFetcher);
-                    Bundle args = new Bundle();
-                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
-                    mRelateMediaFragment.setArguments(args);
-                    return mRelateMediaFragment;
-            }
-        }
+		@Override
+		public Fragment getItem(int i) {
+			String mediaId = mMediaItem!=null?mMediaItem.getMediaId():"";
+			switch (i) {
+			case 0:
+				if (mFacebookPluginFragment==null) {
+					mFacebookPluginFragment = new FacebookPluginFragment(mediaId);
+				}
+				else{
+					mFacebookPluginFragment.setMediaId(mediaId);
+				}
+				// The first section of the app is the most interesting -- it offers
+				// a launchpad into the other demonstrations in this example application.
+				return  mFacebookPluginFragment;
 
-        @Override
-        public int getCount() {
-            return 2;
-        }
+			default:
+				if (mRelateMediaFragment==null) {
+					mRelateMediaFragment = new RelateMediaFragment(mediaId);
+				}
+				else{
+					mRelateMediaFragment.setMediaId(mediaId);
+				}
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "Section " + (position + 1);
-        }
-    }
-    
-    /**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
-    public static class DummySectionFragment extends Fragment {
+				return mRelateMediaFragment;
+			}
+		}
 
-        public static final String ARG_SECTION_NUMBER = "section_number";
+		@Override
+		public int getCount() {
+			return 2;
+		}
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
-            Bundle args = getArguments();
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
-    }
+		@Override
+		public CharSequence getPageTitle(int position) {
+			return "Section " + (position + 1);
+		}
+	}
+
+	/**
+	 * A dummy fragment representing a section of the app, but that simply displays dummy text.
+	 */
+	public static class DummySectionFragment extends Fragment {
+
+		public static final String ARG_SECTION_NUMBER = "section_number";
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
+			Bundle args = getArguments();
+			((TextView) rootView.findViewById(android.R.id.text1)).setText(
+					getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
+			return rootView;
+		}
+	}
 }
