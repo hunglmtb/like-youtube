@@ -39,9 +39,11 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 	private boolean mIsMore = true;
 	private ImageManager imageManager;
 	private ImageTagFactory imageTagFactory;
-	
-	public RelateMediaFragment() {
+	private String mMediaId = "";
+
+	public RelateMediaFragment(String mediaId) {
 		//this.mImageFetcher = aImageFetcher;
+		this.mMediaId = mediaId;
 		imageManager = KCDKApplication.getImageLoader();
 		imageTagFactory = KCDKApplication.getImageTagFactory();
 	}
@@ -150,8 +152,10 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 
 		@Override
 		protected List<MediaInfo> doInBackground(Void... params) {
+			//TODO add mediaID here
+			String url = getString(R.string.url_domain)+"/media/all?limit=10&offset=0";
 			//			return ServerConnection.getRelativeMedia(getString(R.string.url_domain)+data.getString(MEDIA_ID_KEY));
-			return ServerConnection.getRelativeMedia(getString(R.string.url_domain)+"/media/all?limit=10&offset=0");
+			return ServerConnection.getRelativeMedia(url );
 
 		}
 
@@ -214,5 +218,7 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 		loadFromServer();
 	}
 
-
+	public void setMediaId(String mediaId) {
+		this.mMediaId = mediaId;
+	}
 }
