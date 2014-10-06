@@ -154,8 +154,10 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 		protected List<MediaInfo> doInBackground(Void... params) {
 			//TODO add mediaID here
 			String url = getString(R.string.url_domain)+"/media/all?limit=10&offset=0";
+			List<MediaInfo> mediaList = ServerConnection.getRelativeMedia(url);
+			ServerConnection.getLikeAndCommentCount(mediaList);
 			//			return ServerConnection.getRelativeMedia(getString(R.string.url_domain)+data.getString(MEDIA_ID_KEY));
-			return ServerConnection.getRelativeMedia(url );
+			return mediaList;
 
 		}
 

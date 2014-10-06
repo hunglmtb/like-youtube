@@ -277,6 +277,7 @@ public class ServerConnection {
 		String url;
 		try {
 			url = initSocialUrl(mMediaList);
+			Log.i(TAG, "getLikeAndCommentCount url = "+url);
 			String socialData = loadDataFromUrl(url);
 			putJsonDataToMedia(mMediaList,socialData);
 		} catch (UnsupportedEncodingException e) {
@@ -297,10 +298,12 @@ public class ServerConnection {
 			for (int i = 0; i < mMediaList.size(); i++) {
 				media = mMediaList.get(i);
 				if (i==0) {
-					urlSet+=media.getMediaLinkUrl()+"\"";
+					//urlSet+=media.getMediaLinkUrl()+"\"";
+					urlSet+=Common.SOCIAL_HOST_URL+media.getMediaId()+"\"";
 				}
 				else{
-					urlSet+=",\""+media.getMediaLinkUrl()+"\"";					
+					//urlSet+=",\""+media.getMediaLinkUrl()+"\"";					
+					urlSet+=",\""+Common.SOCIAL_HOST_URL+media.getMediaId()+"\"";					
 				}
 			}
 			urlSet+=")";
