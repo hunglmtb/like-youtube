@@ -39,8 +39,8 @@ public class MediaAdapter extends BaseAdapter {
 
 	private boolean mIsHistoryAdapterType = false;
 
-	public MediaAdapter(List<MediaInfo> mCategories, Context context, ImageFetcher imageFetcher) {
-		this.mMediaList = mCategories;
+	public MediaAdapter(List<MediaInfo> aMediaList, Context context, ImageFetcher imageFetcher) {
+		this.mMediaList = aMediaList;
 		this.mContext = context;
 		this.mImageFetcher = imageFetcher;
         imageManager = KCDKApplication.getImageLoader();

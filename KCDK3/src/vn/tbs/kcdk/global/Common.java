@@ -107,6 +107,7 @@ public class Common {
 	public static final String CATEGORY_ID_NAME_06 = "CATEGORY06";
 	public static final String CATEGORY_ID_NAME_07 = "CATEGORY07";
 	public static final String CATEGORY_ID_NAME_08 = "CATEGORY08";
+	public static final String SOCIAL_HOST_URL = "http://kcdkv2.appspot.com/media/social?mediaId=";
 	
 	public static Bundle initFragmentBund(FragmentMode mode, String[] values) {
 
