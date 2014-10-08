@@ -147,6 +147,9 @@ public class SmartViewWithMenu  {
 	private KCDKMediaPlayer sKCDKMediaPlayer;
 	private OnTopListener mOnTopListener;
 
+	public KCDKMediaPlayer getKCDKMediaPlayer() {
+		return sKCDKMediaPlayer;
+	}
 	
 	public ImageView getMediaImage() {
 		return mMediaImage;
