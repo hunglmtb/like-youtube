@@ -88,7 +88,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 				//incrementBy = msg.arg1;
 				break;
 			case PAUSE_PLAY_COMMAND:
-				pauseOrPlay();
+				pauseOrPlay(msg.arg1!=0);
 				break;
 			default:
 				super.handleMessage(msg);
@@ -257,7 +257,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		return playOrPause;
 	}
 	
-	private boolean pauseOrPlay() {
+	private boolean pauseOrPlay(boolean inverse) {
 		Log.i(TAG, "resumePlaying start");
 
 		try {
@@ -266,9 +266,10 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 				sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, 0);
 				return true;
 			}else {
-				mKCDKMediaPlayer.pause();
-				sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PAUSING, 0);
-				//mButtonPlayPause.setImageResource(R.drawable.media_start);
+				if (inverse) {
+					mKCDKMediaPlayer.pause();
+					sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PAUSING, 0);
+				}
 			}
 		} catch (IllegalStateException e) {
 			Log.e(TAG, "playMedia IllegalStateException ");
