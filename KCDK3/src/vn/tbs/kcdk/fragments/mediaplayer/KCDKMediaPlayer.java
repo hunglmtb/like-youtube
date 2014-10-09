@@ -6,7 +6,6 @@ import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -193,7 +192,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 		Log.i(TAG, "onClick start");
 		switch (v.getId()) {
 		case  R.id.download_start:
-			pauseOrPlay();
+			pauseOrPlay(true);
 			break;
 
 		case  R.id.media_player_title_text:
@@ -208,12 +207,12 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 		Log.i(TAG, "onClick end");
 	}
 
-	private void pauseOrPlay() {
+	private void pauseOrPlay(boolean fromClick) {
 		if (mServiceMessenger != null) {
 			try {
-				int intvaluetosend = 10;
+				int from = fromClick?1:0;
 				Message msg = Message.obtain(null,
-						KCDKMediaPlayerService.PAUSE_PLAY_COMMAND, intvaluetosend, 0);
+						KCDKMediaPlayerService.PAUSE_PLAY_COMMAND, from, 0);
 				msg.replyTo = mMessenger;
 				mServiceMessenger.send(msg);
 				Log.i(TAG, "pauseOrPlay  send message");
@@ -379,10 +378,8 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			}
 			//case url is currently being played
 			else{
-				/*//pause then play
-				if (!mKCDKMediaPlayer.isPlaying()) {
-					return startPlayMedia();
-				}*/
+				//pause then play or vice versa
+				pauseOrPlay(false);
 
 			}
 		}
