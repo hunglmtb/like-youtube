@@ -42,9 +42,25 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 		public void handleMessage(Message msg) {
 			Log.d(TAG, "C:IncomingHandler:handleMessage");
 			switch (msg.what) {
-			case KCDKMediaPlayerService.START_PLAY_COMMAND:
+			case KCDKMediaPlayerService.UI_UPDATE_COMAND:
 				Log.d(TAG, "C: RX MSG_SET_INT_VALUE");
 				//textIntValue.setText("Int Message: " + msg.arg1);
+				Bundle data = msg.getData();
+				int type = data.getInt("type");
+				int value = data.getInt("value");
+				int sencondValue = data.getInt("sencondValue");
+				if (type==KCDKMediaPlayerService.BUFFERING_UPDATE_COMMAND&&mSeekBarProgress!=null) {
+					mSeekBarProgress.setSecondaryProgress(value);	
+				}
+				if (type==KCDKMediaPlayerService.SEEKBAR_UPDATE_COMAND) {
+					mSeekBarProgress.setProgress(sencondValue);
+					updateCurrentPlayingTime(value);
+					Log.d(TAG, "lala "+value);
+				}
+				if (type==KCDKMediaPlayerService.PLAY_PAUSE_UPDATE_COMAND) {
+					int iconResource = value==KCDKMediaPlayerService.PLAYING?R.drawable.media_pause:R.drawable.media_start;
+					mButtonPlayPause.setImageResource(iconResource);
+				}
 				break;
 			case KCDKMediaPlayerService.MSG_SET_STRING_VALUE:
 				String str1 = msg.getData().getString("str1");
@@ -69,7 +85,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	private TextView mCurrentPlayingTimeTextView;
 
 	//media player 
-	private MediaPlayer mKCDKMediaPlayer;
+	//private MediaPlayer mKCDKMediaPlayer;
 	// this value contains the song duration in milliseconds. Look at getDuration() method in MediaPlayer class
 	private int mMediaFileLengthInMilliseconds = 300000;
 
@@ -121,10 +137,10 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 		mSeekBarProgress.setMax(SEEKBAR_MAX-1); // It means 100% .0-99
 		mSeekBarProgress.setOnTouchListener(this);
 
-		mKCDKMediaPlayer = new MediaPlayer();
+		/*mKCDKMediaPlayer = new MediaPlayer();
 		mKCDKMediaPlayer.setOnBufferingUpdateListener(this);
 		mKCDKMediaPlayer.setOnCompletionListener(this);
-
+*/
 		Log.i(TAG, "initMediaPlayer end");
 
 	}
@@ -159,11 +175,11 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 				/** Seekbar onTouch event handler. Method which seeks MediaPlayer to seekBar primary progress position*/
 				SeekBar sb = (SeekBar)v;
 				int playPositionInMillisecconds = (mMediaFileLengthInMilliseconds / SEEKBAR_MAX) * sb.getProgress();
-				mKCDKMediaPlayer.seekTo(playPositionInMillisecconds);
+				//mKCDKMediaPlayer.seekTo(playPositionInMillisecconds);
 
-				if(!mKCDKMediaPlayer.isPlaying()){
+				/*if(!mKCDKMediaPlayer.isPlaying()){
 					doPlay();
-				}
+				}*/
 			}
 		}
 
@@ -276,33 +292,34 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	}
 
 
-	private boolean playOrPause() {
+/*	private boolean playOrPause() {
 		Log.i(TAG, "resumePlaying start");
 
 		if(!mKCDKMediaPlayer.isPlaying()){
 			doPlay();
 			return true;
 		}else {
-			mKCDKMediaPlayer.pause();
+			//mKCDKMediaPlayer.pause();
 			mButtonPlayPause.setImageResource(R.drawable.media_start);
 		}
 
 		Log.i(TAG, "resumePlaying end");
 		return false;
-	}
+	}*/
 
 
 	private void doPlay() {
 		Log.i(TAG, "doPlay start");
 
-		mKCDKMediaPlayer.start();
+		//mKCDKMediaPlayer.start();
 		mButtonPlayPause.setImageResource(R.drawable.media_pause);
 
 		Log.i(TAG, "doPlay end");
 	}
+/*
 
-
-	/** Method which updates the SeekBar primary progress by current song playing position*/
+	*//** Method which updates the SeekBar primary progress by current song playing position
+	 * @param aCurrentPlayingTime *//*
 	private void primarySeekBarProgressUpdater() {
 		if (mKCDKMediaPlayer!=null) {
 			float duration = mMediaFileLengthInMilliseconds;
@@ -321,13 +338,13 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			}
 		}
 	}
+*/
 
-
-	protected void updateCurrentPlayingTime() {
+	protected void updateCurrentPlayingTime(int aCurrentPlayingTime) {
 		Log.i(TAG, "updateCurrentPlayingTime start");
-		int mCurrentPlayingTime = Math.round((float)mKCDKMediaPlayer.getCurrentPosition()/1000);
-		int m = mCurrentPlayingTime/60;
-		int s = mCurrentPlayingTime%60;
+		aCurrentPlayingTime = Math.round((float)aCurrentPlayingTime/1000);
+		int m = aCurrentPlayingTime/60;
+		int s = aCurrentPlayingTime%60;
 		String newTime = m+":"+String.format("%02d", s);
 
 		mCurrentPlayingTimeTextView.setText(newTime);
@@ -362,10 +379,10 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			}
 			//case url is currently being played
 			else{
-				//pause then play
+				/*//pause then play
 				if (!mKCDKMediaPlayer.isPlaying()) {
 					return startPlayMedia();
-				}
+				}*/
 
 			}
 		}
@@ -404,7 +421,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 		Log.i(TAG, "updateMediaInfo end");
 	}
 
-
+/*
 	public void stop() {
 		Log.i(TAG, "stop start");
 		if (mKCDKMediaPlayer!=null) {
@@ -416,7 +433,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 
 		Log.i(TAG, "stop end");
 	}
-
+*/
 
 	public void updateView(boolean showProgressLayout) {
 		// TODO Auto-generated method stub
