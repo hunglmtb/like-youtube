@@ -173,7 +173,9 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			if(v.getId() == R.id.download_progress_bar){
 				/** Seekbar onTouch event handler. Method which seeks MediaPlayer to seekBar primary progress position*/
 				SeekBar sb = (SeekBar)v;
-				int playPositionInMillisecconds = (mMediaFileLengthInMilliseconds / SEEKBAR_MAX) * sb.getProgress();
+				int progress = sb.getProgress();
+				sendMessageToService(KCDKMediaPlayerService.UPDATE_PROGRESS_COMMAND,progress);
+				//int playPositionInMillisecconds = (mMediaFileLengthInMilliseconds / SEEKBAR_MAX) * sb.getProgress();
 				//mKCDKMediaPlayer.seekTo(playPositionInMillisecconds);
 
 				/*if(!mKCDKMediaPlayer.isPlaying()){
@@ -186,6 +188,21 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 		return false;
 
 	}
+
+	private void sendMessageToService(int command, int value) {
+		if (mServiceMessenger != null) {
+			try {
+				Message msg = Message.obtain(null,command, value, 0);
+				msg.replyTo = mMessenger;
+				mServiceMessenger.send(msg);
+				Log.i(TAG, "sendMessageToService  send message");
+			} catch (RemoteException e) {
+				Log.e(TAG, "sendMessageToService RemoteException handle");
+				e.printStackTrace();
+			}
+		}
+	}
+
 
 	@Override
 	public void onClick(View v) {
@@ -397,7 +414,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			this.mMediaInfoItem = item;
 			String url = mContext.getString(R.string.action_url)+item.getMediaFileUrl();
 			//String url = "http://stream2.r15s91.vcdn.vn/fsfsdfdsfdserwrwq3/6de9da3107e057671ecb386c5c8bb797/539814e6/2013/12/15/4/b/4b896ff9151263672609e9cb9cc04c00.mp3";
-			//url = "http://download.a1.nixcdn.com/3a027d2becd785fc25ae3f0e47581ce3/54228a5b/NhacCuaTui038/CatbuiTrinhCongSon1987-KhanhLy_6r5p.mp3";
+			url = "http://download.f9.stream.nixcdn.com/c185b4cc82e70588cfb84459034e23ac/5437b2d2/NhacCuaTui873/TroVe-HongNhung-3564154.mp3";
 			boolean ok = playMedia(url );
 			ok = true;
 			if (ok) {
