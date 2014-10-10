@@ -42,6 +42,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	public static final int START_PLAY_COMMAND = 3;
 	public static final int MSG_SET_STRING_VALUE = 4;
 	public static final int PAUSE_PLAY_COMMAND = 5;
+	public static final int UPDATE_PROGRESS_COMMAND = 6;
 
 	public static final int BUFFERING_UPDATE_COMMAND = 100;
 	public static final int SEEKBAR_UPDATE_COMAND = 101;
@@ -51,6 +52,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 	public static final int PLAYING = 10;
 	public static final int PAUSING = 11;
+
 
 	private List<Messenger> mClients = new ArrayList<Messenger>(); // Keeps
 	// track of
@@ -90,10 +92,30 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			case PAUSE_PLAY_COMMAND:
 				pauseOrPlay(msg.arg1!=0);
 				break;
+			case UPDATE_PROGRESS_COMMAND:
+				int progress = msg.arg1;
+				updateProgress(progress);
+				//incrementBy = msg.arg1;
+				break;
 			default:
 				super.handleMessage(msg);
 			}
 		}
+
+	private void updateProgress(int progress){
+		int playPositionInMillisecconds = (mMediaFileLengthInMilliseconds / SEEKBAR_MAX) * progress;
+		mKCDKMediaPlayer.seekTo(playPositionInMillisecconds);
+		int duration = mMediaFileLengthInMilliseconds;
+		int currentPosition = progress*duration;
+		try {
+			sendMessageToUI(SEEKBAR_UPDATE_COMAND,currentPosition,progress);
+			Log.d(TAG, "lele SEEKBAR_UPDATE_COMAND "+progress);
+
+		} catch (Throwable t) { // you should always ultimately catch all
+								// exceptions in timer tasks.
+			Log.e("TimerTick", "Timer Tick Failed.", t);
+		}
+	}
 	}
 	@Override
 	public void onCreate() {
