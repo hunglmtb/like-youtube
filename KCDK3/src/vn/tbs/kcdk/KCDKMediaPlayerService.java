@@ -23,7 +23,7 @@ import android.util.Log;
 
 public class KCDKMediaPlayerService extends Service implements OnBufferingUpdateListener, OnCompletionListener {
 	private static final String TAG = KCDKMediaPlayer.class.getSimpleName();
-	
+
 	private MediaPlayer mKCDKMediaPlayer = null;
 	private boolean      isPlaying = false;
 	private Timer mTimer = new Timer();
@@ -33,7 +33,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	private static boolean isRunning = false;
 
 	private static int classID = 579; // just a number
-	
+
 	public static String START_PLAY = "START_PLAY";
 	private static final int SEEKBAR_MAX = 100;
 
@@ -47,7 +47,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	public static final int BUFFERING_UPDATE_COMMAND = 100;
 	public static final int SEEKBAR_UPDATE_COMAND = 101;
 	public static final int PLAY_PAUSE_UPDATE_COMAND = 102;
-	
+
 	public static final int UI_UPDATE_COMAND = 1000;
 
 	public static final int PLAYING = 10;
@@ -60,17 +60,17 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	// current
 	// registered
 	// clients.
-	
+
 	private final Messenger mMessenger = new Messenger(
 			new IncomingMessageHandler()); // Target we publish for clients to
-											// send messages to IncomingHandler.
+	// send messages to IncomingHandler.
 
 	/**
 	 * Handle incoming messages from MainActivity
 	 */
 	private class IncomingMessageHandler extends Handler { // Handler of
-															// incoming messages
-															// from clients.
+		// incoming messages
+		// from clients.
 		@Override
 		public void handleMessage(Message msg) {
 			Log.d(TAG, "S:handleMessage: " + msg.what);
@@ -102,48 +102,49 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			}
 		}
 
-	private void updateProgress(int progress){
-		int playPositionInMillisecconds = (mMediaFileLengthInMilliseconds / SEEKBAR_MAX) * progress;
-		mKCDKMediaPlayer.seekTo(playPositionInMillisecconds);
-		int duration = mMediaFileLengthInMilliseconds;
-		int currentPosition = progress*duration;
-		try {
-			sendMessageToUI(SEEKBAR_UPDATE_COMAND,currentPosition,progress);
+		private void updateProgress(int progress){
+			int playPositionInMillisecconds = (int) ((mMediaFileLengthInMilliseconds /(float) SEEKBAR_MAX) * progress);
+			mKCDKMediaPlayer.seekTo(playPositionInMillisecconds);
+			int duration = mMediaFileLengthInMilliseconds;
+			int currentPosition = progress*duration;
+			Log.i(TAG, "hehe progress "+progress+" currentPosition "+currentPosition+ " duration "+duration +" playPositionInMillisecconds "+playPositionInMillisecconds);
+			/*try {
+			//sendMessageToUI(SEEKBAR_UPDATE_COMAND,currentPosition,progress);
 			Log.d(TAG, "lele SEEKBAR_UPDATE_COMAND "+progress);
 
 		} catch (Throwable t) { // you should always ultimately catch all
 								// exceptions in timer tasks.
 			Log.e("TimerTick", "Timer Tick Failed.", t);
+		}*/
 		}
-	}
 	}
 	@Override
 	public void onCreate() {
 		mKCDKMediaPlayer = new MediaPlayer();
 		mKCDKMediaPlayer.setOnBufferingUpdateListener(this);
 		mKCDKMediaPlayer.setOnCompletionListener(this);
-		 //mp3 will be started after completion of preparing...
+		//mp3 will be started after completion of preparing...
 		mKCDKMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 
-           @Override
-           public void onPrepared(MediaPlayer player) {
-               player.start();
-               sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, 0);
-				
-           }
+			@Override
+			public void onPrepared(MediaPlayer player) {
+				player.start();
+				sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, 0);
 
-       });
+			}
+
+		});
 		isRunning = true;
-		
-		
+
+
 
 		super.onCreate();
 	}
-	
+
 	public static boolean isRunning() {
 		return isRunning;
 	}
-	
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		Log.d(TAG, "S:onBind() - return mMessenger.getBinder()");
@@ -151,10 +152,10 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		// getBinder()
 		// Return the IBinder that this Messenger is using to communicate with
 		// its associated Handler; that is, IncomingMessageHandler().
-		
+
 		return mMessenger.getBinder();
 	}
-	
+
 
 	@Override
 	public void onDestroy() {
@@ -176,7 +177,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		return Service.START_STICKY;	
 	}
 
-	
+
 	@Override
 	public void onBufferingUpdate(MediaPlayer mp, int percent) {
 		Log.i(TAG, "onBufferingUpdate start");
@@ -230,7 +231,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	}
 	private boolean startPlayMedia() {
 		Log.i(TAG, "playMedia start");
-		
+
 		//mKCDKMediaPlayer.release();
 		boolean playOrPause = false;
 		boolean ioError = false;
@@ -263,7 +264,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 
 		// gets the song length in milliseconds from URL
-		mMediaFileLengthInMilliseconds = mKCDKMediaPlayer.getDuration();
+		//mMediaFileLengthInMilliseconds = mKCDKMediaPlayer.getDuration();
 
 		//mKCDKMediaPlayer.start();
 		//playOrPause = playOrPause();
@@ -278,7 +279,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 		return playOrPause;
 	}
-	
+
 	private boolean pauseOrPlay(boolean inverse) {
 		Log.i(TAG, "resumePlaying start");
 
@@ -300,7 +301,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		Log.i(TAG, "resumePlaying end");
 		return false;
 	}
-	
+
 
 	/** Method which updates the SeekBar primary progress by current song playing position*/
 	private void primarySeekBarProgressUpdater() {
@@ -308,7 +309,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			mTimer.scheduleAtFixedRate(new MyTask(), 0, 1000L);
 		}
 	}
-	
+
 	/**
 	 * The task to run...
 	 */
@@ -319,14 +320,14 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			duration = (duration>0&&duration<1000000000)?duration:100000;
 			int currentPosition = (int)mKCDKMediaPlayer.getCurrentPosition();
 			int progress = (int)((currentPosition/(float)duration )*SEEKBAR_MAX);
-			
+
 			Log.d(TAG, "currentPosition " + currentPosition + " duration "+duration);
 			try {
 				sendMessageToUI(SEEKBAR_UPDATE_COMAND,currentPosition,progress);
 				Log.d(TAG, "lele SEEKBAR_UPDATE_COMAND "+progress);
 
 			} catch (Throwable t) { // you should always ultimately catch all
-									// exceptions in timer tasks.
+				// exceptions in timer tasks.
 				Log.e("TimerTick", "Timer Tick Failed.", t);
 			}
 		}
