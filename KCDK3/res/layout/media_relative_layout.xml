@@ -7,7 +7,6 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/relative_media_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/media_content_item_pading_vertical"
@@ -21,6 +20,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/relative_media_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/media_content_item_pading_vertical"
+        android:layout_marginRight="@dimen/media_content_item_pading_vertical"
+        android:background="@drawable/bg_plugin"
+        android:orientation="vertical"
+        android:visibility="gone" >
     </LinearLayout>
 
     <Button

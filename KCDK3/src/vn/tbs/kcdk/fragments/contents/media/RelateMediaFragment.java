@@ -28,7 +28,7 @@ import com.novoda.imageloader.core.ImageManager;
 import com.novoda.imageloader.core.OnImageLoadedListener;
 import com.novoda.imageloader.core.model.ImageTagFactory;
 
-public class RelateMediaFragment extends Fragment implements  OnClickListener, OnImageLoadedListener {
+public class RelateMediaFragment extends Fragment implements  OnClickListener {
 
 	private LinearLayout mRelativeMediaLayout;
 	private Button mMoreSuggestion;
@@ -39,7 +39,9 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 	private boolean mIsMore = true;
 	private ImageManager imageManager;
 	private ImageTagFactory imageTagFactory;
-	private String mMediaId = "";
+	private boolean mEnableLoading = false;
+	private String mMediaId = null;
+	private String mOldMediaId = null;
 
 	public RelateMediaFragment(String mediaId) {
 		//this.mImageFetcher = aImageFetcher;
@@ -47,7 +49,7 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 		imageManager = KCDKApplication.getImageLoader();
 		imageTagFactory = KCDKApplication.getImageTagFactory();
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -56,7 +58,7 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 		super.onCreate(savedInstanceState);
 
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.media_relative_layout, null);
@@ -89,16 +91,12 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 	}
 
 
-	public void loadFromServer() {
-
-		if (mLoadRelativeAsyntask==null||mRelativeMediaList==null){
-			mLoadRelativeAsyntask = new RelativeAsyntask();			
+	public void showRelativeMediaView() {
+		mEnableLoading = mMediaId!=null&&mMediaId.length()>0&&!mMediaId.equals(mOldMediaId);
+		if (mEnableLoading){
+			mLoadRelativeAsyntask = new RelativeAsyntask();
 			mLoadRelativeAsyntask.execute();			
 		}
-		else{
-			showRelativeMedia(mRelativeMediaList);				
-		}
-
 	}
 
 	public void showRelativeMedia(List<MediaInfo> result) {
@@ -132,9 +130,9 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 					});
 					mRelativeMediaLayout.addView(child);
 					Common.bindTextValue(child,media,false,SmartKCDKActivity.sFont);
-//					mImageFetcher.setEnableOtherLoad(false);
-//					mImageFetcher.loadImage(media.getMediaImageThumbUrl(), (ImageView) child.findViewById(R.id.media_item_image));
-					
+					//					mImageFetcher.setEnableOtherLoad(false);
+					//					mImageFetcher.loadImage(media.getMediaImageThumbUrl(), (ImageView) child.findViewById(R.id.media_item_image));
+
 					ImageView imageView  = (ImageView) child.findViewById(R.id.media_item_image);
 					imageView.setTag(imageTagFactory.build(media.getMediaImageThumbUrl(), getActivity()));
 					imageManager.getLoader().load(imageView);
@@ -149,6 +147,12 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 
 	}
 	private class RelativeAsyntask extends AsyncTask<Void, Void, List<MediaInfo>>{
+
+		
+		public RelativeAsyntask() {
+			super();
+			resetRelativeMedia();
+		}
 
 		@Override
 		protected List<MediaInfo> doInBackground(Void... params) {
@@ -167,6 +171,7 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 			showRelativeMedia(mediaList);
 			super.onPostExecute(mediaList);
 			mLoadRelativeAsyntask.cancel(false);
+			mOldMediaId = mMediaId;
 		}
 
 	}
@@ -174,7 +179,7 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 	public void onClick(View v) {
 
 		switch (v.getId()) {
-		
+
 		case R.id.more_relative_media:
 			mMoreSuggestion.setEnabled(false);
 			if (isAddMore()) {
@@ -196,13 +201,13 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 			break;
 		}
 	}
-	
+
 
 	private void hideRelativeMedia() {
 
 		if (mRelativeMediaLayout!=null) {
 			int visibility = mIsMore?View.VISIBLE:View.GONE;
-			
+
 			for (int i = 3; i < mRelativeMediaLayout.getChildCount(); i++) {
 				mRelativeMediaLayout.getChildAt(i).setVisibility(visibility);
 			}
@@ -215,12 +220,18 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener, O
 
 	}
 
-	@Override
-	public void onImageLoaded(ImageView imageView) {
-		loadFromServer();
-	}
-
 	public void setMediaId(String mediaId) {
+		this.mOldMediaId = this.mMediaId;
 		this.mMediaId = mediaId;
 	}
+
+	public void resetRelativeMedia() {
+		mRelativeMediaLayout.removeAllViews();
+		mMoreSuggestion.setVisibility(View.GONE);
+		if (mRelativeMediaList!=null) {
+			mRelativeMediaList.clear();			
+		}
+		mProgressBar.setVisibility(View.VISIBLE);
+	}
+
 }

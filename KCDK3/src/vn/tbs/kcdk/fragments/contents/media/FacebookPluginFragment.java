@@ -44,8 +44,14 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 	private boolean mEnableRefresh = false;
 	private boolean mEnableZoom = false;
 	private GestureDetector mGestureDetector;
+	private boolean mEnableLoading = false;
+	private String mOldMediaId = null;
 
 
+
+	public void setEnableLoading(boolean mEnableLoading) {
+		this.mEnableLoading = mEnableLoading;
+	}
 
 	public FacebookPluginFragment(String mediaId) {
 		this.mMediaId = mediaId;
@@ -198,8 +204,10 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 		}*/
 			}		
 
-		originalWebView.loadUrl(url);
-		Log.i(TAG, "loadDataFromUrl "+url);
+		if (mEnableLoading&&mMediaId!=null&&!mMediaId.equals(mOldMediaId)) {
+  			originalWebView.loadUrl(url);			
+  			Log.i(TAG, "loadDataFromUrl "+url);
+		}
 		Log.i(TAG, "loadDataFromUrl end");
 	}
 
@@ -421,6 +429,7 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 	}
 
 	public void setMediaId(String mediaId) {
+		this.mOldMediaId = this.mMediaId;
 		this.mMediaId = mediaId;
 	}
 
