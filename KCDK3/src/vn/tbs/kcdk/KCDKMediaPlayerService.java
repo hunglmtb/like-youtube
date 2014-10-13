@@ -170,7 +170,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (intent.getBooleanExtra(START_PLAY, false)) {
+		if (intent!=null&&intent.getBooleanExtra(START_PLAY, false)) {
 			//play();
 			startPlayMedia();
 		}

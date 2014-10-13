@@ -60,7 +60,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 	private ViewPager mViewPager;
 
-	private MediaInfo mMediaItem;
+	private MediaInfo mMediaItem = null;
 
 	private RelateMediaFragment mRelateMediaFragment;
 	private FacebookPluginFragment mFacebookPluginFragment;
@@ -129,7 +129,9 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				// Tab.
 				//actionBar.setSelectedNavigationItem(position);
 				if (position==1&&mRelateMediaFragment!=null) {
-					mRelateMediaFragment.loadFromServer();
+					String mediaId = mMediaItem!=null?mMediaItem.getMediaId():"";
+					mRelateMediaFragment.setMediaId(mediaId);
+					mRelateMediaFragment.showRelativeMediaView();
 				}
 			}
 		});
@@ -257,7 +259,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 
 	public void updateData(MediaInfo item, ImageView imageView) {
-		if (item!=null) {
+		if (item!=null&&item!=mMediaItem) {
 			mMediaItem = item;
 			if (imageView!=null) {
 				mMediaImageUrl = item.getMediaImageUrl();
@@ -287,7 +289,18 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			//mScrollView.fullScroll(ScrollView.FOCUS_UP);
 			if (mFacebookPluginFragment!=null) {
 				mFacebookPluginFragment.setMediaId(item.getMediaId());
+				mFacebookPluginFragment.setEnableLoading(true);
 				mFacebookPluginFragment.loadDataFromUrl();
+			}
+			
+			if (mRelateMediaFragment!=null) {
+				if (mViewPager.getCurrentItem()!=0) {
+					mRelateMediaFragment.setMediaId(item.getMediaId());
+					mRelateMediaFragment.showRelativeMediaView();					
+				}
+				else{
+					mRelateMediaFragment.resetRelativeMedia();
+				}
 			}
 		}
 	}
