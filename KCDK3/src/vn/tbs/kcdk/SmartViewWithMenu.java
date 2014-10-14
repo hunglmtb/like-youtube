@@ -94,6 +94,7 @@ public class SmartViewWithMenu  {
 			final int action = event.getActionMasked();
 			int x = (int)event.getRawX();
 			int y = (int)event.getRawY();
+			Log.i("keke", "here");
 
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
@@ -104,7 +105,7 @@ public class SmartViewWithMenu  {
 				mStartDownX = x;
 				mStartDownY = y;
 				mLastXposition = x;
-				return true;
+				return v.getId()==mMenuListView.getId()?mMenuHiden:true;
 			case MotionEvent.ACTION_MOVE:
 				// Calculate position of the whole tray according to the drag, and update layout.
 				float deltaX = x-mStartDownX;
@@ -122,7 +123,7 @@ public class SmartViewWithMenu  {
 					int xPosition = x - mSlideXDelata;
 					mLastXposition = xPosition;
 					updateMenu(xPosition);
-					return true;
+					return false;
 				}
 				else return false;
 
@@ -135,7 +136,7 @@ public class SmartViewWithMenu  {
 				}
 				boolean result = mSlidingX;
 				mSlidingX = false;
-				return result;
+				return v.getId()==mMenuListView.getId()?mMenuHiden:result;
 			default:
 				return false;
 			}
