@@ -160,7 +160,7 @@ public class SmartViewWithMenu  {
 		return mMainLayout;
 	}
 
-	public SmartViewWithMenu(Context aContext, ArrayAdapter<String> listAdapter) {
+	public SmartViewWithMenu(Context aContext) {
 		super();
 		this.mContext = aContext;
 		
@@ -186,7 +186,6 @@ public class SmartViewWithMenu  {
 		mMenuLayout = (RelativeLayout) mMainLayout.findViewById(R.id.menu_layout);
 		mMenuListView = (ListView) mMainLayout.findViewById( R.id.menuListView );
 		mMenuLayout.setVisibility(View.GONE);
-		mMenuListView.setAdapter( listAdapter );  
 		mRootRelativeLayoutParams = (android.widget.RelativeLayout.LayoutParams) mRootLayout.getLayoutParams();
 
 		mRootLayout.setOnTouchListener(new TrayTouchListener());

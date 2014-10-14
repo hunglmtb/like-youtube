@@ -57,20 +57,10 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ArrayAdapter<String> listAdapter = null;
 		sFont = Typeface.createFromAsset(this.getAssets(),"Roboto-Light.ttf");
 		
-		// Create and populate a List of planet names.
-		String[] planets = new String[] { "kaka", "keke", "kiki", "kuku",
-				"Jupiter", "Saturn", "Uranus", "Neptune", "Venus", "Mars", "Venus", "Neptune", "Neptune","kaka", "keke", "kiki", "kuku"};  
-		ArrayList<String> planetList = new ArrayList<String>();
-		planetList.addAll( Arrays.asList(planets) );
-
-		// Create ArrayAdapter using the planet list.
-		listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList	);
-		
 		//----------------------------------------------------------------------------
-		mSmartViewWithMenu  = new SmartViewWithMenu(this, listAdapter);
+		mSmartViewWithMenu  = new SmartViewWithMenu(this);
 		mSmartViewWithMenu.setOnTopListener(this);
 		View view = mSmartViewWithMenu.getView();
 		setContentView(view);
