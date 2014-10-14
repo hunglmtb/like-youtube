@@ -21,11 +21,12 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 
 
-public class SmartMenu implements OnItemSelectedListener {
+public class SmartMenu implements OnItemClickListener {
 	private static final String TAG = SmartMenu.class.getSimpleName();
 	private MenuAdapter mMenuAdapter;
 	private ListView mMenuListView;
@@ -34,9 +35,9 @@ public class SmartMenu implements OnItemSelectedListener {
 	private LoadCategoriesFromServerTask mLoadCategoriesFromServerTask;
 
 	
-	public SmartMenu(ListView mMenuListView, Context mContext) {
+	public SmartMenu(ListView aMenuListView, Context mContext) {
 		super();
-		this.mMenuListView = mMenuListView;
+		this.mMenuListView = aMenuListView;
 		this.mContext = mContext;
 		loadCategoriesMenu();
 	}
@@ -62,10 +63,9 @@ public class SmartMenu implements OnItemSelectedListener {
 			mCategories = loadDefaultCategories();
 		}
 		mMenuAdapter = new MenuAdapter(mCategories,mContext);
-		mMenuAdapter.setSelectedPosition(1,true);
+		mMenuAdapter.setSelectedPosition(2,true);
 		mMenuListView.setAdapter(mMenuAdapter);
-		mMenuListView.setOnItemSelectedListener(this);
-		//setListAdapter(mMenuAdapter);
+		mMenuListView.setOnItemClickListener(this);
 
 		Log.i(TAG, "initListview end");
 	}
@@ -121,7 +121,7 @@ public class SmartMenu implements OnItemSelectedListener {
 
 		Log.i(TAG, "switchContent end");
 
-		return false;
+		return true;
 	}
 
 
@@ -187,11 +187,10 @@ public class SmartMenu implements OnItemSelectedListener {
 	}
 
 
-
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position,
+	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		Log.i(TAG, "onListItemClick start" +position);
+		Log.i(TAG, "onItemClick start" +position);
 
 		boolean isCurrentPosition = position==mMenuAdapter.getSelectedPosition();
 
@@ -212,18 +211,7 @@ public class SmartMenu implements OnItemSelectedListener {
 		showContentFragment(item,position);
 
 		//		mKCDKActivity.setMenuVisible(position%2==0);
-		Log.i(TAG, "onListItemClick end" +position);
-	}
-
-
-
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-		Log.i(TAG, "TODO start");
-		
-		// TODO Auto-generated method stub
-		
-		Log.i(TAG, "TODO end");
+		Log.i(TAG, "onItemClick end" +position);
 	}
 }
 

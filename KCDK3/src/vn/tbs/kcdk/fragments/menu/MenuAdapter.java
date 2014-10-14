@@ -167,6 +167,7 @@ public class MenuAdapter extends BaseAdapter { //implements SearchView.OnQueryTe
 				this.notifyDataSetChanged();							
 			}
 		}
+		Log.i("keke", "koko selectedPosition "+selectedPosition+" mSelectedPosition "+mSelectedPosition);
 
 		Log.i(TAG, "setSelectedPosition end");
 	}
