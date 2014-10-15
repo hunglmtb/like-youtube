@@ -28,7 +28,7 @@ public class SmartViewWithMenu  {
 
 	public interface OnTopListener {
 
-		void doSmartViewOnTop(boolean onTop);
+		void doSmartViewOnTop(int yAxis);
 
 	}
 
@@ -606,7 +606,7 @@ public class SmartViewWithMenu  {
 		sKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&mYAxis==0));
 		
 		if (mOnTopListener!=null) {
-			mOnTopListener.doSmartViewOnTop(mOnTop);
+			mOnTopListener.doSmartViewOnTop(mYAxis);
 		}
 	}
 
