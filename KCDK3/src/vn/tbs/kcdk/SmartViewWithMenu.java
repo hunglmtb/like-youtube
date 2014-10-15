@@ -70,7 +70,7 @@ public class SmartViewWithMenu  {
 	//private ListView 						mSecondListView;
 	private View 							mBackView;
 	private RelativeLayout 					mMenuLayout;
-	private ListView 						mMenuListView ;
+	private MenuListView 					mMenuListView ;
 	private Context 						mContext;
 	private RelativeLayout 					mMainLayout;
 	private ImageFetcher					mImageFetcher;
@@ -123,6 +123,7 @@ public class SmartViewWithMenu  {
 					int xPosition = x - mSlideXDelata;
 					mLastXposition = xPosition;
 					updateMenu(xPosition);
+					mMenuListView.setScrollingDisable(true);
 					return false;
 				}
 				else return false;
@@ -136,7 +137,8 @@ public class SmartViewWithMenu  {
 				}
 				boolean result = mSlidingX;
 				mSlidingX = false;
-				return v.getId()==mMenuListView.getId()?mMenuHiden:result;
+				mMenuListView.setScrollingDisable(false);
+				return v.getId()==mMenuListView.getId()?false:result;
 			default:
 				return false;
 			}
@@ -184,7 +186,7 @@ public class SmartViewWithMenu  {
 		mSecondaryLayout = (RelativeLayout) mMainLayout.findViewById(R.id.secondary_layout);
 		mBackView = mMainLayout.findViewById(R.id.backView);
 		mMenuLayout = (RelativeLayout) mMainLayout.findViewById(R.id.menu_layout);
-		mMenuListView = (ListView) mMainLayout.findViewById( R.id.menuListView );
+		mMenuListView = (MenuListView) mMainLayout.findViewById( R.id.menuListView );
 		mMenuLayout.setVisibility(View.GONE);
 		mRootRelativeLayoutParams = (android.widget.RelativeLayout.LayoutParams) mRootLayout.getLayoutParams();
 

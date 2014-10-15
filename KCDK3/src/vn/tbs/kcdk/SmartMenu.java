@@ -164,6 +164,8 @@ public class SmartMenu implements OnItemClickListener {
 			Log.i(TAG, "onPostExecute start");
 			if (categories!=null&&categories.size()>0&&mMenuAdapter!=null) {
 				mCategories.addAll(categories);
+				mCategories.addAll(categories);
+				mCategories.addAll(categories);
 				mMenuAdapter.setCategories(mCategories);
 				mMenuAdapter.notifyDataSetChanged();
 			}
