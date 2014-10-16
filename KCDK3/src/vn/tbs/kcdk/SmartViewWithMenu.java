@@ -16,13 +16,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-
-import com.example.android.bitmapfun.util.ImageFetcher;
 
 public class SmartViewWithMenu  {
 
@@ -73,8 +69,6 @@ public class SmartViewWithMenu  {
 	private MenuListView 					mMenuListView ;
 	private Context 						mContext;
 	private RelativeLayout 					mMainLayout;
-	private ImageFetcher					mImageFetcher;
-
 	//listener
 	private OnTouchListener 				mTouchListener = new OnTouchListener() {
 
@@ -607,7 +601,7 @@ public class SmartViewWithMenu  {
 		
 		sKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&mYAxis==0));
 		
-		if (mOnTopListener!=null) {
+		if (mOnTopListener!=null&&!aIsSlidingX) {
 			mOnTopListener.doSmartViewOnTop(mYAxis);
 		}
 	}

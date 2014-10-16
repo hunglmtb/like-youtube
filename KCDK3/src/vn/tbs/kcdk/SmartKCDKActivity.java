@@ -109,8 +109,8 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	public void doSmartViewOnTop(int yAxis) {
 		android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 		if (actionBar!=null) {
-			boolean onTop = yAxis<=actionBar.getHeight();
-			if (onTop) {
+			boolean hide = yAxis<=actionBar.getHeight();
+			if (hide) {
 				actionBar.hide();				
 			}
 			else{
