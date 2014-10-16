@@ -69,6 +69,7 @@ public class SmartViewWithMenu  {
 	private MenuListView 					mMenuListView ;
 	private Context 						mContext;
 	private RelativeLayout 					mMainLayout;
+	private View 							mActionBarView;
 	//listener
 	private OnTouchListener 				mTouchListener = new OnTouchListener() {
 
@@ -181,9 +182,10 @@ public class SmartViewWithMenu  {
 		mBackView = mMainLayout.findViewById(R.id.backView);
 		mMenuLayout = (RelativeLayout) mMainLayout.findViewById(R.id.menu_layout);
 		mMenuListView = (MenuListView) mMainLayout.findViewById( R.id.menuListView );
+		mActionBarView = mMainLayout.findViewById( R.id.action_bar_view);
 		mMenuLayout.setVisibility(View.GONE);
 		mRootRelativeLayoutParams = (android.widget.RelativeLayout.LayoutParams) mRootLayout.getLayoutParams();
-
+		
 		mRootLayout.setOnTouchListener(new TrayTouchListener());
 
 
@@ -253,7 +255,7 @@ public class SmartViewWithMenu  {
 		backViewParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		backViewParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		setAlphaValue(mBackView,fromAlpha);
-		mBackView.setLayoutParams(backViewParams);
+		mBackView.setLayoutParams(backViewParams);		
 	}
 
 
@@ -601,7 +603,7 @@ public class SmartViewWithMenu  {
 		
 		sKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&mYAxis==0));
 		
-		if (mOnTopListener!=null&&!aIsSlidingX) {
+		if (mOnTopListener!=null&&!aIsSlidingX&&!mInSimpleMode) {
 			mOnTopListener.doSmartViewOnTop(mYAxis);
 		}
 	}
@@ -620,6 +622,7 @@ public class SmartViewWithMenu  {
 
 			//back view
 			updateBackView(false,margin,fromAlpha);
+			setAlphaValue(mActionBarView,1-fromAlpha);
 		}
 	}
 
