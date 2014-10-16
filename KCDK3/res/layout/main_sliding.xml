@@ -5,6 +5,14 @@
     android:layout_height="fill_parent"
     android:background="@color/bg_media_list" >
 
+    <View
+        android:id="@+id/action_bar_view"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/highlight_color_blue" />
+
     <fragment
         android:id="@+id/mainFragment"
         android:name="vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment"
@@ -36,7 +44,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:background="#80000000"
+        android:background="@color/back_view_color"
         android:visibility="gone" >
     </View>
 

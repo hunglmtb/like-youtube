@@ -1,8 +1,5 @@
 package vn.tbs.kcdk;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import vn.tbs.kcdk.SmartViewWithMenu.OnTopListener;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
@@ -18,17 +15,14 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListener, ItemSelectionListener,ServiceConnection  {
 
 	private static final String TAG = SmartKCDKActivity.class.getSimpleName();
-	private Fragment mContentFragment;
 	public static Typeface sFont = null;
 
 	public static int sRemainSeconds = -1;
@@ -39,8 +33,6 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		SearchManager.SUGGEST_COLUMN_TEXT_1,
 	};
 
-	private View mPlayerNavigation;
-	private boolean mEnableActionBar;
 	private ServiceConnection mConnection = this;
 	//media player 
 	

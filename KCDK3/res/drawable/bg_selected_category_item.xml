@@ -6,7 +6,9 @@
         android:drawable="@color/abs__bright_foreground_disabled_holo_dark" />
     
     <!-- released -->
-    <item
-        android:drawable="@color/highlight_color" />
+    <!-- <item
+        android:drawable="@color/highlight_color_purple" /> -->
+      <item
+        android:drawable="@color/highlight_color_blue" />
     
 </selector>

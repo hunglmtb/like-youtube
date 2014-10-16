@@ -15,6 +15,7 @@
     <color name="media_category_avatar_background_color">#774D4C4F</color>
     <color name="black_with_transparent">#99000000</color>
     <color name="media_content_background_color">#222222</color>
+    <color name="back_view_color">#95000000</color>
 
     <!-- //subsonic -->
     <color name="mediaControlBackground">#222E42</color>
@@ -33,6 +34,8 @@
     <color name="facebook_color">#3b5998</color>
     <color name="menu_header_text_color">#989898</color>
     <color name="highlight_color">#33b5e5</color>
+    <color name="highlight_color_purple">#9c27b0</color>
+    <color name="highlight_color_blue">#5677fc</color>
     <color name="media_highlight_color">#4433b5e5</color>
     <color name="bg_menu">#222222</color>
     <color name="bg_menu_divider_color">#464644</color>
@@ -41,7 +44,6 @@
     <color name="alpha_white">#ccffffff</color>
     <color name="addition_text_color">#525252</color>
     <color name="bg_color_media_item">#aacbcbcb</color>
-    
     <color name="abs__background_holo_dark">#ff000000</color>
     <color name="abs__background_holo_light">#fff3f3f3</color>
     <color name="abs__bright_foreground_holo_dark">@color/abs__background_holo_light</color>
