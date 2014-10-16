@@ -36,7 +36,8 @@
     <color name="highlight_color">#33b5e5</color>
     <color name="highlight_color_purple">#9c27b0</color>
     <color name="highlight_color_blue">#5677fc</color>
-    <color name="media_highlight_color">#4433b5e5</color>
+<!--      <color name="media_highlight_color">#4433b5e5</color> -->
+    <color name="media_highlight_color">#505677fc</color>
     <color name="bg_menu">#222222</color>
     <color name="bg_menu_divider_color">#464644</color>
     <color name="bg_media_list">#e0e0e0</color>
