@@ -70,6 +70,10 @@ public class SmartViewWithMenu  {
 	private Context 						mContext;
 	private RelativeLayout 					mMainLayout;
 	private View 							mActionBarView;
+	//kcdk data
+	private SmartMenu mSmartMenu;
+	private KCDKMediaPlayer mKCDKMediaPlayer;
+	private OnTopListener mOnTopListener;
 	//listener
 	private OnTouchListener 				mTouchListener = new OnTouchListener() {
 
@@ -139,16 +143,13 @@ public class SmartViewWithMenu  {
 			}
 		}
 	};
-	
-	//kcdk data
-	private SmartMenu mSmartMenu;
-	private KCDKMediaPlayer sKCDKMediaPlayer;
-	private OnTopListener mOnTopListener;
+
+
 
 	public KCDKMediaPlayer getKCDKMediaPlayer() {
-		return sKCDKMediaPlayer;
+		return mKCDKMediaPlayer;
 	}
-	
+
 	public ImageView getMediaImage() {
 		return mMediaImage;
 	}
@@ -160,14 +161,14 @@ public class SmartViewWithMenu  {
 	public SmartViewWithMenu(Context aContext) {
 		super();
 		this.mContext = aContext;
-		
+
 		mMainLayout = (RelativeLayout) LayoutInflater.from(mContext).inflate(R.layout.main_sliding, null);
 		//View playerNavigation = LayoutInflater.from(mContext).inflate(R.layout.media_player_panel_layout, null);
 
 		View playerNavigation = mMainLayout.findViewById(R.id.media_player_layout);
-		sKCDKMediaPlayer = new KCDKMediaPlayer(mContext,playerNavigation);
+		mKCDKMediaPlayer = new KCDKMediaPlayer(mContext,playerNavigation);
 
-		
+
 		//mMainListView = (ListView) mMainLayout.findViewById( R.id.mainListView );
 		// Set the ArrayAdapter as the ListView's adapter.
 		//mMainListView.setAdapter( listAdapter );  
@@ -185,19 +186,19 @@ public class SmartViewWithMenu  {
 		mActionBarView = mMainLayout.findViewById( R.id.action_bar_view);
 		mMenuLayout.setVisibility(View.GONE);
 		mRootRelativeLayoutParams = (android.widget.RelativeLayout.LayoutParams) mRootLayout.getLayoutParams();
-		
+
 		mRootLayout.setOnTouchListener(new TrayTouchListener());
 
 
 		mMenuListView.setOnTouchListener(mTouchListener);
 		mBackView.setOnTouchListener(mTouchListener);
-		
+
 
 		//mSecondListView = (ListView) mMainLayout.findViewById( R.id.secondListView );
 		//mSecondListView.setAdapter( listAdapter );  
 
 		setOriginalPosition();
-		
+
 		//kcdk init values
 		mSmartMenu = new SmartMenu(mMenuListView, mContext);
 	}
@@ -334,7 +335,7 @@ public class SmartViewWithMenu  {
 		private int mYAxis = 0;
 		private int mXAxis = 0;
 		private int mTopHeigh;
-		
+
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 
@@ -351,7 +352,7 @@ public class SmartViewWithMenu  {
 				mMenuLayout.clearAnimation();
 				mBackView.clearAnimation();
 				mRootLayout.clearAnimation();
-				
+
 				mTopHeigh = mOnTop?mRootLayout.getHeight():OVERLAY_HEIGHT;
 				mIsFirstTimeMove = true;
 				mRootLayout.clearAnimation();
@@ -433,7 +434,7 @@ public class SmartViewWithMenu  {
 
 				boolean simpleModeSwitched = mInSimpleMode&&!mIsSlidingX&&(y>mStartDragY);
 				mInSimpleMode = mInSimpleMode||(!mIsSlidingX&&(mOnTop&&y<=mStartDragY));
-				
+
 				setOverlayPlace(x,y);
 				animateRootLayout(mIsSlidingX,mXAxis,mYAxis,simpleModeSwitched);
 				break;
@@ -447,7 +448,7 @@ public class SmartViewWithMenu  {
 
 		private void setOverlayPlace(int x, int y) {
 			mYAxis = mInSimpleMode?mTopHeigh:mYAxis;
-			
+
 			if (mOnTop) {
 				int screenHeight = mAppLayout.getHeight();
 				mOnTop = (screenHeight - mRootRelativeLayoutParams.bottomMargin - mRootRelativeLayoutParams.height)<DRAG_MOVE_RANGE;
@@ -481,7 +482,7 @@ public class SmartViewWithMenu  {
 
 			private int mY0 = aYAxis;
 			private int mY1 = simpleModeSwitched?(int) (screenWidth*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH):
-				(sKCDKMediaPlayer==null?SIMPLE_MODE_HEIGHT:sKCDKMediaPlayer.getSimpleModeHeight());
+				(mKCDKMediaPlayer==null?SIMPLE_MODE_HEIGHT:mKCDKMediaPlayer.getSimpleModeHeight());
 			private int mX0 = aXAxis;
 
 			@Override
@@ -503,6 +504,7 @@ public class SmartViewWithMenu  {
 				//updateSecondaryLayout(margin, fromAlpha);
 				if (interpolatedTime==1) {
 					mRootLayout.clearAnimation();
+					mKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&newYAxis==0),true);
 					mRootLayout.setVisibility(mClosed?View.GONE:View.VISIBLE);
 					mSecondaryLayout.setVisibility(mClosed?View.GONE:View.VISIBLE);
 					mIsRootLayoutAnimating = false;
@@ -540,7 +542,7 @@ public class SmartViewWithMenu  {
 			widthn = Math.min(widthn, screenWidth);
 			int height = (int) (widthn*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH);
 			int margin = (int) (screenHeight - mYAxis - height);
-			
+
 			height = mInSimpleMode?mYAxis:height;
 			widthn = mInSimpleMode?screenWidth:widthn;
 
@@ -552,7 +554,7 @@ public class SmartViewWithMenu  {
 			}
 			else{
 				mRootRelativeLayoutParams.bottomMargin = margin;
-				
+
 				if (mInSimpleMode) {
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 					mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -600,9 +602,9 @@ public class SmartViewWithMenu  {
 			}
 		}
 		setAlphaValue(mRootLayout, fromAlpha);
-		
-		sKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&mYAxis==0));
-		
+
+		mKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&mYAxis==0),false);
+
 		if (mOnTopListener!=null&&!aIsSlidingX&&!mInSimpleMode) {
 			mOnTopListener.doSmartViewOnTop(mYAxis);
 		}
@@ -659,8 +661,8 @@ public class SmartViewWithMenu  {
 		mSecondaryLayout.setVisibility(View.VISIBLE);
 		int screenHeight = mAppLayout.getHeight();
 		animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);
-		if (sKCDKMediaPlayer!=null) {
-			sKCDKMediaPlayer.playMedia(item);						
+		if (mKCDKMediaPlayer!=null) {
+			mKCDKMediaPlayer.playMedia(item);						
 		}
 	}
 }
