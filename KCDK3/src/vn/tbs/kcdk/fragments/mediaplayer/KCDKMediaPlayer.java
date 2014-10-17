@@ -450,9 +450,11 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	}
 */
 
-	public void updateView(boolean showProgressLayout) {
+	public void updateView(boolean showProgressLayout,boolean showPlayControl) {
 		// TODO Auto-generated method stub
-		mMediaPlayerView.setVisibility(showProgressLayout?View.VISIBLE:View.GONE);
+		mMediaProgressLayout.setVisibility(showProgressLayout?View.VISIBLE:View.GONE);
+		mButtonPlayPause.setVisibility(showPlayControl?View.VISIBLE:View.GONE);
+		//mMediaPlayerView.setVisibility(showProgressLayout?View.VISIBLE:View.GONE);
 	}
 
 
