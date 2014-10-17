@@ -43,6 +43,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	public static final int MSG_SET_STRING_VALUE = 4;
 	public static final int PAUSE_PLAY_COMMAND = 5;
 	public static final int UPDATE_PROGRESS_COMMAND = 6;
+	public static final int STOP_COMMAND = 7;
 
 	public static final int BUFFERING_UPDATE_COMMAND = 100;
 	public static final int SEEKBAR_UPDATE_COMAND = 101;
@@ -63,6 +64,8 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 	private final Messenger mMessenger = new Messenger(
 			new IncomingMessageHandler()); // Target we publish for clients to
+
+	private boolean mPostingEnable = false;
 	// send messages to IncomingHandler.
 
 	/**
@@ -92,6 +95,10 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			case PAUSE_PLAY_COMMAND:
 				pauseOrPlay(msg.arg1!=0);
 				break;
+			case STOP_COMMAND:
+				stopMediaPlayer();
+				break;
+
 			case UPDATE_PROGRESS_COMMAND:
 				int progress = msg.arg1;
 				updateProgress(progress);
@@ -139,6 +146,13 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 
 		super.onCreate();
+	}
+
+	public void stopMediaPlayer() {
+		if (mKCDKMediaPlayer!=null) {
+			mPostingEnable = false;
+			mKCDKMediaPlayer.pause();
+		}
 	}
 
 	public static boolean isRunning() {
@@ -235,6 +249,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		//mKCDKMediaPlayer.release();
 		boolean playOrPause = false;
 		boolean ioError = false;
+		mPostingEnable = true;
 
 		/** ImageButton onClick event handler. Method which start/pause mediaplayer playing */
 		try {
@@ -305,7 +320,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 	/** Method which updates the SeekBar primary progress by current song playing position*/
 	private void primarySeekBarProgressUpdater() {
-		if (mKCDKMediaPlayer!=null&&mTimer!=null) {
+		if (mKCDKMediaPlayer!=null&&mTimer!=null&&mPostingEnable) {
 			mTimer.scheduleAtFixedRate(new MyTask(), 0, 1000L);
 		}
 	}

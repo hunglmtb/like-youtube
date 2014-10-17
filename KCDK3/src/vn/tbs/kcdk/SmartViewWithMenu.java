@@ -505,6 +505,9 @@ public class SmartViewWithMenu  {
 				if (interpolatedTime==1) {
 					mRootLayout.clearAnimation();
 					mKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&newYAxis==0),true);
+					if (mClosed) {
+						mKCDKMediaPlayer.stopMediaPlayer();						
+					}
 					mRootLayout.setVisibility(mClosed?View.GONE:View.VISIBLE);
 					mSecondaryLayout.setVisibility(mClosed?View.GONE:View.VISIBLE);
 					mIsRootLayoutAnimating = false;
@@ -662,7 +665,7 @@ public class SmartViewWithMenu  {
 		int screenHeight = mAppLayout.getHeight();
 		animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);
 		if (mKCDKMediaPlayer!=null) {
-			mKCDKMediaPlayer.playMedia(item);						
+			mKCDKMediaPlayer.playMedia(item,mClosed);						
 		}
 	}
 }

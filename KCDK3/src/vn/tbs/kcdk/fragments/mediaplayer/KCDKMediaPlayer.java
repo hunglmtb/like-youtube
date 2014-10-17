@@ -370,11 +370,11 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	}
 
 
-	public boolean playMedia(final String url) {
+	public boolean playMedia(final String url, boolean closed) {
 		Log.i(TAG, "playMedia with url  start");
 		Log.e(TAG, "kaka initMediaPlayer mCurrentUrl "+url);
 		if (url!=null&&url.length()>0) {
-			if (!url.equals(mCurrentUrl)) {
+			if (!url.equals(mCurrentUrl)||closed) {
 				/*mPlayingCommandRunable = new Runnable() {
 					@Override
 					public void run() {
@@ -408,7 +408,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	}
 
 
-	public void playMedia(MediaInfo item) {
+	public void playMedia(MediaInfo item, boolean closed) {
 		Log.i(TAG, "playMedia with MediaInfo  start");
 
 		if (item!=null) {
@@ -416,7 +416,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			String url = mContext.getString(R.string.action_url)+item.getMediaFileUrl();
 			//String url = "http://stream2.r15s91.vcdn.vn/fsfsdfdsfdserwrwq3/6de9da3107e057671ecb386c5c8bb797/539814e6/2013/12/15/4/b/4b896ff9151263672609e9cb9cc04c00.mp3";
 			//url = "http://download.a2.nixcdn.com/f140e6b9dc70829347640ed2a279f9c0/543b4b67/NhacCuaTui149/CoHangXom-QuangLe_33pwh.mp3";
-			boolean ok = playMedia(url );
+			boolean ok = playMedia(url,closed);
 			ok = true;
 			if (ok) {
 				updateMediaInfo(item);
@@ -453,7 +453,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	public void updateView(boolean showProgressLayout,boolean showPlayControl) {
 		// TODO Auto-generated method stub
 		mMediaProgressLayout.setVisibility(showProgressLayout?View.VISIBLE:View.GONE);
-		mButtonPlayPause.setVisibility(showPlayControl?View.VISIBLE:View.GONE);
+		mButtonPlayPause.setVisibility(showPlayControl?View.VISIBLE:View.INVISIBLE);
 		//mMediaPlayerView.setVisibility(showProgressLayout?View.VISIBLE:View.GONE);
 	}
 
@@ -489,6 +489,11 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			Log.e(TAG, "RemoteException at initServiceMessenger");
 			e.printStackTrace();
 		}
+	}
+
+
+	public void stopMediaPlayer() {
+		sendMessageToService(KCDKMediaPlayerService.STOP_COMMAND, 0);
 	}
 
 
