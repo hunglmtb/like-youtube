@@ -108,6 +108,12 @@ public class Common {
 	public static final String CATEGORY_ID_NAME_07 = "CATEGORY07";
 	public static final String CATEGORY_ID_NAME_08 = "CATEGORY08";
 	public static final String SOCIAL_HOST_URL = "http://kcdkv2.appspot.com/media/social?mediaId=";
+	public static final String NOTIFICATION_DETAIL_MEDIA = "NOTIFICATION_DETAIL_MEDIA";
+	
+	public static final String ACTION_LAUNCH="xxx.yyy.zzz.ACTION_LAUNCH";
+	public static final String ACTION_STOP="xxx.yyy.zzz.ACTION_STOP";
+	public static final String ACTION_PLAY="xxx.yyy.zzz.ACTION_PLAY";
+	public static final String ACTION_PAUSE="xxx.yyy.zzz.ACTION_PAUSE";
 	
 	public static Bundle initFragmentBund(FragmentMode mode, String[] values) {
 

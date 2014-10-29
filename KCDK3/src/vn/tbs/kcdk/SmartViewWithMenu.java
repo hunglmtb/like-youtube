@@ -158,7 +158,7 @@ public class SmartViewWithMenu  {
 		return mMainLayout;
 	}
 
-	public SmartViewWithMenu(Context aContext) {
+	public SmartViewWithMenu(Context aContext, boolean showDetailMedia) {
 		super();
 		this.mContext = aContext;
 
@@ -197,7 +197,7 @@ public class SmartViewWithMenu  {
 		//mSecondListView = (ListView) mMainLayout.findViewById( R.id.secondListView );
 		//mSecondListView.setAdapter( listAdapter );  
 
-		setOriginalPosition();
+		setOriginalPosition(showDetailMedia);
 
 		//kcdk init values
 		mSmartMenu = new SmartMenu(mMenuListView, mContext);
@@ -309,12 +309,14 @@ public class SmartViewWithMenu  {
 
 
 
-	private void setOriginalPosition() {
-		mOnTop = false;
+	private void setOriginalPosition(boolean showDetailMedia) {
+		mOnTop = showDetailMedia;
 		mClosed = false;
 		mMenuHiden = true;
 		int xAxis = mAppLayout.getWidth() - OVERLAY_WIDTH - OVERLAY_BOTTOM_MARGIN;
-		updateViewLayout(false,true,xAxis,0);
+		int yAxis = 0;
+		boolean aIsSlidingX = !showDetailMedia;
+		updateViewLayout(false,aIsSlidingX,xAxis,yAxis);
 		updateMenu(0);
 	}
 

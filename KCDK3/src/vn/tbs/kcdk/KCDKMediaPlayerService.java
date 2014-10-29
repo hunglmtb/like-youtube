@@ -8,6 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
+import vn.tbs.kcdk.global.Common;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -31,9 +32,7 @@ import android.widget.RemoteViews;
 public class KCDKMediaPlayerService extends Service implements OnBufferingUpdateListener, OnCompletionListener {
 	private static final String TAG = KCDKMediaPlayer.class.getSimpleName();
 
-	public static final String ACTION_STOP="xxx.yyy.zzz.ACTION_STOP";
-	public static final String ACTION_PLAY="xxx.yyy.zzz.ACTION_PLAY";
-	public static final String ACTION_PAUSE="xxx.yyy.zzz.ACTION_PAUSE";
+
 
 	private MediaPlayer mKCDKMediaPlayer = null;
 	private boolean      isPlaying = false;
@@ -228,11 +227,11 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		if (intent != null) {
 			String action = intent.getAction();         
 			if (action!=null&&action.length()>0) {
-				if (action.equals(ACTION_PLAY)) {
+				if (action.equals(Common.ACTION_PLAY)) {
 					pauseOrPlay(true);
-				}else if(action.equals(ACTION_PAUSE)) {
+				}else if(action.equals(Common.ACTION_PAUSE)) {
 					pauseOrPlay(true);
-				}else if(action.equals(ACTION_STOP)) {
+				}else if(action.equals(Common.ACTION_STOP)) {
 					pauseMediaPlayer(true);
 				}
 			}
@@ -396,7 +395,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		//Define what you want to do after clicked the button in notification.
 		//Here we launcher a service by an action named "ACTION_STOP" which will stop the music play.
 
-		intent = new Intent(ACTION_PLAY);       
+		intent = new Intent(Common.ACTION_PLAY);       
 		pendingIntent = PendingIntent.getService(getApplicationContext(),
 				REQUEST_CODE_PLAY, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
@@ -406,17 +405,33 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		mRemoteViews.setOnClickPendingIntent(R.id.player_notification_play,
 				pendingIntent);
 
-		intent = new Intent(ACTION_STOP);   
+		intent = new Intent(Common.ACTION_STOP);   
 		PendingIntent deletePendingIntent = PendingIntent.getService(getApplicationContext(),
 				REQUEST_CODE_STOP, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		
+		/*
+		Intent notificationIntent = new Intent(getApplicationContext(), SmartKCDKActivity.class);
+
+	    notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+	            | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+	    PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+	            notificationIntent, 0);
+
+	    mNotification.setLatestEventInfo(context, title, message, pIntent);
+	    mNotification.flags |= Notification.FLAG_AUTO_CANCEL;*/
+		
+		Intent notificationIntent = new Intent(getApplicationContext(), SmartKCDKActivity.class);
+		notificationIntent.setAction(Common.ACTION_LAUNCH);
+		pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,notificationIntent, 0);
 		//Create the notification instance.
 		mNotification = new NotificationCompat.Builder(getApplicationContext())
 		.setSmallIcon(R.drawable.ic_launcher).setOngoing(false)
 		.setWhen(System.currentTimeMillis())                
 		.setContent(mRemoteViews)
 		.setDeleteIntent(deletePendingIntent)
+		.setContentIntent(pendingIntent)
 		.build();
 
 		//Show the notification in the notification bar.
