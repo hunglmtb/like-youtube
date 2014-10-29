@@ -6,6 +6,7 @@ import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectio
 import vn.tbs.kcdk.fragments.contents.media.DescriptionFragment;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
+import vn.tbs.kcdk.global.Common;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,8 +27,8 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	public static Typeface sFont = null;
 
 	public static int sRemainSeconds = -1;
-	
-	
+
+
 	private static final String[] COLUMNS = {
 		BaseColumns._ID,
 		SearchManager.SUGGEST_COLUMN_TEXT_1,
@@ -35,41 +36,48 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 
 	private ServiceConnection mConnection = this;
 	//media player 
-	
-	
+
+
 	private SmartViewWithMenu mSmartViewWithMenu;
 	private PinnedHeaderMediaListFragment mPinnedHeaderMediaListFragment;
 	private DescriptionFragment mDescriptionFragment;
 	/** Called when the activity is first created. */
-	
+
 	boolean mIsBound;
 	private KCDKMediaPlayer mKCDKMediaPlayer;
 
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		sFont = Typeface.createFromAsset(this.getAssets(),"Roboto-Light.ttf");
-		
+
+		Intent intent = getIntent();
+		boolean showDetailMedia = false;
+		if (intent!=null) {
+			String action = intent.getAction();
+			showDetailMedia = action!=null&&action.length()>0&&action.equals(Common.ACTION_LAUNCH);
+		}
+
 		//----------------------------------------------------------------------------
-		mSmartViewWithMenu  = new SmartViewWithMenu(this);
+		mSmartViewWithMenu  = new SmartViewWithMenu(this,showDetailMedia);
 		mSmartViewWithMenu.setOnTopListener(this);
 		View view = mSmartViewWithMenu.getView();
 		setContentView(view);
-		
+
 		mPinnedHeaderMediaListFragment = (PinnedHeaderMediaListFragment)getSupportFragmentManager().findFragmentById(R.id.mainFragment);
 		mDescriptionFragment = (DescriptionFragment)getSupportFragmentManager().findFragmentById(R.id.secondFragment);
-		
+
 		mPinnedHeaderMediaListFragment.setOnItemSelectionListener(this);
-		
+
 		mKCDKMediaPlayer = mSmartViewWithMenu.getKCDKMediaPlayer();
-		
+
 		startService(new Intent(SmartKCDKActivity.this, KCDKMediaPlayerService.class));
 		mIsBound = false; // by default set this to unbound
 		automaticBind();
 		doBindService();
 	}
-	
+
 
 	@Override
 	public void onServiceConnected(ComponentName name, IBinder service) {
@@ -77,7 +85,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		if (mKCDKMediaPlayer!=null) {
 			mKCDKMediaPlayer.initServiceMessenger(service);
 		}
-		
+
 	}
 
 	@Override
@@ -127,7 +135,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 			}*/
 		}
 	}
-	
+
 	/**
 	 * Check if the service is running. If the service is running when the
 	 * activity starts, we want to automatically bind to it.
@@ -138,7 +146,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 			doBindService();
 		}
 	}
-	
+
 	/**
 	 * Bind this Activity to TimerService
 	 */
@@ -148,11 +156,11 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 				Context.BIND_AUTO_CREATE);
 		mIsBound = true;
 		Toast.makeText(this, "Binding", Toast.LENGTH_SHORT).show();
-//		textStatus.setText("Binding.");
+		//		textStatus.setText("Binding.");
 	}
 
 
-	
+
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
