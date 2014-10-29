@@ -151,4 +151,12 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 //		textStatus.setText("Binding.");
 	}
 
+
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		mConnection = null;
+		super.onDestroy();
+	}
 }

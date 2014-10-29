@@ -254,6 +254,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 				msg.replyTo = mMessenger;
 				Bundle data = new Bundle();
 				data.putString("url", mCurrentUrl);
+				data.putString("title", mMediaInfoItem!=null?mMediaInfoItem.getTitle():"no title");
 				msg.setData(data);
 				mServiceMessenger.send(msg);
 				Log.i(TAG, "playMedia send message");
