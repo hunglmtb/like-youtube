@@ -23,11 +23,21 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="KCDKMediaPlayerService" />
+
+        <service
+            android:name="KCDKMediaPlayerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="xxx.yyy.zzz.ACTION_PLAY" />
+                <action android:name="xxx.yyy.zzz.ACTION_PAUSE" />
+                <action android:name="xxx.yyy.zzz.ACTION_STOP" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

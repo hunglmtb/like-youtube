@@ -8,8 +8,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -19,10 +24,16 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 public class KCDKMediaPlayerService extends Service implements OnBufferingUpdateListener, OnCompletionListener {
 	private static final String TAG = KCDKMediaPlayer.class.getSimpleName();
+
+	public static final String ACTION_STOP="xxx.yyy.zzz.ACTION_STOP";
+	public static final String ACTION_PLAY="xxx.yyy.zzz.ACTION_PLAY";
+	public static final String ACTION_PAUSE="xxx.yyy.zzz.ACTION_PAUSE";
 
 	private MediaPlayer mKCDKMediaPlayer = null;
 	private boolean      isPlaying = false;
@@ -54,6 +65,12 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	public static final int PLAYING = 10;
 	public static final int PAUSING = 11;
 
+	private static final int NOTIFICATION_ID = 0;
+
+	private static final int REQUEST_CODE_STOP = 0;
+
+	private static final int REQUEST_CODE_PLAY = 1;
+
 
 	private List<Messenger> mClients = new ArrayList<Messenger>(); // Keeps
 	// track of
@@ -67,6 +84,14 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 	private boolean mPostingEnable = false;
 	// send messages to IncomingHandler.
+
+	private RemoteViews mRemoteViews;
+
+	private Notification mNotification;
+
+	private NotificationManager mNotificationManager;
+
+	private String mMediaTitle = "";
 
 	/**
 	 * Handle incoming messages from MainActivity
@@ -89,14 +114,18 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			case START_PLAY_COMMAND:
 				Bundle data = msg.getData();
 				mCurrentUrl = data.getString("url");
+				mMediaTitle = data.getString("title");
 				startPlayMedia();
 				//incrementBy = msg.arg1;
 				break;
 			case PAUSE_PLAY_COMMAND:
 				pauseOrPlay(msg.arg1!=0);
+				if (!mKCDKMediaPlayer.isPlaying()) {
+					mNotificationManager.cancel(NOTIFICATION_ID);				
+				}
 				break;
 			case STOP_COMMAND:
-				stopMediaPlayer();
+				pauseMediaPlayer(true);
 				break;
 
 			case UPDATE_PROGRESS_COMMAND:
@@ -127,6 +156,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	}
 	@Override
 	public void onCreate() {
+		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mKCDKMediaPlayer = new MediaPlayer();
 		mKCDKMediaPlayer.setOnBufferingUpdateListener(this);
 		mKCDKMediaPlayer.setOnCompletionListener(this);
@@ -137,6 +167,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			public void onPrepared(MediaPlayer player) {
 				player.start();
 				sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, 0);
+				showControllerInNotification();
 
 			}
 
@@ -148,10 +179,15 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		super.onCreate();
 	}
 
-	public void stopMediaPlayer() {
+	public void pauseMediaPlayer(boolean isStop) {
 		if (mKCDKMediaPlayer!=null) {
 			mPostingEnable = false;
 			mKCDKMediaPlayer.pause();
+			showControllerInNotification();
+			sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PAUSING, 0);
+			if (isStop) {
+				mNotificationManager.cancel(NOTIFICATION_ID);				
+			}
 		}
 	}
 
@@ -187,6 +223,19 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		if (intent!=null&&intent.getBooleanExtra(START_PLAY, false)) {
 			//play();
 			startPlayMedia();
+		}
+
+		if (intent != null) {
+			String action = intent.getAction();         
+			if (action!=null&&action.length()>0) {
+				if (action.equals(ACTION_PLAY)) {
+					pauseOrPlay(true);
+				}else if(action.equals(ACTION_PAUSE)) {
+					pauseOrPlay(true);
+				}else if(action.equals(ACTION_STOP)) {
+					pauseMediaPlayer(true);
+				}
+			}
 		}
 		return Service.START_STICKY;	
 	}
@@ -298,15 +347,16 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	private boolean pauseOrPlay(boolean inverse) {
 		Log.i(TAG, "resumePlaying start");
 
+		boolean result = false;
 		try {
 			if(!mKCDKMediaPlayer.isPlaying()){
 				mKCDKMediaPlayer.start();
 				sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, 0);
-				return true;
+				showControllerInNotification();
+				result =  true;
 			}else {
 				if (inverse) {
-					mKCDKMediaPlayer.pause();
-					sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PAUSING, 0);
+					pauseMediaPlayer(false);
 				}
 			}
 		} catch (IllegalStateException e) {
@@ -314,7 +364,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			e.printStackTrace();
 		}
 		Log.i(TAG, "resumePlaying end");
-		return false;
+		return result;
 	}
 
 
@@ -325,6 +375,53 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		}
 	}
 
+	private void showControllerInNotification() {       
+		PendingIntent pendingIntent = null;
+		Intent intent = null;
+
+
+		//Inflate a remote view with a layout which you want to display in the notification bar.
+		if (mRemoteViews == null) {
+			mRemoteViews = new RemoteViews(getPackageName(),
+					R.layout.player_notification);
+		}   
+
+		//String playOrPauseText = mKCDKMediaPlayer.isPlaying()?"Playing":"Pause";
+
+		mRemoteViews.setTextViewText(R.id.player_notification_text, mMediaTitle);
+		int id = mKCDKMediaPlayer.isPlaying()?R.drawable.media_pause:R.drawable.media_start;
+		mRemoteViews.setImageViewResource(R.id.player_notification_play, id);
+		//		Bitmap bmp = null;
+		//		mRemoteViews.setBitmap(R.id.player_notification, "", bmp);
+		//Define what you want to do after clicked the button in notification.
+		//Here we launcher a service by an action named "ACTION_STOP" which will stop the music play.
+
+		intent = new Intent(ACTION_PLAY);       
+		pendingIntent = PendingIntent.getService(getApplicationContext(),
+				REQUEST_CODE_PLAY, intent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+
+		//In R.layout.notification_control_bar,there is a button view identified by bar_btn_stop
+		//We bind a pendingIntent with this button view so when user click the button,it will excute the intent action.
+		mRemoteViews.setOnClickPendingIntent(R.id.player_notification_play,
+				pendingIntent);
+
+		intent = new Intent(ACTION_STOP);   
+		PendingIntent deletePendingIntent = PendingIntent.getService(getApplicationContext(),
+				REQUEST_CODE_STOP, intent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		//Create the notification instance.
+		mNotification = new NotificationCompat.Builder(getApplicationContext())
+		.setSmallIcon(R.drawable.ic_launcher).setOngoing(false)
+		.setWhen(System.currentTimeMillis())                
+		.setContent(mRemoteViews)
+		.setDeleteIntent(deletePendingIntent)
+		.build();
+
+		//Show the notification in the notification bar.
+		mNotificationManager.notify(NOTIFICATION_ID, mNotification);      
+	}   
 	/**
 	 * The task to run...
 	 */
