@@ -330,8 +330,10 @@ public class SmartViewWithMenu  {
 		int yAxis = 0;
 		boolean aIsSlidingX = !showDetailMedia;
 		mInSimpleMode = false;
+		mCloseOnRight = !showDetailMedia;
 		updateViewLayout(false,aIsSlidingX,xAxis,yAxis);
 		updateMenu(0);
+		mRootLayout.setVisibility(mClosed?View.INVISIBLE:View.VISIBLE);
 	}
 
 
