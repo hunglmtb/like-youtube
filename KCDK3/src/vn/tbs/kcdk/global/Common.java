@@ -110,10 +110,32 @@ public class Common {
 	public static final String SOCIAL_HOST_URL = "http://kcdkv2.appspot.com/media/social?mediaId=";
 	public static final String NOTIFICATION_DETAIL_MEDIA = "NOTIFICATION_DETAIL_MEDIA";
 	
+	//notification
 	public static final String ACTION_LAUNCH="xxx.yyy.zzz.ACTION_LAUNCH";
 	public static final String ACTION_STOP="xxx.yyy.zzz.ACTION_STOP";
 	public static final String ACTION_PLAY="xxx.yyy.zzz.ACTION_PLAY";
 	public static final String ACTION_PAUSE="xxx.yyy.zzz.ACTION_PAUSE";
+
+	public static String START_PLAY = "START_PLAY";
+	public static final int SEEKBAR_MAX = 100;
+	public static final int MSG_REGISTER_CLIENT = 1;
+	public static final int MSG_UNREGISTER_CLIENT = 2;
+	public static final int START_PLAY_COMMAND = 3;
+	public static final int MSG_SET_STRING_VALUE = 4;
+	public static final int PAUSE_PLAY_COMMAND = 5;
+	public static final int UPDATE_PROGRESS_COMMAND = 6;
+	public static final int STOP_COMMAND = 7;
+
+	public static final int BUFFERING_UPDATE_COMMAND = 100;
+	public static final int SEEKBAR_UPDATE_COMAND = 101;
+	public static final int PLAY_PAUSE_UPDATE_COMAND = 102;
+	public static final int UI_UPDATE_COMAND = 1000;
+	public static final int PLAYING = 10;
+	public static final int PAUSING = 11;
+	public static final int NOTIFICATION_ID = 0;
+	public static final int REQUEST_CODE_STOP = 0;
+	public static final int REQUEST_CODE_PLAY = 1;
+
 	
 	public static Bundle initFragmentBund(FragmentMode mode, String[] values) {
 

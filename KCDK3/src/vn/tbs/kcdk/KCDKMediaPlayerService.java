@@ -1,5 +1,23 @@
 package vn.tbs.kcdk;
 
+import static vn.tbs.kcdk.global.Common.BUFFERING_UPDATE_COMMAND;
+import static vn.tbs.kcdk.global.Common.MSG_REGISTER_CLIENT;
+import static vn.tbs.kcdk.global.Common.MSG_UNREGISTER_CLIENT;
+import static vn.tbs.kcdk.global.Common.NOTIFICATION_ID;
+import static vn.tbs.kcdk.global.Common.PAUSE_PLAY_COMMAND;
+import static vn.tbs.kcdk.global.Common.PAUSING;
+import static vn.tbs.kcdk.global.Common.PLAYING;
+import static vn.tbs.kcdk.global.Common.PLAY_PAUSE_UPDATE_COMAND;
+import static vn.tbs.kcdk.global.Common.REQUEST_CODE_PLAY;
+import static vn.tbs.kcdk.global.Common.REQUEST_CODE_STOP;
+import static vn.tbs.kcdk.global.Common.SEEKBAR_MAX;
+import static vn.tbs.kcdk.global.Common.SEEKBAR_UPDATE_COMAND;
+import static vn.tbs.kcdk.global.Common.START_PLAY;
+import static vn.tbs.kcdk.global.Common.START_PLAY_COMMAND;
+import static vn.tbs.kcdk.global.Common.STOP_COMMAND;
+import static vn.tbs.kcdk.global.Common.UI_UPDATE_COMAND;
+import static vn.tbs.kcdk.global.Common.UPDATE_PROGRESS_COMMAND;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,7 +33,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -43,32 +60,6 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	private static boolean isRunning = false;
 
 	private static int classID = 579; // just a number
-
-	public static String START_PLAY = "START_PLAY";
-	private static final int SEEKBAR_MAX = 100;
-
-	public static final int MSG_REGISTER_CLIENT = 1;
-	public static final int MSG_UNREGISTER_CLIENT = 2;
-	public static final int START_PLAY_COMMAND = 3;
-	public static final int MSG_SET_STRING_VALUE = 4;
-	public static final int PAUSE_PLAY_COMMAND = 5;
-	public static final int UPDATE_PROGRESS_COMMAND = 6;
-	public static final int STOP_COMMAND = 7;
-
-	public static final int BUFFERING_UPDATE_COMMAND = 100;
-	public static final int SEEKBAR_UPDATE_COMAND = 101;
-	public static final int PLAY_PAUSE_UPDATE_COMAND = 102;
-
-	public static final int UI_UPDATE_COMAND = 1000;
-
-	public static final int PLAYING = 10;
-	public static final int PAUSING = 11;
-
-	private static final int NOTIFICATION_ID = 0;
-
-	private static final int REQUEST_CODE_STOP = 0;
-
-	private static final int REQUEST_CODE_PLAY = 1;
 
 
 	private List<Messenger> mClients = new ArrayList<Messenger>(); // Keeps

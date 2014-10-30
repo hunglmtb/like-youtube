@@ -1,6 +1,17 @@
 package vn.tbs.kcdk.fragments.mediaplayer;
 
-import vn.tbs.kcdk.KCDKMediaPlayerService;
+import static vn.tbs.kcdk.global.Common.BUFFERING_UPDATE_COMMAND;
+import static vn.tbs.kcdk.global.Common.MSG_REGISTER_CLIENT;
+import static vn.tbs.kcdk.global.Common.MSG_SET_STRING_VALUE;
+import static vn.tbs.kcdk.global.Common.PAUSE_PLAY_COMMAND;
+import static vn.tbs.kcdk.global.Common.PLAYING;
+import static vn.tbs.kcdk.global.Common.PLAY_PAUSE_UPDATE_COMAND;
+import static vn.tbs.kcdk.global.Common.SEEKBAR_UPDATE_COMAND;
+import static vn.tbs.kcdk.global.Common.START_PLAY_COMMAND;
+import static vn.tbs.kcdk.global.Common.STOP_COMMAND;
+import static vn.tbs.kcdk.global.Common.UI_UPDATE_COMAND;
+import static vn.tbs.kcdk.global.Common.UPDATE_PROGRESS_COMMAND;
+
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import android.app.ActivityManager;
@@ -41,27 +52,27 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 		public void handleMessage(Message msg) {
 			Log.d(TAG, "C:IncomingHandler:handleMessage");
 			switch (msg.what) {
-			case KCDKMediaPlayerService.UI_UPDATE_COMAND:
+			case UI_UPDATE_COMAND:
 				Log.d(TAG, "C: RX MSG_SET_INT_VALUE");
 				//textIntValue.setText("Int Message: " + msg.arg1);
 				Bundle data = msg.getData();
 				int type = data.getInt("type");
 				int value = data.getInt("value");
 				int sencondValue = data.getInt("sencondValue");
-				if (type==KCDKMediaPlayerService.BUFFERING_UPDATE_COMMAND&&mSeekBarProgress!=null) {
+				if (type==BUFFERING_UPDATE_COMMAND&&mSeekBarProgress!=null) {
 					mSeekBarProgress.setSecondaryProgress(value);	
 				}
-				if (type==KCDKMediaPlayerService.SEEKBAR_UPDATE_COMAND) {
+				if (type==SEEKBAR_UPDATE_COMAND) {
 					mSeekBarProgress.setProgress(sencondValue);
 					updateCurrentPlayingTime(value);
 					Log.d(TAG, "lala "+value);
 				}
-				if (type==KCDKMediaPlayerService.PLAY_PAUSE_UPDATE_COMAND) {
-					int iconResource = value==KCDKMediaPlayerService.PLAYING?R.drawable.media_pause:R.drawable.media_start;
+				if (type==PLAY_PAUSE_UPDATE_COMAND) {
+					int iconResource = value==PLAYING?R.drawable.media_pause:R.drawable.media_start;
 					mButtonPlayPause.setImageResource(iconResource);
 				}
 				break;
-			case KCDKMediaPlayerService.MSG_SET_STRING_VALUE:
+			case MSG_SET_STRING_VALUE:
 				String str1 = msg.getData().getString("str1");
 				Log.d(TAG, "C:RX MSG_SET_STRING_VALUE");
 				//textStrValue.setText("Str Message: " + str1);
@@ -139,7 +150,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 		/*mKCDKMediaPlayer = new MediaPlayer();
 		mKCDKMediaPlayer.setOnBufferingUpdateListener(this);
 		mKCDKMediaPlayer.setOnCompletionListener(this);
-*/
+		 */
 		Log.i(TAG, "initMediaPlayer end");
 
 	}
@@ -175,7 +186,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 				SeekBar sb = (SeekBar)v;
 				int progress = sb.getProgress();
 				Log.i(TAG, "hehe progress "+progress);
-				sendMessageToService(KCDKMediaPlayerService.UPDATE_PROGRESS_COMMAND,progress);
+				sendMessageToService(UPDATE_PROGRESS_COMMAND,progress);
 				//int playPositionInMillisecconds = (mMediaFileLengthInMilliseconds / SEEKBAR_MAX) * sb.getProgress();
 				//mKCDKMediaPlayer.seekTo(playPositionInMillisecconds);
 
@@ -230,7 +241,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			try {
 				int from = fromClick?1:0;
 				Message msg = Message.obtain(null,
-						KCDKMediaPlayerService.PAUSE_PLAY_COMMAND, from, 0);
+						PAUSE_PLAY_COMMAND, from, 0);
 				msg.replyTo = mMessenger;
 				mServiceMessenger.send(msg);
 				Log.i(TAG, "pauseOrPlay  send message");
@@ -250,7 +261,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			try {
 				int intvaluetosend = 10;
 				Message msg = Message.obtain(null,
-						KCDKMediaPlayerService.START_PLAY_COMMAND, intvaluetosend, 0);
+						START_PLAY_COMMAND, intvaluetosend, 0);
 				msg.replyTo = mMessenger;
 				Bundle data = new Bundle();
 				data.putString("url", mCurrentUrl);
@@ -310,7 +321,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	}
 
 
-/*	private boolean playOrPause() {
+	/*	private boolean playOrPause() {
 		Log.i(TAG, "resumePlaying start");
 
 		if(!mKCDKMediaPlayer.isPlaying()){
@@ -334,9 +345,9 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 
 		Log.i(TAG, "doPlay end");
 	}
-/*
+	/*
 
-	*//** Method which updates the SeekBar primary progress by current song playing position
+	 *//** Method which updates the SeekBar primary progress by current song playing position
 	 * @param aCurrentPlayingTime *//*
 	private void primarySeekBarProgressUpdater() {
 		if (mKCDKMediaPlayer!=null) {
@@ -356,7 +367,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			}
 		}
 	}
-*/
+	  */
 
 	protected void updateCurrentPlayingTime(int aCurrentPlayingTime) {
 		Log.i(TAG, "updateCurrentPlayingTime start");
@@ -437,7 +448,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 		Log.i(TAG, "updateMediaInfo end");
 	}
 
-/*
+	/*
 	public void stop() {
 		Log.i(TAG, "stop start");
 		if (mKCDKMediaPlayer!=null) {
@@ -449,7 +460,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 
 		Log.i(TAG, "stop end");
 	}
-*/
+	 */
 
 	public void updateView(boolean showProgressLayout,boolean showPlayControl) {
 		// TODO Auto-generated method stub
@@ -480,7 +491,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 		//textStatus.setText("Attached.");
 		Toast.makeText(mContext, "Attached", Toast.LENGTH_SHORT).show();
 		try {
-			Message msg = Message.obtain(null, KCDKMediaPlayerService.MSG_REGISTER_CLIENT);
+			Message msg = Message.obtain(null, MSG_REGISTER_CLIENT);
 			msg.replyTo = mMessenger;
 			Log.d(TAG, "C: TX MSG_REGISTER_CLIENT");
 			mServiceMessenger.send(msg);
@@ -494,7 +505,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 
 
 	public void stopMediaPlayer() {
-		sendMessageToService(KCDKMediaPlayerService.STOP_COMMAND, 0);
+		sendMessageToService(STOP_COMMAND, 0);
 	}
 
 

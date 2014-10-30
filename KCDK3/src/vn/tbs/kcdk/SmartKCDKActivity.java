@@ -60,7 +60,6 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 			String action = intent.getAction();
 			showDetailMedia = action!=null&&action.length()>0&&action.equals(Common.ACTION_LAUNCH);
 		}
-		showDetailMedia = true;
 
 		//----------------------------------------------------------------------------
 		mSmartViewWithMenu  = new SmartViewWithMenu(this,showDetailMedia,this);
