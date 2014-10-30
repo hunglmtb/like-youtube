@@ -16,7 +16,9 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -58,10 +60,10 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 			String action = intent.getAction();
 			showDetailMedia = action!=null&&action.length()>0&&action.equals(Common.ACTION_LAUNCH);
 		}
+		showDetailMedia = true;
 
 		//----------------------------------------------------------------------------
-		mSmartViewWithMenu  = new SmartViewWithMenu(this,showDetailMedia);
-		mSmartViewWithMenu.setOnTopListener(this);
+		mSmartViewWithMenu  = new SmartViewWithMenu(this,showDetailMedia,this);
 		View view = mSmartViewWithMenu.getView();
 		setContentView(view);
 
@@ -77,7 +79,6 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		automaticBind();
 		doBindService();
 	}
-
 
 	@Override
 	public void onServiceConnected(ComponentName name, IBinder service) {

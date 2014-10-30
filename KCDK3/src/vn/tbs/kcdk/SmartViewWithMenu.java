@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -143,6 +145,7 @@ public class SmartViewWithMenu  {
 			}
 		}
 	};
+	private OnGlobalLayoutListener onGlobalLayoutListener;
 
 
 
@@ -158,9 +161,10 @@ public class SmartViewWithMenu  {
 		return mMainLayout;
 	}
 
-	public SmartViewWithMenu(Context aContext, boolean showDetailMedia) {
+	public SmartViewWithMenu(Context aContext, final boolean showDetailMedia, OnTopListener onTopListener) {
 		super();
 		this.mContext = aContext;
+		setOnTopListener(onTopListener);
 
 		mMainLayout = (RelativeLayout) LayoutInflater.from(mContext).inflate(R.layout.main_sliding, null);
 		//View playerNavigation = LayoutInflater.from(mContext).inflate(R.layout.media_player_panel_layout, null);
@@ -193,11 +197,19 @@ public class SmartViewWithMenu  {
 		mMenuListView.setOnTouchListener(mTouchListener);
 		mBackView.setOnTouchListener(mTouchListener);
 
-
-		//mSecondListView = (ListView) mMainLayout.findViewById( R.id.secondListView );
-		//mSecondListView.setAdapter( listAdapter );  
-
-		setOriginalPosition(showDetailMedia);
+		//setOriginalPosition(showDetailMedia);
+		
+		final ViewTreeObserver vto = mAppLayout.getViewTreeObserver(); 
+		onGlobalLayoutListener = new OnGlobalLayoutListener() { 
+		    @Override 
+		    public void onGlobalLayout() { 
+		        // Put your code here. 
+	    		setOriginalPosition(showDetailMedia);
+		    	mAppLayout.getViewTreeObserver().removeGlobalOnLayoutListener(onGlobalLayoutListener);
+		    } 
+		};
+		
+		vto.addOnGlobalLayoutListener(onGlobalLayoutListener);
 
 		//kcdk init values
 		mSmartMenu = new SmartMenu(mMenuListView, mContext);
@@ -309,13 +321,15 @@ public class SmartViewWithMenu  {
 
 
 
-	private void setOriginalPosition(boolean showDetailMedia) {
+	public void setOriginalPosition(boolean showDetailMedia) {
 		mOnTop = showDetailMedia;
-		mClosed = false;
+		mClosed = !showDetailMedia;
 		mMenuHiden = true;
-		int xAxis = mAppLayout.getWidth() - OVERLAY_WIDTH - OVERLAY_BOTTOM_MARGIN;
+//		int xAxis = mAppLayout.getWidth() - OVERLAY_WIDTH - OVERLAY_BOTTOM_MARGIN;
+		int xAxis = 0;
 		int yAxis = 0;
 		boolean aIsSlidingX = !showDetailMedia;
+		mInSimpleMode = false;
 		updateViewLayout(false,aIsSlidingX,xAxis,yAxis);
 		updateMenu(0);
 	}
@@ -534,6 +548,7 @@ public class SmartViewWithMenu  {
 
 	@SuppressLint("NewApi")
 	private void updateViewLayout(boolean aWithAlpha, boolean aIsSlidingX, int mXAxis, int mYAxis) {
+		Log.e("hung", "hehe aIsSlidingX "+aIsSlidingX+" mXAxis "+mXAxis+" mYAxis "+mYAxis);
 		int screenWidth = mAppLayout.getWidth();
 		int screenHeight = mAppLayout.getHeight();
 		int rightMargin = 0;
@@ -572,6 +587,8 @@ public class SmartViewWithMenu  {
 					mRootRelativeLayoutParams.rightMargin = rightMargin;
 				}
 			}
+			Log.e("hung", "haha mInSimpleMode "+mInSimpleMode+" widthn "+widthn+" height "+height +" screenHeight "+screenHeight);
+
 		}
 		else{
 			if (mClosed) {
