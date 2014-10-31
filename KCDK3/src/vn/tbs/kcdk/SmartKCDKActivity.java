@@ -7,6 +7,8 @@ import vn.tbs.kcdk.fragments.contents.media.DescriptionFragment;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
 import vn.tbs.kcdk.global.Common;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -66,19 +68,32 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 
 		mKCDKMediaPlayer = mSmartViewWithMenu.getKCDKMediaPlayer();
 
-		startService(new Intent(SmartKCDKActivity.this, KCDKMediaPlayerService.class));
+		if (!isMyServiceRunning(KCDKMediaPlayerService.class)) {
+		}
+		startService(new Intent(SmartKCDKActivity.this, KCDKMediaPlayerService.class));			
 		mIsBound = false; // by default set this to unbound
-		automaticBind();
+		//automaticBind();
 		doBindService();
 	}
 	
 	@Override
 	public void onServiceConnected(ComponentName name, IBinder service) {
 		Log.d(TAG, "C:onServiceConnected()");
+		Toast.makeText(this, "C:onServiceConnected", Toast.LENGTH_SHORT).show();
 		if (mKCDKMediaPlayer!=null) {
 			mKCDKMediaPlayer.initServiceMessenger(service);
 		}
 
+	}
+	
+	private boolean isMyServiceRunning(Class<?> serviceClass) {
+	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+	        if (serviceClass.getName().equals(service.service.getClassName())) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 
 	@Override
@@ -112,10 +127,10 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		}
 	}
 	@Override
-	public void doItemSelection(MediaInfo item) {
+	public void doItemSelection(MediaInfo item, boolean reset) {
 		if(mDescriptionFragment!=null&&mSmartViewWithMenu!=null){
 			mDescriptionFragment.updateData(item,mSmartViewWithMenu.getMediaImage(),this);
-			mSmartViewWithMenu.showMediaContent(item);
+			mSmartViewWithMenu.showMediaContent(item,reset);
 			/*if (!isMyServiceRunning(KCDKMediaPlayerService.class)) {
 				Intent intent = new Intent(getApplicationContext(),KCDKMediaPlayerService.class);
 				intent.putExtra(KCDKMediaPlayerService.START_PLAY, true);

@@ -129,7 +129,7 @@ public class Common {
 	public static final int UPDATE_PROGRESS_COMMAND = 6;
 	public static final int STOP_COMMAND = 7;
 	public static final int UPDATE_GUI_COMMAND = 8;
-	
+
 
 	public static final int BUFFERING_UPDATE_COMMAND = 100;
 	public static final int SEEKBAR_UPDATE_COMAND = 101;
@@ -148,6 +148,7 @@ public class Common {
 	public static final String DURATION="DURATION";
 	public static final String AUTHOR="AUTHOR";
 	public static final String MEDIA_IMAGE_URL="MEDIA_IMAGE_URL";
+	public static final String IS_PLAYING = "IS_PLAYING";
 
 	
 	public static Bundle initFragmentBund(FragmentMode mode, String[] values) {

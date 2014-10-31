@@ -3,13 +3,13 @@ package vn.tbs.kcdk.fragments.contents.media;
 import static vn.tbs.kcdk.global.Common.AUTHOR;
 import static vn.tbs.kcdk.global.Common.CONTENT_INFO;
 import static vn.tbs.kcdk.global.Common.DURATION;
+import static vn.tbs.kcdk.global.Common.IS_PLAYING;
 import static vn.tbs.kcdk.global.Common.MEDIA_FILE_URL;
 import static vn.tbs.kcdk.global.Common.MEDIA_ID;
 import static vn.tbs.kcdk.global.Common.MEDIA_IMAGE_URL;
 import static vn.tbs.kcdk.global.Common.MEDIA_TYPE_AUDIO;
 import static vn.tbs.kcdk.global.Common.SPEAKER;
 import static vn.tbs.kcdk.global.Common.TITLE;
-import android.content.Intent;
 import android.os.Bundle;
 
 public class MediaInfo {
@@ -32,6 +32,7 @@ public class MediaInfo {
 	private String mMediaImageUrl;
 	private String mEnjoyDonePercent;
 	private int mTimeDurationAgo;
+	private boolean mIsPlaying = false;
 	
 	
 	public MediaInfo(String mediaId, String title, String mediaFileUrl,
@@ -145,7 +146,14 @@ public class MediaInfo {
 			mDuration = extras.getString(DURATION);
 			mAuthor = extras.getString(AUTHOR);
 			mMediaImageUrl = extras.getString(MEDIA_IMAGE_URL);
+			mIsPlaying =  extras.getBoolean(IS_PLAYING,false);
 		}
+	}
+	
+	
+
+	public boolean isPlaying() {
+		return mIsPlaying;
 	}
 
 	public String getSpeaker() {

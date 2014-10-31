@@ -211,6 +211,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 				extras.putString(DURATION, mDuration);
 				extras.putString(AUTHOR, mAuthor);
 				extras.putString(MEDIA_IMAGE_URL, mMediaImageUrl);
+				extras.putBoolean(IS_PLAYING, mKCDKMediaPlayer.isPlaying());
 				Message msg = Message.obtain(null, UPDATE_GUI_COMMAND);
 				msg.setData(extras);
 				messenger.send(msg);
@@ -413,7 +414,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	/** Method which updates the SeekBar primary progress by current song playing position*/
 	private void primarySeekBarProgressUpdater() {
 		if (mKCDKMediaPlayer!=null&&mTimer!=null&&mPostingEnable) {
-			mTimer.scheduleAtFixedRate(new MyTask(), 0, 1000L);
+			mTimer.scheduleAtFixedRate(new MyTask(), 10, 1000L);
 		}
 	}
 
