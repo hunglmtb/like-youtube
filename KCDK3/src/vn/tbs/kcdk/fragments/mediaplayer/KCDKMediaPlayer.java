@@ -91,11 +91,12 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			case UPDATE_GUI_COMMAND:
 				Log.d(TAG, "C: RX MSG_SET_INT_VALUE");
 				//textIntValue.setText("Int Message: " + msg.arg1);
-				Bundle extras = msg.getData();
-				mCurrentMediaFileUrl = extras.getString(MEDIA_FILE_URL);
+				//mCurrentMediaFileUrl = extras.getString(MEDIA_FILE_URL);
 				if(mUpdateMediaDetailListener!=null){
+					Bundle extras = msg.getData();
 					MediaInfo item = new MediaInfo(extras);
-					mUpdateMediaDetailListener.doItemSelection(item);
+					boolean reset = false;
+					mUpdateMediaDetailListener.doItemSelection(item,reset);
 				}
 				break;
 				
@@ -441,7 +442,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	}
 
 
-	public void playMedia(MediaInfo item, boolean closed) {
+	public void playMedia(MediaInfo item, boolean closed, boolean reset) {
 		Log.i(TAG, "playMedia with MediaInfo  start");
 
 		if (item!=null) {
@@ -449,10 +450,13 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			String url = mContext.getString(R.string.action_url)+item.getMediaFileUrl();
 			//String url = "http://stream2.r15s91.vcdn.vn/fsfsdfdsfdserwrwq3/6de9da3107e057671ecb386c5c8bb797/539814e6/2013/12/15/4/b/4b896ff9151263672609e9cb9cc04c00.mp3";
 			//url = "http://download.a2.nixcdn.com/f140e6b9dc70829347640ed2a279f9c0/543b4b67/NhacCuaTui149/CoHangXom-QuangLe_33pwh.mp3";
-			boolean ok = playMedia(url,closed);
+			boolean ok = true;
+			if (reset) {
+				ok = playMedia(url,closed);				
+			}
 			ok = true;
 			if (ok) {
-				updateMediaInfo(item);
+				updateMediaInfo(item,reset);
 			}
 		}
 
@@ -460,10 +464,14 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	}
 
 
-	private void updateMediaInfo(MediaInfo item) {
+	private void updateMediaInfo(MediaInfo item, boolean reset) {
 		Log.i(TAG, "updateMediaInfo start");
 
 		mDurationTextView.setText(item.getDuration());
+		if (!reset) {
+			int iconResource = item.isPlaying()?R.drawable.media_pause:R.drawable.media_start;
+			mButtonPlayPause.setImageResource(iconResource);
+		}
 		//		mMediaPlayerTitle.setText(item.getTitle());
 
 		Log.i(TAG, "updateMediaInfo end");

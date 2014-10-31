@@ -215,7 +215,7 @@ public class SmartViewWithMenu {
 			mOnGlobalLayoutListener = new OnGlobalLayoutListener() { 
 				@Override 
 				public void onGlobalLayout() { 
-					setOriginalPosition(true);
+					//setOriginalPosition(false);
 //					MediaInfo item = new MediaInfo(intent);
 //					showMediaContent(item);
 					if (mKCDKMediaPlayer!=null) {
@@ -227,8 +227,8 @@ public class SmartViewWithMenu {
 			vto.addOnGlobalLayoutListener(mOnGlobalLayoutListener);
 		}
 		else{
-			setOriginalPosition(false);
 		}
+		setOriginalPosition(false);			
 		//kcdk init values
 		mSmartMenu = new SmartMenu(mMenuListView, mContext);
 	}
@@ -694,7 +694,7 @@ public class SmartViewWithMenu {
 		this.mOnTopListener = aOnTopListener;
 	}
 
-	public void showMediaContent(MediaInfo item) {
+	public void showMediaContent(MediaInfo item, boolean reset) {
 		// TODO Auto-generated method stub
 		//loadImage(item);
 		mClosed = false;
@@ -704,7 +704,7 @@ public class SmartViewWithMenu {
 		int screenHeight = mAppLayout.getHeight();
 		animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);
 		if (mKCDKMediaPlayer!=null) {
-			mKCDKMediaPlayer.playMedia(item,mClosed);						
+			mKCDKMediaPlayer.playMedia(item,mClosed,reset);						
 		}
 	}
 

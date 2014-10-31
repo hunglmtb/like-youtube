@@ -24,7 +24,7 @@ import com.example.android.bitmapfun.util.ImageFetcher;
 public class PinnedHeaderMediaListFragment extends ListFragment {
 	public interface ItemSelectionListener {
 
-		void doItemSelection(MediaInfo item);
+		void doItemSelection(MediaInfo item, boolean reset);
 
 	}
 
@@ -217,7 +217,7 @@ public class PinnedHeaderMediaListFragment extends ListFragment {
 		Log.i(TAG, "onListItemClick start" +position);
 
 		if (mItemListerner!=null) {
-			mItemListerner.doItemSelection(mPinnedHeaderMediaAdapter.getItem(position));			
+			mItemListerner.doItemSelection(mPinnedHeaderMediaAdapter.getItem(position),true);			
 		}
 		//Common.showMediaPage(mPinnedHeaderMediaAdapter.getItem(position),mKCDKActivity);
 		//		Common.showMediaContent(mMediaAdapter.getItem(position),mKCDKActivity);
