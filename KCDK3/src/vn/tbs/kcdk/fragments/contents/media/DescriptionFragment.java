@@ -9,6 +9,8 @@ import static vn.tbs.kcdk.global.Common.MEDIA_TITLE_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_VIEWCOUNT_KEY;
 import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
+import vn.tbs.kcdk.SmartKCDKActivity;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -150,7 +152,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	}
 
 
-	private void matchData() {
+	public void matchData() {
 		Log.i(TAG, "matchData start");
 
 		if (data!=null) {
@@ -258,7 +260,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 
 
-	public void updateData(MediaInfo item, ImageView imageView) {
+	public void updateData(MediaInfo item, ImageView imageView, Context context) {
 		if (item!=null&&item!=mMediaItem) {
 			mMediaItem = item;
 			if (imageView!=null) {
@@ -267,11 +269,11 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				/*mImageFetcher.setEnableOtherLoad(true);
 				mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);*/
 
-				imageView.setTag(imageTagFactory.build(mMediaImageUrl, getActivity()));
+				imageView.setTag(imageTagFactory.build(mMediaImageUrl, context));
 				imageManager.getLoader().load(imageView);
 			}
 
-			Typeface tf=Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");
+			Typeface tf=Typeface.createFromAsset(context.getAssets(),"Roboto-Light.ttf");
 
 			mContent.setText(item.getContentInfo());
 			mTitleTextView.setText(item.getTitle());
@@ -290,7 +292,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			if (mFacebookPluginFragment!=null) {
 				mFacebookPluginFragment.setMediaId(item.getMediaId());
 				mFacebookPluginFragment.setEnableLoading(true);
-				mFacebookPluginFragment.loadDataFromUrl();
+				mFacebookPluginFragment.loadDataFromUrl(context);
 			}
 			
 			if (mRelateMediaFragment!=null) {
