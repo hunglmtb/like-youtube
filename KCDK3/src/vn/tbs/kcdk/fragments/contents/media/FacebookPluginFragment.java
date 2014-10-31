@@ -127,7 +127,7 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 			originalWebView.restoreState(savedInstanceState);
 		}
 		else{
-			loadDataFromUrl();
+			loadDataFromUrl(getActivity());
 		}
 
 
@@ -167,15 +167,15 @@ public class FacebookPluginFragment extends Fragment implements Runnable  {
 	}
 
 
-	public void loadDataFromUrl() {
+	public void loadDataFromUrl(Context context) {
 		Log.i(TAG, "loadDataFromUrl start");
 
 		String url = null;
   		if (isLikePlugin ) {
-  			url =getActivity().getString(R.string.url_domain)+getActivity().getString(R.string.action_url_social)+"mediaId="+mMediaId;
+  			url =context.getString(R.string.url_domain)+context.getString(R.string.action_url_social)+"mediaId="+mMediaId;
 		}
 		else{
-			url =getActivity().getString(R.string.url_domain)+getActivity().getString(R.string.action_url_social)+"mediaId="+mMediaId;
+			url =context.getString(R.string.url_domain)+context.getString(R.string.action_url_social)+"mediaId="+mMediaId;
 //			String url = "http://hunglmbk.com:8888/commentplugin.html";
 			
 			/*

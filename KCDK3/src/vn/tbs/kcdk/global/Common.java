@@ -111,10 +111,13 @@ public class Common {
 	public static final String NOTIFICATION_DETAIL_MEDIA = "NOTIFICATION_DETAIL_MEDIA";
 	
 	//notification
-	public static final String ACTION_LAUNCH="xxx.yyy.zzz.ACTION_LAUNCH";
-	public static final String ACTION_STOP="xxx.yyy.zzz.ACTION_STOP";
-	public static final String ACTION_PLAY="xxx.yyy.zzz.ACTION_PLAY";
-	public static final String ACTION_PAUSE="xxx.yyy.zzz.ACTION_PAUSE";
+	public static final String ACTION_LAUNCH="vn.tbs.kcdk.ACTION_LAUNCH";
+	public static final String ACTION_STOP="vn.tbs.kcdk.ACTION_STOP";
+	public static final String ACTION_PLAY="vn.tbs.kcdk.ACTION_PLAY";
+	public static final String ACTION_PAUSE="vn.tbs.kcdk.ACTION_PAUSE";
+	public static final int REQUEST_CODE = 1000;
+	public static final int REQUEST_CODE_STOP = 1001;
+	public static final int REQUEST_CODE_PLAY = 1002;
 
 	public static String START_PLAY = "START_PLAY";
 	public static final int SEEKBAR_MAX = 100;
@@ -125,6 +128,8 @@ public class Common {
 	public static final int PAUSE_PLAY_COMMAND = 5;
 	public static final int UPDATE_PROGRESS_COMMAND = 6;
 	public static final int STOP_COMMAND = 7;
+	public static final int UPDATE_GUI_COMMAND = 8;
+	
 
 	public static final int BUFFERING_UPDATE_COMMAND = 100;
 	public static final int SEEKBAR_UPDATE_COMAND = 101;
@@ -132,9 +137,17 @@ public class Common {
 	public static final int UI_UPDATE_COMAND = 1000;
 	public static final int PLAYING = 10;
 	public static final int PAUSING = 11;
-	public static final int NOTIFICATION_ID = 0;
-	public static final int REQUEST_CODE_STOP = 0;
-	public static final int REQUEST_CODE_PLAY = 1;
+	public static final int NOTIFICATION_ID = 2000;
+	
+	//media fields
+	public static final String MEDIA_ID="MEDIA_ID";
+	public static final String TITLE="TITLE";
+	public static final String SPEAKER="SPEAKER";
+	public static final String MEDIA_FILE_URL="MEDIA_FILE_URL";
+	public static final String CONTENT_INFO="CONTENT_INFO";
+	public static final String DURATION="DURATION";
+	public static final String AUTHOR="AUTHOR";
+	public static final String MEDIA_IMAGE_URL="MEDIA_IMAGE_URL";
 
 	
 	public static Bundle initFragmentBund(FragmentMode mode, String[] values) {

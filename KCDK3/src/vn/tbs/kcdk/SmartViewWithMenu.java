@@ -1,11 +1,15 @@
 package vn.tbs.kcdk;
 
 
+import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
+import vn.tbs.kcdk.global.Common;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,7 +26,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
-public class SmartViewWithMenu  {
+public class SmartViewWithMenu {
 
 	public interface OnTopListener {
 
@@ -145,7 +149,7 @@ public class SmartViewWithMenu  {
 			}
 		}
 	};
-	private OnGlobalLayoutListener onGlobalLayoutListener;
+	private OnGlobalLayoutListener mOnGlobalLayoutListener;
 
 
 
@@ -161,8 +165,9 @@ public class SmartViewWithMenu  {
 		return mMainLayout;
 	}
 
-	public SmartViewWithMenu(Context aContext, final boolean showDetailMedia, OnTopListener onTopListener) {
+	public SmartViewWithMenu(Context aContext, final Intent intent, OnTopListener onTopListener) {
 		super();
+
 		this.mContext = aContext;
 		setOnTopListener(onTopListener);
 
@@ -171,6 +176,7 @@ public class SmartViewWithMenu  {
 
 		View playerNavigation = mMainLayout.findViewById(R.id.media_player_layout);
 		mKCDKMediaPlayer = new KCDKMediaPlayer(mContext,playerNavigation);
+		mKCDKMediaPlayer.setOnUpdateMediaDetailListener((ItemSelectionListener) aContext);
 
 
 		//mMainListView = (ListView) mMainLayout.findViewById( R.id.mainListView );
@@ -198,19 +204,31 @@ public class SmartViewWithMenu  {
 		mBackView.setOnTouchListener(mTouchListener);
 
 		//setOriginalPosition(showDetailMedia);
-		
-		final ViewTreeObserver vto = mAppLayout.getViewTreeObserver(); 
-		onGlobalLayoutListener = new OnGlobalLayoutListener() { 
-		    @Override 
-		    public void onGlobalLayout() { 
-		        // Put your code here. 
-	    		setOriginalPosition(showDetailMedia);
-		    	mAppLayout.getViewTreeObserver().removeGlobalOnLayoutListener(onGlobalLayoutListener);
-		    } 
-		};
-		
-		vto.addOnGlobalLayoutListener(onGlobalLayoutListener);
+		boolean showDetailMedia = false;
+		if (intent!=null) {
+			String action = intent.getAction();
+			showDetailMedia = action!=null&&action.length()>0&&action.equals(Common.ACTION_LAUNCH);
+		}
 
+		if (showDetailMedia) {
+			ViewTreeObserver vto = mAppLayout.getViewTreeObserver(); 
+			mOnGlobalLayoutListener = new OnGlobalLayoutListener() { 
+				@Override 
+				public void onGlobalLayout() { 
+					setOriginalPosition(true);
+//					MediaInfo item = new MediaInfo(intent);
+//					showMediaContent(item);
+					if (mKCDKMediaPlayer!=null) {
+						mKCDKMediaPlayer.requestUpdateGUI();
+					}
+					mAppLayout.getViewTreeObserver().removeGlobalOnLayoutListener(mOnGlobalLayoutListener);
+				} 
+			};
+			vto.addOnGlobalLayoutListener(mOnGlobalLayoutListener);
+		}
+		else{
+			setOriginalPosition(false);
+		}
 		//kcdk init values
 		mSmartMenu = new SmartMenu(mMenuListView, mContext);
 	}
@@ -325,7 +343,7 @@ public class SmartViewWithMenu  {
 		mOnTop = showDetailMedia;
 		mClosed = !showDetailMedia;
 		mMenuHiden = true;
-//		int xAxis = mAppLayout.getWidth() - OVERLAY_WIDTH - OVERLAY_BOTTOM_MARGIN;
+		//		int xAxis = mAppLayout.getWidth() - OVERLAY_WIDTH - OVERLAY_BOTTOM_MARGIN;
 		int xAxis = 0;
 		int yAxis = 0;
 		boolean aIsSlidingX = !showDetailMedia;
@@ -689,4 +707,5 @@ public class SmartViewWithMenu  {
 			mKCDKMediaPlayer.playMedia(item,mClosed);						
 		}
 	}
+
 }

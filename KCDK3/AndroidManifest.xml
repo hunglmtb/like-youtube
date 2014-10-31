@@ -23,6 +23,7 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -31,9 +32,10 @@
             android:name="KCDKMediaPlayerService"
             android:exported="false" >
             <intent-filter>
-                <action android:name="xxx.yyy.zzz.ACTION_PLAY" />
-                <action android:name="xxx.yyy.zzz.ACTION_PAUSE" />
-                <action android:name="xxx.yyy.zzz.ACTION_STOP" />
+                <action android:name="vn.tbs.kcdk.ACTION_LAUNCH" />
+                <action android:name="vn.tbs.kcdk.ACTION_PLAY" />
+                <action android:name="vn.tbs.kcdk.ACTION_PAUSE" />
+                <action android:name="vn.tbs.kcdk.ACTION_STOP" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

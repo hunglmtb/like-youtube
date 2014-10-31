@@ -1,6 +1,12 @@
 package vn.tbs.kcdk;
 
+import static vn.tbs.kcdk.global.Common.AUTHOR;
 import static vn.tbs.kcdk.global.Common.BUFFERING_UPDATE_COMMAND;
+import static vn.tbs.kcdk.global.Common.CONTENT_INFO;
+import static vn.tbs.kcdk.global.Common.DURATION;
+import static vn.tbs.kcdk.global.Common.MEDIA_FILE_URL;
+import static vn.tbs.kcdk.global.Common.MEDIA_ID;
+import static vn.tbs.kcdk.global.Common.MEDIA_IMAGE_URL;
 import static vn.tbs.kcdk.global.Common.MSG_REGISTER_CLIENT;
 import static vn.tbs.kcdk.global.Common.MSG_UNREGISTER_CLIENT;
 import static vn.tbs.kcdk.global.Common.NOTIFICATION_ID;
@@ -12,11 +18,13 @@ import static vn.tbs.kcdk.global.Common.REQUEST_CODE_PLAY;
 import static vn.tbs.kcdk.global.Common.REQUEST_CODE_STOP;
 import static vn.tbs.kcdk.global.Common.SEEKBAR_MAX;
 import static vn.tbs.kcdk.global.Common.SEEKBAR_UPDATE_COMAND;
+import static vn.tbs.kcdk.global.Common.SPEAKER;
 import static vn.tbs.kcdk.global.Common.START_PLAY;
 import static vn.tbs.kcdk.global.Common.START_PLAY_COMMAND;
 import static vn.tbs.kcdk.global.Common.STOP_COMMAND;
+import static vn.tbs.kcdk.global.Common.TITLE;
 import static vn.tbs.kcdk.global.Common.UI_UPDATE_COMAND;
-import static vn.tbs.kcdk.global.Common.UPDATE_PROGRESS_COMMAND;
+import static vn.tbs.kcdk.global.Common.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +39,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -49,14 +58,10 @@ import android.widget.RemoteViews;
 public class KCDKMediaPlayerService extends Service implements OnBufferingUpdateListener, OnCompletionListener {
 	private static final String TAG = KCDKMediaPlayer.class.getSimpleName();
 
-
-
 	private MediaPlayer mKCDKMediaPlayer = null;
 	private boolean      isPlaying = false;
 	private Timer mTimer = new Timer();
 	private int mMediaFileLengthInMilliseconds = 300000;
-
-	private String mCurrentUrl = null;
 	private static boolean isRunning = false;
 
 	private static int classID = 579; // just a number
@@ -81,7 +86,19 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 	private NotificationManager mNotificationManager;
 
+	//media
 	private String mMediaTitle = "";
+	private String mMediaId;
+	private String mMediaFileUrl;
+	private String mSpeaker;
+	private String mContentInfo;
+	private String mDuration;
+	private String mMediaLinkUrl;
+	private String mAuthor;
+	private String mPublishedDate;
+	private String mViewCount;
+	private String mMediaImageThumbUrl;
+	private String mMediaImageUrl;
 
 	/**
 	 * Handle incoming messages from MainActivity
@@ -103,8 +120,14 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 				break;
 			case START_PLAY_COMMAND:
 				Bundle data = msg.getData();
-				mCurrentUrl = data.getString("url");
-				mMediaTitle = data.getString("title");
+				mMediaFileUrl = data.getString(MEDIA_FILE_URL);
+				mMediaId = data.getString(MEDIA_ID);
+				mMediaTitle = data.getString(TITLE);
+				mSpeaker = data.getString(SPEAKER);
+				mContentInfo = data.getString(CONTENT_INFO);
+				mDuration = data.getString(DURATION);
+				mAuthor = data.getString(AUTHOR);
+				mMediaImageUrl = data.getString(MEDIA_IMAGE_URL);
 				startPlayMedia();
 				//incrementBy = msg.arg1;
 				break;
@@ -122,6 +145,9 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 				int progress = msg.arg1;
 				updateProgress(progress);
 				//incrementBy = msg.arg1;
+				break;
+			case UPDATE_GUI_COMMAND:
+				sendMediaData2GUI();
 				break;
 			default:
 				super.handleMessage(msg);
@@ -167,6 +193,32 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 
 		super.onCreate();
+	}
+
+	public void sendMediaData2GUI() {
+		Log.d(TAG, "S:sendMediaData2GUI");
+		Iterator<Messenger> messengerIterator = mClients.iterator();
+		while (messengerIterator.hasNext()) {
+			Messenger messenger = messengerIterator.next();
+			try {
+				// Send data as a String
+				Bundle  extras = new Bundle();
+				extras.putString(MEDIA_ID, mMediaId);
+				extras.putString(MEDIA_FILE_URL, mMediaFileUrl);
+				extras.putString(TITLE, mMediaTitle);
+				extras.putString(SPEAKER, mSpeaker);
+				extras.putString(CONTENT_INFO, mContentInfo);
+				extras.putString(DURATION, mDuration);
+				extras.putString(AUTHOR, mAuthor);
+				extras.putString(MEDIA_IMAGE_URL, mMediaImageUrl);
+				Message msg = Message.obtain(null, UPDATE_GUI_COMMAND);
+				msg.setData(extras);
+				messenger.send(msg);
+			} catch (RemoteException e) {
+				// The client is dead. Remove it from the list.
+				mClients.remove(messenger);
+			}
+		}
 	}
 
 	public void pauseMediaPlayer(boolean isStop) {
@@ -294,10 +346,10 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		try {
 			// setup song from http://www.hrupin.com/wp-content/uploads/mp3/testsong_20_sec.mp3 URL to mediaplayer data source
 			//			mMediaPlayer.setDataSource(mContext.getString(R.string.mp3_url_test));
-			if (mCurrentUrl!=null&&mCurrentUrl.length()>0) {
+			if (mMediaFileUrl!=null&&mMediaFileUrl.length()>0) {
 				sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PAUSING, 0);
 				mKCDKMediaPlayer.reset();
-				mKCDKMediaPlayer.setDataSource(mCurrentUrl );
+				mKCDKMediaPlayer.setDataSource(mMediaFileUrl );
 				// you must call this method after setup the datasource in setDataSource method.
 				//After calling prepare() the instance of MediaPlayer starts load data from URL to internal buffer. 
 				mKCDKMediaPlayer.prepareAsync();				
@@ -415,8 +467,21 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		
 		Intent notificationIntent = new Intent(getApplicationContext(), SmartKCDKActivity.class);
 		notificationIntent.setAction(Common.ACTION_LAUNCH);
-		pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,notificationIntent, 0);
-		//Create the notification instance.
+		
+		Bundle  extras = new Bundle();
+		extras.putString(MEDIA_ID, mMediaId);
+		extras.putString(MEDIA_FILE_URL, mMediaFileUrl);
+		extras.putString(TITLE, mMediaTitle);
+		extras.putString(SPEAKER, mSpeaker);
+		extras.putString(CONTENT_INFO, mContentInfo);
+		extras.putString(DURATION, mDuration);
+		extras.putString(AUTHOR, mAuthor);
+		extras.putString(MEDIA_IMAGE_URL, mMediaImageUrl);
+		notificationIntent.putExtras(extras);
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		pendingIntent = PendingIntent.getActivity(getApplicationContext(), REQUEST_CODE,notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		
+				//Create the notification instance.
 		mNotification = new NotificationCompat.Builder(getApplicationContext())
 		.setSmallIcon(R.drawable.ic_launcher).setOngoing(false)
 		.setWhen(System.currentTimeMillis())                
@@ -424,7 +489,10 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		.setDeleteIntent(deletePendingIntent)
 		.setContentIntent(pendingIntent)
 		.build();
-
+		
+		//mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+		//mNotification.setLatestEventInfo(getApplicationContext(), "title", "mess", pendingIntent);
+		
 		//Show the notification in the notification bar.
 		mNotificationManager.notify(NOTIFICATION_ID, mNotification);      
 	}   

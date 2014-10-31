@@ -53,16 +53,9 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		sFont = Typeface.createFromAsset(this.getAssets(),"Roboto-Light.ttf");
-
 		Intent intent = getIntent();
-		boolean showDetailMedia = false;
-		if (intent!=null) {
-			String action = intent.getAction();
-			showDetailMedia = action!=null&&action.length()>0&&action.equals(Common.ACTION_LAUNCH);
-		}
-
 		//----------------------------------------------------------------------------
-		mSmartViewWithMenu  = new SmartViewWithMenu(this,showDetailMedia,this);
+		mSmartViewWithMenu  = new SmartViewWithMenu(this,intent,this);
 		View view = mSmartViewWithMenu.getView();
 		setContentView(view);
 
@@ -78,7 +71,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		automaticBind();
 		doBindService();
 	}
-
+	
 	@Override
 	public void onServiceConnected(ComponentName name, IBinder service) {
 		Log.d(TAG, "C:onServiceConnected()");
@@ -121,7 +114,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	@Override
 	public void doItemSelection(MediaInfo item) {
 		if(mDescriptionFragment!=null&&mSmartViewWithMenu!=null){
-			mDescriptionFragment.updateData(item,mSmartViewWithMenu.getMediaImage());
+			mDescriptionFragment.updateData(item,mSmartViewWithMenu.getMediaImage(),this);
 			mSmartViewWithMenu.showMediaContent(item);
 			/*if (!isMyServiceRunning(KCDKMediaPlayerService.class)) {
 				Intent intent = new Intent(getApplicationContext(),KCDKMediaPlayerService.class);

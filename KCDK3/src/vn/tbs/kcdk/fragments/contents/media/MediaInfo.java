@@ -1,6 +1,16 @@
 package vn.tbs.kcdk.fragments.contents.media;
 
+import static vn.tbs.kcdk.global.Common.AUTHOR;
+import static vn.tbs.kcdk.global.Common.CONTENT_INFO;
+import static vn.tbs.kcdk.global.Common.DURATION;
+import static vn.tbs.kcdk.global.Common.MEDIA_FILE_URL;
+import static vn.tbs.kcdk.global.Common.MEDIA_ID;
+import static vn.tbs.kcdk.global.Common.MEDIA_IMAGE_URL;
 import static vn.tbs.kcdk.global.Common.MEDIA_TYPE_AUDIO;
+import static vn.tbs.kcdk.global.Common.SPEAKER;
+import static vn.tbs.kcdk.global.Common.TITLE;
+import android.content.Intent;
+import android.os.Bundle;
 
 public class MediaInfo {
 
@@ -123,6 +133,19 @@ public class MediaInfo {
 		this.mAuthor = mAuthor;
 		this.mPublishedDate = mPublishedDate;
 		this.mViewCount = mViewCount;
+	}
+
+	public MediaInfo(Bundle extras) {
+		if (extras!=null) {
+			mMediaId = extras.getString(MEDIA_ID);
+			mMediaFileUrl = extras.getString(MEDIA_FILE_URL);
+			mTitle = extras.getString(TITLE);
+			mSpeaker = extras.getString(SPEAKER);
+			mContentInfo = extras.getString(CONTENT_INFO);
+			mDuration = extras.getString(DURATION);
+			mAuthor = extras.getString(AUTHOR);
+			mMediaImageUrl = extras.getString(MEDIA_IMAGE_URL);
+		}
 	}
 
 	public String getSpeaker() {

@@ -1,18 +1,27 @@
 package vn.tbs.kcdk.fragments.mediaplayer;
 
+import static vn.tbs.kcdk.global.Common.AUTHOR;
 import static vn.tbs.kcdk.global.Common.BUFFERING_UPDATE_COMMAND;
+import static vn.tbs.kcdk.global.Common.CONTENT_INFO;
+import static vn.tbs.kcdk.global.Common.DURATION;
+import static vn.tbs.kcdk.global.Common.MEDIA_FILE_URL;
+import static vn.tbs.kcdk.global.Common.MEDIA_ID;
+import static vn.tbs.kcdk.global.Common.MEDIA_IMAGE_URL;
 import static vn.tbs.kcdk.global.Common.MSG_REGISTER_CLIENT;
 import static vn.tbs.kcdk.global.Common.MSG_SET_STRING_VALUE;
 import static vn.tbs.kcdk.global.Common.PAUSE_PLAY_COMMAND;
 import static vn.tbs.kcdk.global.Common.PLAYING;
 import static vn.tbs.kcdk.global.Common.PLAY_PAUSE_UPDATE_COMAND;
 import static vn.tbs.kcdk.global.Common.SEEKBAR_UPDATE_COMAND;
+import static vn.tbs.kcdk.global.Common.SPEAKER;
 import static vn.tbs.kcdk.global.Common.START_PLAY_COMMAND;
 import static vn.tbs.kcdk.global.Common.STOP_COMMAND;
+import static vn.tbs.kcdk.global.Common.TITLE;
 import static vn.tbs.kcdk.global.Common.UI_UPDATE_COMAND;
+import static vn.tbs.kcdk.global.Common.UPDATE_GUI_COMMAND;
 import static vn.tbs.kcdk.global.Common.UPDATE_PROGRESS_COMMAND;
-
 import vn.tbs.kcdk.R;
+import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -38,11 +47,13 @@ import android.widget.Toast;
 
 public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBufferingUpdateListener, OnCompletionListener{
 
+
 	private static final String TAG = KCDKMediaPlayer.class.getSimpleName();
 	private Messenger mServiceMessenger = null;
 
 	private final Messenger mMessenger = new Messenger(
 			new IncomingMessageHandler());
+	public ItemSelectionListener mUpdateMediaDetailListener;
 
 	/**
 	 * Handle incoming messages from TimerService
@@ -77,6 +88,17 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 				Log.d(TAG, "C:RX MSG_SET_STRING_VALUE");
 				//textStrValue.setText("Str Message: " + str1);
 				break;
+			case UPDATE_GUI_COMMAND:
+				Log.d(TAG, "C: RX MSG_SET_INT_VALUE");
+				//textIntValue.setText("Int Message: " + msg.arg1);
+				Bundle extras = msg.getData();
+				mCurrentMediaFileUrl = extras.getString(MEDIA_FILE_URL);
+				if(mUpdateMediaDetailListener!=null){
+					MediaInfo item = new MediaInfo(extras);
+					mUpdateMediaDetailListener.doItemSelection(item);
+				}
+				break;
+				
 			default:
 				super.handleMessage(msg);
 			}
@@ -93,25 +115,17 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	private TextView mDurationTextView;
 	//private TextView mMediaPlayerTitle;
 	private TextView mCurrentPlayingTimeTextView;
-
-	//media player 
-	//private MediaPlayer mKCDKMediaPlayer;
-	// this value contains the song duration in milliseconds. Look at getDuration() method in MediaPlayer class
-	private int mMediaFileLengthInMilliseconds = 300000;
-
-	private final Handler mHandler = new Handler();
-
-	private String mCurrentUrl = null;
-
-
-	private Runnable mUpdateSeekbarCallback;
-
 	private MediaInfo mMediaInfoItem;
-
-	private Runnable mPlayingCommandRunable;
-
 	private View mMediaProgressLayout;
 
+	private String mCurrentMediaFileUrl = null;
+
+	
+
+	public void setOnUpdateMediaDetailListener(
+			ItemSelectionListener mUpdateMediaDetailListener) {
+		this.mUpdateMediaDetailListener = mUpdateMediaDetailListener;
+	}
 
 
 	public void setServiceMessenger(Messenger aServiceMessenger) {
@@ -257,16 +271,23 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	private boolean startPlayMedia() {
 		Log.i(TAG, "playMedia start");
 
-		if (mServiceMessenger != null) {
+		if (mServiceMessenger != null&&mMediaInfoItem!=null) {
 			try {
 				int intvaluetosend = 10;
 				Message msg = Message.obtain(null,
 						START_PLAY_COMMAND, intvaluetosend, 0);
 				msg.replyTo = mMessenger;
-				Bundle data = new Bundle();
-				data.putString("url", mCurrentUrl);
-				data.putString("title", mMediaInfoItem!=null?mMediaInfoItem.getTitle():"no title");
-				msg.setData(data);
+				Bundle extras = new Bundle();
+				extras.putString(MEDIA_FILE_URL, mCurrentMediaFileUrl);
+				extras.putString(TITLE, mMediaInfoItem.getTitle());
+				extras.putString(MEDIA_ID, mMediaInfoItem.getMediaId());
+				extras.putString(TITLE, mMediaInfoItem.getTitle());
+				extras.putString(SPEAKER, mMediaInfoItem.getSpeaker());
+				extras.putString(CONTENT_INFO, mMediaInfoItem.getContentInfo());
+				extras.putString(DURATION, mMediaInfoItem.getDuration());
+				extras.putString(AUTHOR, mMediaInfoItem.getAuthor());
+				extras.putString(MEDIA_IMAGE_URL, mMediaInfoItem.getMediaImageUrl());
+				msg.setData(extras);
 				mServiceMessenger.send(msg);
 				Log.i(TAG, "playMedia send message");
 
@@ -386,7 +407,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 		Log.i(TAG, "playMedia with url  start");
 		Log.e(TAG, "kaka initMediaPlayer mCurrentUrl "+url);
 		if (url!=null&&url.length()>0) {
-			if (!url.equals(mCurrentUrl)||closed) {
+			if (!url.equals(mCurrentMediaFileUrl)||closed) {
 				/*mPlayingCommandRunable = new Runnable() {
 					@Override
 					public void run() {
@@ -402,7 +423,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 				mHandler.postDelayed(mPlayingCommandRunable,500);		
 				 */
 				//mKCDKMediaPlayer.reset();
-				mCurrentUrl = url;
+				mCurrentMediaFileUrl = url;
 				startPlayMedia();
 				return true;
 			}
@@ -506,6 +527,11 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 
 	public void stopMediaPlayer() {
 		sendMessageToService(STOP_COMMAND, 0);
+	}
+
+
+	public void requestUpdateGUI() {
+		sendMessageToService(UPDATE_GUI_COMMAND,0);
 	}
 
 
