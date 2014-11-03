@@ -61,7 +61,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	private MediaPlayer mKCDKMediaPlayer = null;
 	private boolean      isPlaying = false;
 	private Timer mTimer = new Timer();
-	private int mMediaFileLengthInMilliseconds = 300000;
+	private int mMediaFileLengthInMilliseconds = 180000;
 	private static boolean isRunning = false;
 
 	private static int classID = 579; // just a number
@@ -121,6 +121,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			case START_PLAY_COMMAND:
 				Bundle data = msg.getData();
 				mMediaFileUrl = data.getString(MEDIA_FILE_URL);
+				mMediaFileUrl = "http://download.a1.nixcdn.com/1e5b9e0574a804e212375655b7d42687/545733a2/NhacCuaTui856/Exodus-HoaTau-3089103.mp3";
 				mMediaId = data.getString(MEDIA_ID);
 				mMediaTitle = data.getString(TITLE);
 				mSpeaker = data.getString(SPEAKER);
@@ -224,13 +225,13 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 	public void pauseMediaPlayer(boolean isStop) {
 		if (mKCDKMediaPlayer!=null) {
-			mPostingEnable = false;
 			mKCDKMediaPlayer.pause();
 			showControllerInNotification();
 			sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PAUSING, 0);
 			if (isStop) {
 				mNotificationManager.cancel(NOTIFICATION_ID);				
 			}
+			mPostingEnable = false;
 		}
 	}
 
@@ -299,9 +300,13 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	public void onCompletion(MediaPlayer mp) {
 		Log.i(TAG, "onCompletion start");
 
-		/** MediaPlayer onCompletion event handler. Method which calls then song playing is complete*/
-		//mButtonPlayPause.setImageResource(R.drawable.media_start);
-
+		int current = mp.getCurrentPosition();
+		boolean reached2End = current>=mMediaFileLengthInMilliseconds-500;
+		
+		if (reached2End) {
+			mKCDKMediaPlayer.seekTo(1);
+			pauseMediaPlayer(false);
+		}
 		Log.i(TAG, "onCompletion end");
 	}
 
