@@ -175,13 +175,7 @@ public class PinnedHeaderMediaListFragment extends ListFragment {
 	@Override
 	public void onResume() {
 		Log.i(TAG, "onResume start");
-
 		super.onResume();
-
-		/*if (mKCDKActivity!=null) {
-			mKCDKActivity.setmContentFragment(this);			
-		}
-*/
 		//lrucache
 		mImageFetcher.setExitTasksEarly(false);
 		if (mPinnedHeaderMediaAdapter!=null) {
@@ -249,5 +243,20 @@ public class PinnedHeaderMediaListFragment extends ListFragment {
 
 	public void setOnItemSelectionListener(ItemSelectionListener alistener) {
 		this.mItemListerner = alistener;
+	}
+
+
+	public void setEnableLoading(boolean disable) {
+		if (mEndlessAdapter!=null) {
+			mEndlessAdapter.setEnableLoading(!disable);
+		}
+	}
+	
+	public void reloadMediaList() {
+		Log.i(TAG, "reloadMediaList start");
+		if (mEndlessAdapter!=null) {
+			mEndlessAdapter.reload();
+		}
+		Log.i(TAG, "reloadMediaList end");
 	}
 }

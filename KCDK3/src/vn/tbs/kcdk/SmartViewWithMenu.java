@@ -150,6 +150,7 @@ public class SmartViewWithMenu {
 		}
 	};
 	private OnGlobalLayoutListener mOnGlobalLayoutListener;
+	private boolean mShowDetailMedia = false; 
 
 
 
@@ -163,6 +164,12 @@ public class SmartViewWithMenu {
 
 	public RelativeLayout getView() {
 		return mMainLayout;
+	}
+	
+	
+
+	public boolean isShowDetailMedia() {
+		return mShowDetailMedia;
 	}
 
 	public SmartViewWithMenu(Context aContext, final Intent intent, OnTopListener onTopListener) {
@@ -203,14 +210,12 @@ public class SmartViewWithMenu {
 		mMenuListView.setOnTouchListener(mTouchListener);
 		mBackView.setOnTouchListener(mTouchListener);
 
-		//setOriginalPosition(showDetailMedia);
-		boolean showDetailMedia = false;
 		if (intent!=null) {
 			String action = intent.getAction();
-			showDetailMedia = action!=null&&action.length()>0&&action.equals(Common.ACTION_LAUNCH);
+			mShowDetailMedia = action!=null&&action.length()>0&&action.equals(Common.ACTION_LAUNCH);
 		}
 
-		if (showDetailMedia) {
+		if (mShowDetailMedia) {
 			ViewTreeObserver vto = mAppLayout.getViewTreeObserver(); 
 			mOnGlobalLayoutListener = new OnGlobalLayoutListener() { 
 				@Override 
@@ -222,6 +227,7 @@ public class SmartViewWithMenu {
 						mKCDKMediaPlayer.requestUpdateGUI();
 					}
 					mAppLayout.getViewTreeObserver().removeGlobalOnLayoutListener(mOnGlobalLayoutListener);
+					mShowDetailMedia = false;
 				} 
 			};
 			vto.addOnGlobalLayoutListener(mOnGlobalLayoutListener);
