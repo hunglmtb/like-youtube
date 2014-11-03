@@ -6,7 +6,6 @@ import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectio
 import vn.tbs.kcdk.fragments.contents.media.DescriptionFragment;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
-import vn.tbs.kcdk.global.Common;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.SearchManager;
@@ -18,9 +17,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -65,11 +62,10 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		mDescriptionFragment = (DescriptionFragment)getSupportFragmentManager().findFragmentById(R.id.secondFragment);
 
 		mPinnedHeaderMediaListFragment.setOnItemSelectionListener(this);
+		mPinnedHeaderMediaListFragment.setEnableLoading(mSmartViewWithMenu.isShowDetailMedia());
 
 		mKCDKMediaPlayer = mSmartViewWithMenu.getKCDKMediaPlayer();
 
-		if (!isMyServiceRunning(KCDKMediaPlayerService.class)) {
-		}
 		startService(new Intent(SmartKCDKActivity.this, KCDKMediaPlayerService.class));			
 		mIsBound = false; // by default set this to unbound
 		//automaticBind();
@@ -123,6 +119,10 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 			}
 			else{
 				actionBar.show();
+				if (mPinnedHeaderMediaListFragment!=null) {
+					mPinnedHeaderMediaListFragment.reloadMediaList();
+				}
+				
 			}
 		}
 	}

@@ -8,6 +8,7 @@ import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.global.Common;
 import vn.tbs.kcdk.global.ServerConnection;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,13 @@ public class EndlessLoadAdapter extends EndlessAdapter {
 	private Context mContext;
 	private PinnedHeaderMediaAdapter mPinnedHeaderMediaAdapter;
 	private List<MediaInfo> mMoreData = null;
+	private boolean mEnableLoading = true;
 
+	
+	
+	public void setEnableLoading(boolean enableLoading) {
+		this.mEnableLoading = enableLoading;
+	}
 
 	EndlessLoadAdapter(Context ctxt, ArrayList<Integer> list) {
 		super(new ArrayAdapter<Integer>(ctxt,
@@ -81,16 +88,24 @@ public class EndlessLoadAdapter extends EndlessAdapter {
 
 		if (mPinnedHeaderMediaAdapter!=null) {
 			//load more data
-			if (mPinnedHeaderMediaAdapter!=null&&mPinnedHeaderMediaAdapter.getCount()<35) {
+			Log.i("kuku", "cacheInBackground start");
+			if (mEnableLoading&&mPinnedHeaderMediaAdapter!=null&&mPinnedHeaderMediaAdapter.getCount()<35) {
 				String url = Common.getConnectUrl(mContext,Common.URL_MEDIA_LIST_MODE,mPinnedHeaderMediaAdapter.getUrlParams());
+				Log.i("kuku", "url "+url);
+
 				mMoreData = ServerConnection.loadMediaList(url);
-				if (mMoreData==null) {
+				if (mMoreData==null||mMoreData.size()<=0) {
+					Log.i("kuku", "cacheInBackground end mMoreData null false");
 					return false;
+				}
+				else{
+					Log.i("kuku", "cacheInBackground end hasMoreData");
+					return mPinnedHeaderMediaAdapter.hasMoreData();
 				}
 			}
 
-			return mPinnedHeaderMediaAdapter.hasMoreData();
 		}
+		Log.i("kuku", "cacheInBackground end false");
 
 		return false;
 	}
@@ -106,6 +121,14 @@ public class EndlessLoadAdapter extends EndlessAdapter {
 	void startProgressAnimation() {
 		if (pendingView!=null) {
 			pendingView.startAnimation(rotate);
+		}
+	}
+
+	public void reload() {
+		mEnableLoading = true;
+		mPinnedHeaderMediaAdapter.setOffset(0);
+		if (mMoreData==null||mMoreData.size()<=0) {
+			super.restartAppending();
 		}
 	}
 }

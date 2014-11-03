@@ -171,8 +171,12 @@ public class MediaAdapter extends BaseAdapter {
 	}
 
 
+	public void setOffset(int mOffset) {
+		this.mOffset = mOffset;
+	}
+
+
 	public String[] getUrlParams() {
 		return new String[] {mMediaGroupMode,String.valueOf(mLimit),String.valueOf(mOffset)};
-
 	}
 }
