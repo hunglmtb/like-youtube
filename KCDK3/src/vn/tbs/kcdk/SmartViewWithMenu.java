@@ -30,7 +30,7 @@ public class SmartViewWithMenu {
 
 	public interface OnTopListener {
 
-		void doSmartViewOnTop(int yAxis);
+		void doSmartViewOnTop(int yAxis, boolean reachBottom);
 
 	}
 
@@ -556,6 +556,10 @@ public class SmartViewWithMenu {
 					updateBackView(true,BACK_VIEW_WIDTH,0);
 					mInSimpleMode = mInSimpleMode&&!simpleModeSwitched;
 					mOnTop = mInSimpleMode||mOnTop;
+					
+					if (mOnTopListener!=null&&!aIsSlidingX&&!mInSimpleMode) {
+						mOnTopListener.doSmartViewOnTop(newYAxis,!mOnTop&&!mInSimpleMode);
+					}
 				}
 			}
 
@@ -596,7 +600,7 @@ public class SmartViewWithMenu {
 
 			if (mYAxis == screenHeight) {
 				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);			
+				mRootRelativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 			}
 			else{
 				mRootRelativeLayoutParams.bottomMargin = margin;
@@ -654,7 +658,7 @@ public class SmartViewWithMenu {
 		mKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&mYAxis==0),false);
 
 		if (mOnTopListener!=null&&!aIsSlidingX&&!mInSimpleMode) {
-			mOnTopListener.doSmartViewOnTop(mYAxis);
+			mOnTopListener.doSmartViewOnTop(mYAxis,false);
 		}
 	}
 

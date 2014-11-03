@@ -110,7 +110,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		}
 	}
 	@Override
-	public void doSmartViewOnTop(int yAxis) {
+	public void doSmartViewOnTop(int yAxis, boolean reachBottom){
 		android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 		if (actionBar!=null) {
 			boolean hide = yAxis<=actionBar.getHeight();
@@ -119,7 +119,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 			}
 			else{
 				actionBar.show();
-				if (mPinnedHeaderMediaListFragment!=null) {
+				if (reachBottom&&mPinnedHeaderMediaListFragment!=null) {
 					mPinnedHeaderMediaListFragment.reloadMediaList();
 				}
 				
