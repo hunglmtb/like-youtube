@@ -71,7 +71,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 				int value = data.getInt("value");
 				int sencondValue = data.getInt("sencondValue");
 				if (type==BUFFERING_UPDATE_COMMAND&&mSeekBarProgress!=null) {
-					mSeekBarProgress.setSecondaryProgress(value);	
+					mSeekBarProgress.setSecondaryProgress(value);
 				}
 				if (type==SEEKBAR_UPDATE_COMAND) {
 					mSeekBarProgress.setProgress(sencondValue);
@@ -202,6 +202,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 				int progress = sb.getProgress();
 				Log.i(TAG, "hehe progress "+progress);
 				sendMessageToService(UPDATE_PROGRESS_COMMAND,progress);
+				pauseOrPlay(false);
 				//int playPositionInMillisecconds = (mMediaFileLengthInMilliseconds / SEEKBAR_MAX) * sb.getProgress();
 				//mKCDKMediaPlayer.seekTo(playPositionInMillisecconds);
 
