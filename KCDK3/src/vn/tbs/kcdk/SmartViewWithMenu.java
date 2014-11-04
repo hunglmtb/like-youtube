@@ -498,8 +498,8 @@ public class SmartViewWithMenu {
 				mOnTop = (mRootRelativeLayoutParams.bottomMargin)>DRAG_MOVE_RANGE;
 				int screenWidth = mAppLayout.getWidth();
 				int leftPointerX = mStartDragX - (screenWidth - OVERLAY_WIDTH/2 );
-				mCloseOnRight = (x - leftPointerX)>=screenWidth/2&&mRootRelativeLayoutParams.leftMargin>=(screenWidth - 2*OVERLAY_WIDTH/3 );
-				mClosed = (x - leftPointerX)<screenWidth/2||mCloseOnRight;
+				mCloseOnRight = mIsSlidingX&&((x - leftPointerX)>=screenWidth/2&&mRootRelativeLayoutParams.leftMargin>=(screenWidth - 2*OVERLAY_WIDTH/3 ));
+				mClosed = mIsSlidingX&&((x - leftPointerX)<screenWidth/2||mCloseOnRight);
 				//mClosed = false;
 			}
 			mOnTop= mInSimpleMode||mOnTop;
