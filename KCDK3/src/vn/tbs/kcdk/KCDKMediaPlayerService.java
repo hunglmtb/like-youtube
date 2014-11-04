@@ -121,7 +121,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			case START_PLAY_COMMAND:
 				Bundle data = msg.getData();
 				mMediaFileUrl = data.getString(MEDIA_FILE_URL);
-				mMediaFileUrl = "http://download.a1.nixcdn.com/1e5b9e0574a804e212375655b7d42687/545733a2/NhacCuaTui856/Exodus-HoaTau-3089103.mp3";
+				//mMediaFileUrl = "http://download.a1.nixcdn.com/1e5b9e0574a804e212375655b7d42687/545733a2/NhacCuaTui856/Exodus-HoaTau-3089103.mp3";
 				mMediaId = data.getString(MEDIA_ID);
 				mMediaTitle = data.getString(TITLE);
 				mSpeaker = data.getString(SPEAKER);

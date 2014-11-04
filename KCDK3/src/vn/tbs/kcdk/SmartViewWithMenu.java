@@ -215,14 +215,11 @@ public class SmartViewWithMenu {
 			mShowDetailMedia = action!=null&&action.length()>0&&action.equals(Common.ACTION_LAUNCH);
 		}
 
-		if (mShowDetailMedia) {
+		//if (mShowDetailMedia) {
 			ViewTreeObserver vto = mAppLayout.getViewTreeObserver(); 
 			mOnGlobalLayoutListener = new OnGlobalLayoutListener() { 
 				@Override 
 				public void onGlobalLayout() { 
-					//setOriginalPosition(false);
-//					MediaInfo item = new MediaInfo(intent);
-//					showMediaContent(item);
 					if (mKCDKMediaPlayer!=null) {
 						mKCDKMediaPlayer.requestUpdateGUI();
 					}
@@ -231,9 +228,10 @@ public class SmartViewWithMenu {
 				} 
 			};
 			vto.addOnGlobalLayoutListener(mOnGlobalLayoutListener);
-		}
-		else{
-		}
+//		}
+//		else {
+//			
+//		}
 		setOriginalPosition(false);			
 		//kcdk init values
 		mSmartMenu = new SmartMenu(mMenuListView, mContext);
