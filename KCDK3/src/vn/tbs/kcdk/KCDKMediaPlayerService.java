@@ -4,6 +4,7 @@ import static vn.tbs.kcdk.global.Common.AUTHOR;
 import static vn.tbs.kcdk.global.Common.BUFFERING_UPDATE_COMMAND;
 import static vn.tbs.kcdk.global.Common.CONTENT_INFO;
 import static vn.tbs.kcdk.global.Common.DURATION;
+import static vn.tbs.kcdk.global.Common.IS_PLAYING;
 import static vn.tbs.kcdk.global.Common.MEDIA_FILE_URL;
 import static vn.tbs.kcdk.global.Common.MEDIA_ID;
 import static vn.tbs.kcdk.global.Common.MEDIA_IMAGE_URL;
@@ -14,6 +15,7 @@ import static vn.tbs.kcdk.global.Common.PAUSE_PLAY_COMMAND;
 import static vn.tbs.kcdk.global.Common.PAUSING;
 import static vn.tbs.kcdk.global.Common.PLAYING;
 import static vn.tbs.kcdk.global.Common.PLAY_PAUSE_UPDATE_COMAND;
+import static vn.tbs.kcdk.global.Common.REQUEST_CODE;
 import static vn.tbs.kcdk.global.Common.REQUEST_CODE_PLAY;
 import static vn.tbs.kcdk.global.Common.REQUEST_CODE_STOP;
 import static vn.tbs.kcdk.global.Common.SEEKBAR_MAX;
@@ -24,7 +26,8 @@ import static vn.tbs.kcdk.global.Common.START_PLAY_COMMAND;
 import static vn.tbs.kcdk.global.Common.STOP_COMMAND;
 import static vn.tbs.kcdk.global.Common.TITLE;
 import static vn.tbs.kcdk.global.Common.UI_UPDATE_COMAND;
-import static vn.tbs.kcdk.global.Common.*;
+import static vn.tbs.kcdk.global.Common.UPDATE_GUI_COMMAND;
+import static vn.tbs.kcdk.global.Common.UPDATE_PROGRESS_COMMAND;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,7 +42,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -52,6 +54,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -99,6 +103,8 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	private String mViewCount;
 	private String mMediaImageThumbUrl;
 	private String mMediaImageUrl;
+
+	private PhoneStateListener mPhoneStateListener;
 
 	/**
 	 * Handle incoming messages from MainActivity
@@ -191,9 +197,30 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		});
 		isRunning = true;
 
+		registerCallingState();
 
 
 		super.onCreate();
+	}
+
+	private void registerCallingState() {
+		mPhoneStateListener = new PhoneStateListener() {
+		    @Override
+		    public void onCallStateChanged(int state, String incomingNumber) {
+		        if (state == TelephonyManager.CALL_STATE_RINGING) {
+		        	pauseMediaPlayer(true);
+		        } else if(state == TelephonyManager.CALL_STATE_IDLE) {
+		           pauseOrPlay(true);
+		        } else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
+		        	pauseMediaPlayer(true);
+		        }
+		        super.onCallStateChanged(state, incomingNumber);
+		    }
+		};
+		TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+		if(mgr != null) {
+		    mgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+		}
 	}
 
 	public void sendMediaData2GUI() {
@@ -258,27 +285,40 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		if (mTimer != null) {
 			mTimer.cancel();
 		}
+		
+		unregisterCallingState();
+		
 		isRunning = false;
 	}
 
 
+	private void unregisterCallingState() {
+		TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+		if(mgr != null) {
+			mgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+		}
+	}
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (intent!=null&&intent.getBooleanExtra(START_PLAY, false)) {
-			//play();
-			startPlayMedia();
-		}
-
-		if (intent != null) {
+		if (intent!=null) {
 			String action = intent.getAction();         
-			if (action!=null&&action.length()>0) {
-				if (action.equals(Common.ACTION_PLAY)) {
+			if (action!=null&&action.length()>0){
+				if (action.equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
+					pauseMediaPlayer(true);
+				}
+				else if (action.equals(Common.ACTION_PLAY)) {
 					pauseOrPlay(true);
 				}else if(action.equals(Common.ACTION_PAUSE)) {
 					pauseOrPlay(true);
 				}else if(action.equals(Common.ACTION_STOP)) {
 					pauseMediaPlayer(true);
 				}
+			}
+
+			if (intent.getBooleanExtra(START_PLAY, false)) {
+				//play();
+				startPlayMedia();
 			}
 		}
 		return Service.START_STICKY;	
@@ -302,7 +342,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 		int current = mp.getCurrentPosition();
 		boolean reached2End = current>=mMediaFileLengthInMilliseconds-500;
-		
+
 		if (reached2End) {
 			mKCDKMediaPlayer.seekTo(1);
 			pauseMediaPlayer(false);
@@ -458,7 +498,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		PendingIntent deletePendingIntent = PendingIntent.getService(getApplicationContext(),
 				REQUEST_CODE_STOP, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
-		
+
 		/*
 		Intent notificationIntent = new Intent(getApplicationContext(), SmartKCDKActivity.class);
 
@@ -470,10 +510,10 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 	    mNotification.setLatestEventInfo(context, title, message, pIntent);
 	    mNotification.flags |= Notification.FLAG_AUTO_CANCEL;*/
-		
+
 		Intent notificationIntent = new Intent(getApplicationContext(), SmartKCDKActivity.class);
 		notificationIntent.setAction(Common.ACTION_LAUNCH);
-		
+
 		Bundle  extras = new Bundle();
 		extras.putString(MEDIA_ID, mMediaId);
 		extras.putString(MEDIA_FILE_URL, mMediaFileUrl);
@@ -486,8 +526,8 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		notificationIntent.putExtras(extras);
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		pendingIntent = PendingIntent.getActivity(getApplicationContext(), REQUEST_CODE,notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-		
-				//Create the notification instance.
+
+		//Create the notification instance.
 		mNotification = new NotificationCompat.Builder(getApplicationContext())
 		.setSmallIcon(R.drawable.ic_launcher).setOngoing(false)
 		.setWhen(System.currentTimeMillis())                
@@ -495,10 +535,10 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		.setDeleteIntent(deletePendingIntent)
 		.setContentIntent(pendingIntent)
 		.build();
-		
+
 		//mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
 		//mNotification.setLatestEventInfo(getApplicationContext(), "title", "mess", pendingIntent);
-		
+
 		//Show the notification in the notification bar.
 		mNotificationManager.notify(NOTIFICATION_ID, mNotification);      
 	}   
