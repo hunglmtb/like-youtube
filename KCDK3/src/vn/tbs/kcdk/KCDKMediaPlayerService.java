@@ -106,6 +106,8 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 	private PhoneStateListener mPhoneStateListener;
 
+	//private boolean mNotificationShown = false;
+
 	/**
 	 * Handle incoming messages from MainActivity
 	 */
@@ -141,11 +143,12 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			case PAUSE_PLAY_COMMAND:
 				pauseOrPlay(msg.arg1!=0);
 				if (!mKCDKMediaPlayer.isPlaying()) {
-					mNotificationManager.cancel(NOTIFICATION_ID);				
+					mNotificationManager.cancel(NOTIFICATION_ID);
+					//mNotificationShown  = false;
 				}
 				break;
 			case STOP_COMMAND:
-				pauseMediaPlayer(true);
+				pauseMediaPlayer(true,false);
 				break;
 
 			case UPDATE_PROGRESS_COMMAND:
@@ -208,11 +211,11 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		    @Override
 		    public void onCallStateChanged(int state, String incomingNumber) {
 		        if (state == TelephonyManager.CALL_STATE_RINGING) {
-		        	pauseMediaPlayer(true);
+		        	pause();
 		        } else if(state == TelephonyManager.CALL_STATE_IDLE) {
-		           pauseOrPlay(true);
+		        	playIfCan();
 		        } else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
-		        	pauseMediaPlayer(true);
+		        	pause();
 		        }
 		        super.onCallStateChanged(state, incomingNumber);
 		    }
@@ -220,6 +223,16 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 		if(mgr != null) {
 		    mgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+		}
+	}
+
+	protected void playIfCan() {
+		//pauseOrPlay(true);
+	}
+
+	protected void pause() {
+		if (mKCDKMediaPlayer!=null&&mKCDKMediaPlayer.isPlaying()) {
+			pauseMediaPlayer(false,true);
 		}
 	}
 
@@ -250,13 +263,16 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		}
 	}
 
-	public void pauseMediaPlayer(boolean isStop) {
+	public void pauseMediaPlayer(boolean isStop,boolean showNotification) {
 		if (mKCDKMediaPlayer!=null) {
 			mKCDKMediaPlayer.pause();
-			showControllerInNotification();
+			if (showNotification) {
+				showControllerInNotification();
+			}
 			sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PAUSING, 0);
 			if (isStop) {
-				mNotificationManager.cancel(NOTIFICATION_ID);				
+				mNotificationManager.cancel(NOTIFICATION_ID);	
+				//mNotificationShown  = false;
 			}
 			mPostingEnable = false;
 		}
@@ -287,7 +303,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		}
 		
 		unregisterCallingState();
-		
+		//mNotificationShown  = false;
 		isRunning = false;
 	}
 
@@ -305,14 +321,14 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			String action = intent.getAction();         
 			if (action!=null&&action.length()>0){
 				if (action.equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
-					pauseMediaPlayer(true);
+					pauseMediaPlayer(true,false);
 				}
 				else if (action.equals(Common.ACTION_PLAY)) {
 					pauseOrPlay(true);
 				}else if(action.equals(Common.ACTION_PAUSE)) {
 					pauseOrPlay(true);
 				}else if(action.equals(Common.ACTION_STOP)) {
-					pauseMediaPlayer(true);
+					pauseMediaPlayer(true,false);
 				}
 			}
 
@@ -345,7 +361,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 		if (reached2End) {
 			mKCDKMediaPlayer.seekTo(1);
-			pauseMediaPlayer(false);
+			pauseMediaPlayer(false,true);
 		}
 		Log.i(TAG, "onCompletion end");
 	}
@@ -436,20 +452,22 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		Log.i(TAG, "resumePlaying start");
 
 		boolean result = false;
-		try {
-			if(!mKCDKMediaPlayer.isPlaying()){
-				mKCDKMediaPlayer.start();
-				sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, 0);
-				showControllerInNotification();
-				result =  true;
-			}else {
-				if (inverse) {
-					pauseMediaPlayer(false);
+		if (mKCDKMediaPlayer!=null) {
+			try {
+				if(!mKCDKMediaPlayer.isPlaying()){
+					mKCDKMediaPlayer.start();
+					sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, 0);
+					showControllerInNotification();
+					result =  true;
+				}else {
+					if (inverse) {
+						pauseMediaPlayer(false,true);
+					}
 				}
+			} catch (IllegalStateException e) {
+				Log.e(TAG, "playMedia IllegalStateException ");
+				e.printStackTrace();
 			}
-		} catch (IllegalStateException e) {
-			Log.e(TAG, "playMedia IllegalStateException ");
-			e.printStackTrace();
 		}
 		Log.i(TAG, "resumePlaying end");
 		return result;
@@ -540,7 +558,8 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		//mNotification.setLatestEventInfo(getApplicationContext(), "title", "mess", pendingIntent);
 
 		//Show the notification in the notification bar.
-		mNotificationManager.notify(NOTIFICATION_ID, mNotification);      
+		mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+		//mNotificationShown = true;
 	}   
 	/**
 	 * The task to run...
