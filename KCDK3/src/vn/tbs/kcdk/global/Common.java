@@ -468,4 +468,8 @@ public class Common {
 		likeAndCommentCountLoadingAsyntask.execute();			
 	}
 
+	public static boolean checkNullOrEmpty(String mMediaId) {
+		return mMediaId!=null&&mMediaId.length()>0;
+	}
+
 }
