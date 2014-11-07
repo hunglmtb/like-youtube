@@ -131,18 +131,16 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	@Override
 	public void doItemSelection(MediaInfo item, boolean reset) {
 		if(mDescriptionFragment!=null&&mSmartViewWithMenu!=null){
-			mDescriptionFragment.updateData(item,mSmartViewWithMenu.getMediaImage(),this);
-			mSmartViewWithMenu.showMediaContent(item,reset);
-			/*if (!isMyServiceRunning(KCDKMediaPlayerService.class)) {
-				Intent intent = new Intent(getApplicationContext(),KCDKMediaPlayerService.class);
-				intent.putExtra(KCDKMediaPlayerService.START_PLAY, true);
-				startService(intent);
+			if (item.validated()) {
+				mDescriptionFragment.updateData(item,mSmartViewWithMenu.getMediaImage(),this);
+				mSmartViewWithMenu.showMediaContent(item,reset);				
 			}
 			else{
-				//Intent new_intent = new Intent();
-		        //new_intent.setAction(ACTION_STRING_SERVICE);
-		        //sendBroadcast(new_intent);
-			}*/
+				if (mPinnedHeaderMediaListFragment!=null) {
+					mPinnedHeaderMediaListFragment.setEnableLoading(true);
+					mPinnedHeaderMediaListFragment.reloadMediaList();
+				}
+			}
 		}
 	}
 

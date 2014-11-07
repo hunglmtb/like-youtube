@@ -10,6 +10,7 @@ import static vn.tbs.kcdk.global.Common.MEDIA_IMAGE_URL;
 import static vn.tbs.kcdk.global.Common.MEDIA_TYPE_AUDIO;
 import static vn.tbs.kcdk.global.Common.SPEAKER;
 import static vn.tbs.kcdk.global.Common.TITLE;
+import vn.tbs.kcdk.global.Common;
 import android.os.Bundle;
 
 public class MediaInfo {
@@ -250,6 +251,15 @@ public class MediaInfo {
 
 	public void setCommentCount(String mCommentCount) {
 		this.mCommentCount = mCommentCount;
+	}
+
+	public boolean validated() {
+		boolean result = Common.checkNullOrEmpty(mMediaId)&&
+				Common.checkNullOrEmpty(mMediaFileUrl)&&
+				Common.checkNullOrEmpty(mTitle)&&
+				Common.checkNullOrEmpty(mMediaImageUrl); 
+		
+		return result;
 	}
 
 	

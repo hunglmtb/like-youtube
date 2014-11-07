@@ -301,7 +301,10 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		if (mTimer != null) {
 			mTimer.cancel();
 		}
-		
+		if (mKCDKMediaPlayer!=null) {
+			pauseMediaPlayer(true, false);
+			mKCDKMediaPlayer = null;
+		}
 		unregisterCallingState();
 		//mNotificationShown  = false;
 		isRunning = false;

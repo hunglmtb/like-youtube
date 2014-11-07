@@ -718,5 +718,4 @@ public class SmartViewWithMenu {
 			mKCDKMediaPlayer.playMedia(item,mClosed,reset);						
 		}
 	}
-
 }
