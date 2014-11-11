@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/media_content_item_pading_vertical"
-        android:layout_marginRight="@dimen/media_content_item_pading_vertical"
+        android:layout_marginRight="1dp"
         android:background="@android:color/white" />
 
     <FrameLayout
