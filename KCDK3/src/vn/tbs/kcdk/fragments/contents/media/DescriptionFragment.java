@@ -116,8 +116,6 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		mSpeakerTextView = (TextView)mScrollView.findViewById(R.id.media_speaker_tv);
 		mPublishedDateTextView = (TextView)mScrollView.findViewById(R.id.media_publisheddate_tv);
 
-
-
 		//
 		AppSectionsPagerAdapter mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
 

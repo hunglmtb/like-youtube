@@ -2,6 +2,7 @@ package vn.tbs.kcdk.fragments.contents.media;
 
 import static vn.tbs.kcdk.global.Common.MAX_NUM_RELATIVE_MEDIA;
 
+import java.util.Iterator;
 import java.util.List;
 
 import vn.tbs.kcdk.KCDKApplication;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,10 +35,9 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener {
 	private LinearLayout mRelativeMediaLayout;
 	private Button mMoreSuggestion;
 	private RelativeAsyntask mLoadRelativeAsyntask;
-	private List<MediaInfo> mRelativeMediaList;
+	private List<MediaInfo> mMediaList;
 	private View mEndView;
 	private ProgressBar mProgressBar;
-	private boolean mIsMore = true;
 	private ImageManager imageManager;
 	private ImageTagFactory imageTagFactory;
 	private boolean mEnableLoading = false;
@@ -138,6 +139,14 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener {
 					imageManager.getLoader().load(imageView);
 				}
 			}
+			else{
+				for (int i = 0; i < MAX_NUM_RELATIVE_MEDIA ; i++) {
+					child = mRelativeMediaLayout.getChildAt(i);
+					if (child!=null) {
+						child.setVisibility(View.VISIBLE);
+					}
+				}
+			}
 			if (mMoreSuggestion.getVisibility()==View.GONE) {
 				mEndView.setVisibility(View.VISIBLE);
 			}
@@ -167,7 +176,7 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener {
 
 		@Override
 		protected void onPostExecute(List<MediaInfo> mediaList) {
-			mRelativeMediaList = mediaList;
+			mMediaList = mediaList;
 			showRelativeMedia(mediaList);
 			super.onPostExecute(mediaList);
 			mLoadRelativeAsyntask.cancel(false);
@@ -183,17 +192,13 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener {
 		case R.id.more_relative_media:
 			mMoreSuggestion.setEnabled(false);
 			if (isAddMore()) {
-				showRelativeMedia(mRelativeMediaList);		
-				//mViewPager.getLayoutParams().height = 600;
+				showRelativeMedia(mMediaList);		
 			}
 			else{
 				hideRelativeMedia();
-				//mViewPager.getLayoutParams().height = 400;
 			}
-			//mViewPager.requestLayout();
-			String text = mIsMore?getString(R.string.less_suggestion):getString(R.string.more_suggestion);
+			String text = !isAddMore()?getString(R.string.less_suggestion):getString(R.string.more_suggestion);
 			mMoreSuggestion.setText(text);
-			mIsMore = ! mIsMore;
 			mMoreSuggestion.setEnabled(true);
 
 			return;
@@ -206,7 +211,7 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener {
 	private void hideRelativeMedia() {
 
 		if (mRelativeMediaLayout!=null) {
-			int visibility = mIsMore?View.VISIBLE:View.GONE;
+			int visibility = View.GONE;
 
 			for (int i = 3; i < mRelativeMediaLayout.getChildCount(); i++) {
 				mRelativeMediaLayout.getChildAt(i).setVisibility(visibility);
@@ -215,9 +220,17 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener {
 	}
 
 	private boolean isAddMore() {
-
-		return (mRelativeMediaLayout!=null&&mRelativeMediaLayout.getChildCount()<MAX_NUM_RELATIVE_MEDIA);
-
+		int count = 0;
+		View child = null;
+		for (int i = 0; i < mRelativeMediaLayout.getChildCount(); i++) {
+			child = mRelativeMediaLayout.getChildAt(i);
+			if (child!=null&&child.getVisibility()==View.VISIBLE) {
+				count++;
+			}
+		}
+		boolean result = count <MAX_NUM_RELATIVE_MEDIA;
+		Log.i("huhu", "count "+count+ " result "+ result);
+		return result;
 	}
 
 	public void setMediaId(String mediaId) {
@@ -228,8 +241,8 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener {
 	public void resetRelativeMedia() {
 		mRelativeMediaLayout.removeAllViews();
 		mMoreSuggestion.setVisibility(View.GONE);
-		if (mRelativeMediaList!=null) {
-			mRelativeMediaList.clear();			
+		if (mMediaList!=null) {
+			mMediaList.clear();			
 		}
 		mProgressBar.setVisibility(View.VISIBLE);
 	}
