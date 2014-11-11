@@ -292,7 +292,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				mFacebookPluginFragment.setEnableLoading(true);
 				mFacebookPluginFragment.loadDataFromUrl(context);
 			}
-			
+
 			if (mRelateMediaFragment!=null) {
 				if (mViewPager.getCurrentItem()!=0) {
 					mRelateMediaFragment.setMediaId(item.getMediaId());
@@ -315,7 +315,13 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		public AppSectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
-
+		
+		@Override
+		public float getPageWidth(int position) { 
+			return(0.97f);
+		}
+		
+		
 		@Override
 		public Fragment getItem(int i) {
 			String mediaId = mMediaItem!=null?mMediaItem.getMediaId():"";
