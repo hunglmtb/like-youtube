@@ -9,21 +9,26 @@ import static vn.tbs.kcdk.global.Common.MEDIA_TITLE_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_VIEWCOUNT_KEY;
 import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
-import vn.tbs.kcdk.SmartKCDKActivity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -34,15 +39,19 @@ import com.novoda.imageloader.core.model.ImageTagFactory;
 
 public class DescriptionFragment extends Fragment implements OnClickListener {
 	private static final String TAG = DescriptionFragment.class.getName();
+	private WebView childView =null;
+	protected LinearLayout mParentLayout;
 
 	private String mMediaImageUrl;
 	private ImageView mMediaImageView;
 	private ImageManager imageManager;
 	private ImageTagFactory imageTagFactory;
+	private boolean mEnableRefresh = false;
 
 	public static final String IMAGE_CACHE_DIR = "images";
 
 	//private ImageFetcher mImageFetcher;
+	protected WebView originalWebView;
 
 	private Bundle data;
 	private ScrollView mScrollView;
@@ -60,12 +69,13 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 
 
-	private ViewPager mViewPager;
+	//private ViewPager mViewPager;
 
 	private MediaInfo mMediaItem = null;
 
 	private RelateMediaFragment mRelateMediaFragment;
 	private FacebookPluginFragment mFacebookPluginFragment;
+	private Context mContext;
 
 
 
@@ -116,7 +126,10 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		mSpeakerTextView = (TextView)mScrollView.findViewById(R.id.media_speaker_tv);
 		mPublishedDateTextView = (TextView)mScrollView.findViewById(R.id.media_publisheddate_tv);
 
-		//
+		mParentLayout = (LinearLayout) mScrollView.findViewById(R.id.parent_of_webview);
+		originalWebView = (WebView)mScrollView.findViewById(R.id.webview);
+
+		/*//
 		AppSectionsPagerAdapter mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
 
 		mViewPager = (ViewPager) mScrollView.findViewById(R.id.pager);
@@ -134,7 +147,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 					mRelateMediaFragment.showRelativeMediaView();
 				}
 			}
-		});
+		});*/
 		//
 		return mScrollView;
 
@@ -147,6 +160,100 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		//TODO use it for fetch image for smart media player
 		//mImageFetcher.setEnableOtherLoad(true);
 		//mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);
+
+		//define webview
+		originalWebView.setHorizontalScrollBarEnabled(false);
+		WebSettings webSettings = originalWebView.getSettings();
+		originalWebView.setWebChromeClient(new MyChromeClient());
+
+		webSettings.setJavaScriptEnabled(true);
+		//originalWebView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
+
+		webSettings.setAppCacheEnabled(true);
+		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+		webSettings.setSupportMultipleWindows(true);
+		/*if (mWebclient==null) {
+			mWebclient = new LikeWebviewClient();			
+		}*/
+		originalWebView.setWebViewClient(new WebViewClient(){
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				Log.i(TAG, "LikeWebviewClient shouldOverrideUrlLoading url: " +url);
+
+				return false;
+			}
+
+			@Override
+			public void onPageFinished(WebView view, String url) {
+				Log.i(TAG, "LikeWebviewClient onPageFinished url: " +url);
+				// Facebook redirects to this url once a user has logged in, this is a blank page so we override this
+				// http://www.facebook.com/connect/connect_to_external_page_widget_loggedin.php?............
+				/*if(url.startsWith("https://www.facebook.com/dialog/oauth")){
+					String redirectUrl = "http://www.haivl.com/photo/928661";
+					view.loadUrl(redirectUrl);
+					return;
+				}*/
+				super.onPageFinished(view, url);
+
+				String fromComment = "plugins%2Fcomments.php";
+				String loginsuccess = "plugins/login_success.php";
+				mEnableRefresh = url.contains(loginsuccess)&&url.contains(fromComment);
+
+				/*
+				if (mHandler!=null) {
+					mHandler.postDelayed(FacebookPluginFragment.this, 1000);
+					Toast.makeText(mActivity, "done "+url, Toast.LENGTH_SHORT).show();				
+				}
+				 */
+
+
+				/*if (url.equals(mUrl)&&mLoadingView!=null&&mHandler!=null) {
+					mHandler.postDelayed(FacebookPluginFragment.this, 5000);
+				}*/
+				Log.e(TAG,"url done" + url);
+			}
+		} );
+		//		webSettings.setSupportZoom(true);
+		//		webSettings.setBuiltInZoomControls(true);
+		//webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
+		//		originalWebView.loadUrl("file:///android_asset/01fatihah.html");
+		//		originalWebView.loadUrl("http://www.haivl.com/photo/928661");
+
+
+
+
+
+		originalWebView.requestFocus(View.FOCUS_DOWN);
+		/*originalWebView.setOnTouchListener(new View.OnTouchListener()
+		{
+			@SuppressWarnings("deprecation")
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				switch (event.getAction())
+				{
+				case MotionEvent.ACTION_DOWN:
+				case MotionEvent.ACTION_UP:
+					if (!v.hasFocus())
+					{
+						v.requestFocus();
+					}
+					break;
+				}
+				if (mGestureDetector==null) {
+					mGestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+
+						@Override
+						public boolean onDoubleTap(MotionEvent e) {
+							setZoom(true);           
+							return true;
+						}
+					});
+				}
+				mGestureDetector.onTouchEvent(event);
+				return false;
+			}
+		});*/
 	}
 
 
@@ -259,6 +366,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 
 	public void updateData(MediaInfo item, ImageView imageView, Context context) {
+		this.mContext = context;
 		if (item!=null&&item!=mMediaItem) {
 			mMediaItem = item;
 			if (imageView!=null) {
@@ -286,14 +394,21 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			mSpeakerTextView.setTypeface(tf);
 			mPublishedDateTextView.setTypeface(tf);
 			mViewCountTextView.setTypeface(tf);
+
+
+			String url =context.getString(R.string.url_domain)+context.getString(R.string.action_url_social)+"mediaId="+mMediaItem.getMediaId();
+			// url = "https://m.facebook.com/";
+			Log.i("mimi", url);
+
+			originalWebView.loadUrl(url);
 			//mScrollView.fullScroll(ScrollView.FOCUS_UP);
-			if (mFacebookPluginFragment!=null) {
+			/*if (mFacebookPluginFragment!=null) {
 				mFacebookPluginFragment.setMediaId(item.getMediaId());
 				mFacebookPluginFragment.setEnableLoading(true);
 				mFacebookPluginFragment.loadDataFromUrl(context);
 			}
-
-			if (mRelateMediaFragment!=null) {
+			 */
+			/*if (mRelateMediaFragment!=null) {
 				if (mViewPager.getCurrentItem()!=0) {
 					mRelateMediaFragment.setMediaId(item.getMediaId());
 					mRelateMediaFragment.showRelativeMediaView();					
@@ -301,7 +416,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				else{
 					mRelateMediaFragment.resetRelativeMedia();
 				}
-			}
+			}*/
 		}
 	}
 
@@ -315,13 +430,13 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		public AppSectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
-		
+
 		@Override
 		public float getPageWidth(int position) { 
 			return(0.97f);
 		}
-		
-		
+
+
 		@Override
 		public Fragment getItem(int i) {
 			String mediaId = mMediaItem!=null?mMediaItem.getMediaId():"";
@@ -376,5 +491,133 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 					getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
 			return rootView;
 		}
+	}
+
+
+
+
+	final class MyChromeClient extends WebChromeClient{
+
+		@Override
+		public boolean onCreateWindow(WebView view, boolean dialog,
+				boolean userGesture, Message resultMsg) {
+			Log.i("MyChromeClient", "onCreateWindow start");
+
+			if (childView!=null) {
+				return false;
+			}
+
+			initChildWebView();
+
+			childView.setWebChromeClient(this);
+			childView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
+
+			mParentLayout.addView(childView);
+
+
+			childView.requestFocus();
+			originalWebView.setVisibility(View.GONE);
+
+			/*I think this is the main part which handles all the log in session*/
+			WebView.WebViewTransport transport =(WebView.WebViewTransport)resultMsg.obj;
+			transport.setWebView(childView);
+			resultMsg.sendToTarget();
+
+			Log.i("MyChromeClient", "onCreateWindow end");
+			return true;
+		}
+
+
+		/*@Override
+		public void onProgressChanged(WebView view, int newProgress) {
+			if (mActivity!=null) {
+				mActivity.setProgress(newProgress*100);				
+			}
+		}*/
+
+		@Override
+		public void onCloseWindow(WebView window) {
+			Log.i("MyChromeClient", "onCloseWindow start");
+
+			mParentLayout.removeViewAt(mParentLayout.getChildCount()-1);
+			childView =null;
+			originalWebView.setVisibility(View.VISIBLE);
+			originalWebView.requestFocus();
+
+			refreshWebView();
+			mEnableRefresh = false;
+
+			Log.i("MyChromeClient", "onCloseWindow end");
+		}
+
+	}
+
+
+	public void refreshWebView() {
+		Log.i(TAG, "refreshWebView start");
+
+		if (mEnableRefresh&&originalWebView!=null) {
+			//mLoadingLayout.setVisibility(View.VISIBLE);
+			//originalWebView.reload();
+		}
+
+		Log.i(TAG, "refreshWebView end");
+	}
+
+	private void initChildWebView() {
+		Log.i(TAG, "initChildWebView start");
+
+		//mLoadingLayout.setVisibility(View.VISIBLE);				
+
+		if (childView==null) {
+			childView = new WebView(mContext);			
+		}
+		childView.getSettings().setJavaScriptEnabled(true);
+
+		WebSettings webSettings = childView.getSettings();
+		//		webSettings.setSupportZoom(true);
+		//		webSettings.setBuiltInZoomControls(true);
+		//webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
+
+		childView.setWebViewClient(new WebViewClient(){
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				Log.i(TAG, "LikeWebviewClient shouldOverrideUrlLoading url: " +url);
+
+				return false;
+			}
+
+			@Override
+			public void onPageFinished(WebView view, String url) {
+				Log.i(TAG, "LikeWebviewClient onPageFinished url: " +url);
+				// Facebook redirects to this url once a user has logged in, this is a blank page so we override this
+				// http://www.facebook.com/connect/connect_to_external_page_widget_loggedin.php?............
+				/*if(url.startsWith("https://www.facebook.com/dialog/oauth")){
+					String redirectUrl = "http://www.haivl.com/photo/928661";
+					view.loadUrl(redirectUrl);
+					return;
+				}*/
+				super.onPageFinished(view, url);
+
+				String fromComment = "plugins%2Fcomments.php";
+				String loginsuccess = "plugins/login_success.php";
+				mEnableRefresh = url.contains(loginsuccess)&&url.contains(fromComment);
+
+				/*
+				if (mHandler!=null) {
+					mHandler.postDelayed(FacebookPluginFragment.this, 1000);
+					Toast.makeText(mActivity, "done "+url, Toast.LENGTH_SHORT).show();				
+				}
+				 */
+
+
+				/*if (url.equals(mUrl)&&mLoadingView!=null&&mHandler!=null) {
+					mHandler.postDelayed(FacebookPluginFragment.this, 5000);
+				}*/
+				Log.e(TAG,"url done" + url);
+			}
+		} );
+
+		Log.i(TAG, "initChildWebView end");
 	}
 }
