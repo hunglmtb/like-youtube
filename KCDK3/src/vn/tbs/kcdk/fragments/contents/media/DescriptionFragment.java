@@ -7,15 +7,22 @@ import static vn.tbs.kcdk.global.Common.MEDIA_PUBLISHDATE_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_SPEAKER_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_TITLE_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_VIEWCOUNT_KEY;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
+import vn.tbs.kcdk.global.ServerConnection;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,6 +54,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	private ImageManager imageManager;
 	private ImageTagFactory imageTagFactory;
 	private boolean mEnableRefresh = false;
+	private List<MediaInfo> mRelativeMediaList;
 
 	public static final String IMAGE_CACHE_DIR = "images";
 
@@ -56,7 +64,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	private Bundle data;
 	private ScrollView mScrollView;
 
-	private TextView mContent;
+/*	private TextView mContent;
 	private TextView mTitleTextView;
 	private TextView mAuthorTextView;
 	private TextView mViewCountTextView;
@@ -64,21 +72,29 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	private TextView mPublishedDateTextView;
 	private View mContentLayout;
 	private View mDivider;
-	private View mComma;
+	private View mComma;*/
 
 
 
 
-	//private ViewPager mViewPager;
+	private ViewPager mViewPager;
 
 	private MediaInfo mMediaItem = null;
 
-	private RelateMediaFragment mRelateMediaFragment;
-	private FacebookPluginFragment mFacebookPluginFragment;
+	private RelateMediaFragment2 mRelateMediaFragment;
+	private DetailFragment mDetailFragment;
 	private Context mContext;
 
+	private RelativeAsyntask mLoadRelativeAsyntask;
+	private AppSectionsPagerAdapter mAppSectionsPagerAdapter;
+	private boolean mEnableLoading = false;
+	private String mMediaId = null;
+	private String mOldMediaId = null;
+	private boolean mEnableLoadingRelative = false;
+	public List<RelateMediaFragment2> mFragmentList;
+	private Typeface tf;
 
-
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -112,7 +128,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 		//mMediaImageView = (ImageView)view.findViewById(R.id.media_imageview);
 
-		mComma = mScrollView.findViewById(R.id.three_comma_tv);
+		/*mComma = mScrollView.findViewById(R.id.three_comma_tv);
 		mDivider = mScrollView.findViewById(R.id.divider);
 		mContentLayout = mScrollView.findViewById(R.id.media_content_layout);
 		if (mContentLayout!=null) {
@@ -124,27 +140,24 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		mAuthorTextView = (TextView)mScrollView.findViewById(R.id.media_author_tv);
 		mViewCountTextView = (TextView)mScrollView.findViewById(R.id.media_viewcount_tv);
 		mSpeakerTextView = (TextView)mScrollView.findViewById(R.id.media_speaker_tv);
-		mPublishedDateTextView = (TextView)mScrollView.findViewById(R.id.media_publisheddate_tv);
+		mPublishedDateTextView = (TextView)mScrollView.findViewById(R.id.media_publisheddate_tv);*/
 
 		mParentLayout = (LinearLayout) mScrollView.findViewById(R.id.parent_of_webview);
 		originalWebView = (WebView)mScrollView.findViewById(R.id.webview);
 
-		/*//
-		AppSectionsPagerAdapter mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
-
+		//
+		mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
 		mViewPager = (ViewPager) mScrollView.findViewById(R.id.pager);
 		mViewPager.setAdapter(mAppSectionsPagerAdapter);
-		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+		/*mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int position) {
 				// When swiping between different app sections, select the corresponding tab.
 				// We can also use ActionBar.Tab#select() to do this if we have a reference to the
 				// Tab.
 				//actionBar.setSelectedNavigationItem(position);
-				if (position==1&&mRelateMediaFragment!=null) {
-					String mediaId = mMediaItem!=null?mMediaItem.getMediaId():"";
-					mRelateMediaFragment.setMediaId(mediaId);
-					mRelateMediaFragment.showRelativeMediaView();
+				if (position>0) {
+					loadRelativeMediaList();
 				}
 			}
 		});*/
@@ -156,7 +169,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		matchData();
+		//matchData();
 		//TODO use it for fetch image for smart media player
 		//mImageFetcher.setEnableOtherLoad(true);
 		//mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);
@@ -256,7 +269,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		});*/
 	}
 
-
+/*
 	public void matchData() {
 		Log.i(TAG, "matchData start");
 
@@ -280,7 +293,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 		Log.i(TAG, "matchData end");
 	}
-
+*/
 	private void iniLrucache() {
 
 		// Fetch screen height and width, to use as our max size when loading images as this
@@ -346,7 +359,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 		switch (v.getId()) {
 		case R.id.media_content_layout:
-			if (mContent.getVisibility()==View.VISIBLE) {
+			/*if (mContent.getVisibility()==View.VISIBLE) {
 				mContent.setVisibility(View.GONE);
 				mDivider.setVisibility(View.GONE);
 				mComma.setVisibility(View.VISIBLE);
@@ -355,7 +368,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				mContent.setVisibility(View.VISIBLE);
 				mDivider.setVisibility(View.VISIBLE);
 				mComma.setVisibility(View.GONE);
-			}
+			}*/
 			return;
 		default:
 			break;
@@ -379,9 +392,14 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				imageManager.getLoader().load(imageView);
 			}
 
-			Typeface tf=Typeface.createFromAsset(context.getAssets(),"Roboto-Light.ttf");
+			if (mDetailFragment!=null) {
+				if (tf==null) {
+					tf=Typeface.createFromAsset(context.getAssets(),"Roboto-Light.ttf");
+				}
+				mDetailFragment.updateData(tf,item);
+			}
 
-			mContent.setText(item.getContentInfo());
+			/*mContent.setText(item.getContentInfo());
 			mTitleTextView.setText(item.getTitle());
 			mAuthorTextView.setText(item.getAuthor());
 			mSpeakerTextView.setText(item.getSpeaker());
@@ -393,7 +411,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			mAuthorTextView.setTypeface(tf);
 			mSpeakerTextView.setTypeface(tf);
 			mPublishedDateTextView.setTypeface(tf);
-			mViewCountTextView.setTypeface(tf);
+			mViewCountTextView.setTypeface(tf);*/
 
 
 			String url =context.getString(R.string.url_domain)+context.getString(R.string.action_url_social)+"mediaId="+mMediaItem.getMediaId();
@@ -401,6 +419,8 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			Log.i("mimi", url);
 
 			originalWebView.loadUrl(url);
+			mEnableLoadingRelative = true;
+			loadRelativeMediaList();
 			//mScrollView.fullScroll(ScrollView.FOCUS_UP);
 			/*if (mFacebookPluginFragment!=null) {
 				mFacebookPluginFragment.setMediaId(item.getMediaId());
@@ -432,41 +452,49 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		}
 
 		@Override
-		public float getPageWidth(int position) { 
-			return(0.97f);
-		}
-
-
-		@Override
 		public Fragment getItem(int i) {
 			String mediaId = mMediaItem!=null?mMediaItem.getMediaId():"";
 			switch (i) {
 			case 0:
-				if (mFacebookPluginFragment==null) {
-					mFacebookPluginFragment = new FacebookPluginFragment(mediaId);
+				if (mDetailFragment==null) {
+					mDetailFragment = new DetailFragment(tf,mMediaItem);
 				}
 				else{
-					mFacebookPluginFragment.setMediaId(mediaId);
+					mDetailFragment.setMediaId(tf,mediaId);
 				}
-				// The first section of the app is the most interesting -- it offers
-				// a launchpad into the other demonstrations in this example application.
-				return  mFacebookPluginFragment;
+				return  mDetailFragment;
 
 			default:
-				if (mRelateMediaFragment==null) {
-					mRelateMediaFragment = new RelateMediaFragment(mediaId);
+				int index = i-1;;
+				if (mRelativeMediaList!=null&&index<mRelativeMediaList.size()) {
+					MediaInfo media = mRelativeMediaList.get(index);
+					if (media!=null) {
+						Fragment fragment = getFragmentByMediaId(media.getMediaId());
+						if (fragment==null) {
+							mRelateMediaFragment = new RelateMediaFragment2(media,mContext);
+							if (mFragmentList==null) {
+								mFragmentList = new ArrayList<RelateMediaFragment2>();
+							}
+							mFragmentList.add(mRelateMediaFragment);
+							//getFragmentManager().beginTransaction().add(mRelateMediaFragment, media.getMediaId());
+							return mRelateMediaFragment;
+						}
+						else{
+							return fragment;
+						}
+					}
 				}
-				else{
-					mRelateMediaFragment.setMediaId(mediaId);
-				}
-
-				return mRelateMediaFragment;
+				return null;
 			}
 		}
 
 		@Override
 		public int getCount() {
-			return 2;
+			if (mRelativeMediaList!=null) {
+				int count = mRelativeMediaList.size()+1;
+				return count;
+			}
+			return 1;
 		}
 
 		@Override
@@ -564,6 +592,20 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		Log.i(TAG, "refreshWebView end");
 	}
 
+	public Fragment getFragmentByMediaId(String mediaId) {
+		if (mFragmentList!=null&&mediaId!=null) {
+			RelateMediaFragment2 fragment = null;
+			for (int i = 0; i < mFragmentList.size(); i++) {
+				fragment = mFragmentList.get(i);
+				if (mediaId.equals(fragment.getMedia().getMediaId())) {
+					return fragment;
+				}
+			}
+		}
+		return null;
+	}
+
+
 	private void initChildWebView() {
 		Log.i(TAG, "initChildWebView start");
 
@@ -619,5 +661,54 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		} );
 
 		Log.i(TAG, "initChildWebView end");
+	}
+	
+	public void loadRelativeMediaList() {
+		if (mEnableLoadingRelative&&mMediaItem!=null) {
+			mMediaId = mMediaItem.getMediaId();
+			mEnableLoading = mMediaId!=null&&mMediaId.length()>0&&!mMediaId.equals(mOldMediaId);
+			if (mEnableLoading){
+				mLoadRelativeAsyntask = new RelativeAsyntask();
+				mLoadRelativeAsyntask.execute();
+				mEnableLoadingRelative = false;
+			}
+		}
+	}
+
+	private class RelativeAsyntask extends AsyncTask<Void, Void, List<MediaInfo>>{
+
+		
+		public RelativeAsyntask() {
+			super();
+			//resetRelativeMedia();
+		}
+
+		@Override
+		protected List<MediaInfo> doInBackground(Void... params) {
+			//TODO add mediaID here
+			String url = getString(R.string.url_domain)+"/media/all?limit=10&offset=0";
+			List<MediaInfo> mediaList = ServerConnection.getRelativeMedia(url);
+			ServerConnection.getLikeAndCommentCount(mediaList);
+			//			return ServerConnection.getRelativeMedia(getString(R.string.url_domain)+data.getString(MEDIA_ID_KEY));
+			return mediaList;
+
+		}
+
+		@Override
+		protected void onPostExecute(List<MediaInfo> mediaList) {
+			mRelativeMediaList = mediaList;
+			if (mAppSectionsPagerAdapter!=null) {
+				mAppSectionsPagerAdapter.notifyDataSetChanged();
+			}
+			super.onPostExecute(mediaList);
+			mLoadRelativeAsyntask.cancel(false);
+			mOldMediaId = mMediaId;
+			/*mMediaList = mediaList;
+			showRelativeMedia(mediaList);
+			super.onPostExecute(mediaList);
+			mLoadRelativeAsyntask.cancel(false);
+			mOldMediaId = mMediaId;*/
+		}
+
 	}
 }

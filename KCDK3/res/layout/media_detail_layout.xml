@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/media_detail_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,109 +17,21 @@
         android:focusableInTouchMode="true"
         android:orientation="vertical" >
 
-        <LinearLayout
-            android:id="@+id/media_content_layout"
-            style="@style/media_image_layout_style"
+        <com.pixplicity.multiviewpager.MultiViewPager
+            android:id="@+id/pager"
+            android:layout_marginTop="@dimen/media_content_item_pading_vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/media_content_item_pading_vertical"
-            android:orientation="vertical"
-            android:padding="@dimen/plugin_margin" >
-
-            <TextView
-                android:id="@+id/media_title_tv"
-                style="@style/detail_media_title_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tuổi trẻ Bao Thanh Thiên Phần 3 tập 30 Vietsub" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/plugin_margin" >
-
-                <TextView
-                    android:id="@+id/media_author_tv"
-                    style="@style/detail_media_additional_text_style"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
-                    android:text="Kim dung" />
-
-                <TextView
-                    android:id="@+id/media_viewcount_tv"
-                    style="@style/detail_media_additional_text_style"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
-                    android:gravity="right"
-                    android:text="765 Views" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:id="@+id/media_speaker_tv"
-                    style="@style/detail_media_additional_text_style"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
-                    android:text="giọng đọc Việt Hùng" />
-
-                <TextView
-                    android:id="@+id/media_publisheddate_tv"
-                    style="@style/detail_media_additional_text_style"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
-                    android:gravity="right"
-                    android:text="14/9/2013" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/three_comma_tv"
-                style="@style/detail_media_additional_text_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="..."
-                android:visibility="gone" />
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_margin="@dimen/divider_media_content_tv"
-                android:background="@color/shadow_color"
-                android:visibility="visible" />
-
-            <TextView
-                android:id="@+id/media_content_tv"
-                style="@style/detaiL_media_content_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dương- Qua đã trải qua bảy ngày du ngoạn. Chàng đã rõ cỏ Đoạn trường tuy độc nhưng chất độc này có thể chế ngự được chất độc Tình hoa, nên chàng hái một nhánh Đoạn trường thảo cho vào miệng nhai nuốt rồi vận khí hộ lấy tâm phế.
-
-Một chốc, chất độc thâm nhập vào cơ thể, xua đuổi chất độc Tình hoa, hai thứ gặp nhau xung đột dữ dội, làm cho cơ thể chàng đau đớn vô cùng. Hồi lâu, chất độc từ nội tạng đưa ra ngoài miệng, làm Dương- Qua thổ ra một đống máu bầm và sự đau nhức bớt dần."
-                android:visibility="visible" />
-        </LinearLayout>
+            app:matchChildWidth="@+id/vg_cover" >
+        </com.pixplicity.multiviewpager.MultiViewPager>
 
         <WebView
             android:id="@+id/webview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/media_content_item_pading_vertical"
-            android:layout_marginRight="1dp"
+            android:layout_marginRight="@dimen/media_content_item_pading_vertical"
             android:background="@android:color/white" />
-        <!--
-        <vn.tbs.kcdk.global.WrapContentHeightViewPager
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </vn.tbs.kcdk.global.WrapContentHeightViewPager>
-        -->
     </LinearLayout>
 
 </ScrollView>
