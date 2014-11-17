@@ -5,9 +5,11 @@
     android:background="@android:color/transparent" >
 
     <RelativeLayout
-        android:id="@+id/category_layout"
+        android:id="@+id/vg_cover"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/media_content_item_pading_vertical"
+        android:layout_marginRight="@dimen/media_content_item_pading_vertical" >
 
         <LinearLayout
             android:id="@+id/media_content_item"
@@ -158,7 +160,7 @@
         android:id="@+id/end_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/media_content_item_pading_vertical"
-        android:layout_below="@id/category_layout"
+        android:layout_below="@id/vg_cover"
         android:background="@android:color/transparent"
         android:visibility="gone" />
 
