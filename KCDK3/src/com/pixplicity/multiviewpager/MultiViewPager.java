@@ -76,14 +76,19 @@ public class MultiViewPager extends ViewPager {
                     MeasureSpec.EXACTLY);
         }
         int height = 0;
+        int minHeight  = 0;
 		for(int i = 0; i < getChildCount(); i++) {
 			View child = getChildAt(i);
 			child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 			int h = child.getMeasuredHeight();
 			if(h > height) height = h;
+			if (i==0) {
+				minHeight = h;
+			}
+			minHeight = minHeight>height?height:minHeight;
 		}
 
-		heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+		heightMeasureSpec = MeasureSpec.makeMeasureSpec(getCurrentItem()==0?height:minHeight, MeasureSpec.EXACTLY);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         onMeasurePage(widthMeasureSpec, heightMeasureSpec);
     }

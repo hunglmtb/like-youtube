@@ -149,18 +149,26 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
 		mViewPager = (ViewPager) mScrollView.findViewById(R.id.pager);
 		mViewPager.setAdapter(mAppSectionsPagerAdapter);
-		/*mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int position) {
 				// When swiping between different app sections, select the corresponding tab.
 				// We can also use ActionBar.Tab#select() to do this if we have a reference to the
 				// Tab.
 				//actionBar.setSelectedNavigationItem(position);
-				if (position>0) {
-					loadRelativeMediaList();
+				/*if (position>0&&mDetailFragment!=null) {
+				}*/
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int state) {
+				// TODO Auto-generated method stub
+				super.onPageScrollStateChanged(state);
+				if (state==ViewPager.SCROLL_STATE_IDLE&&mDetailFragment!=null) {
+					mDetailFragment.hideDescription();						
 				}
 			}
-		});*/
+		});
 		//
 		return mScrollView;
 

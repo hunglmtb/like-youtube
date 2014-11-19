@@ -8,11 +8,12 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-public class DetailFragment extends Fragment {
+public class DetailFragment extends Fragment implements OnClickListener {
 
 	private static final String TAG = DetailFragment.class.getName();
 	protected View mParentLayout;
@@ -53,9 +54,9 @@ public class DetailFragment extends Fragment {
 		mParentLayout =  inflater.inflate(R.layout.detail_media_layout, null);
 		mComma = mParentLayout.findViewById(R.id.three_comma_tv);
 		mDivider = mParentLayout.findViewById(R.id.divider);
-		mContentLayout = mParentLayout.findViewById(R.id.media_content_layout);
+		mContentLayout = mParentLayout.findViewById(R.id.vg_cover);
 		if (mContentLayout!=null) {
-			//mContentLayout.setOnClickListener(this);
+			mContentLayout.setOnClickListener(this);
 		}
 
 		mContent = (TextView)mParentLayout.findViewById(R.id.media_content_tv);
@@ -96,6 +97,34 @@ public class DetailFragment extends Fragment {
 		}
 	}
 	
+
+	@Override
+	public void onClick(View v) {
+		Log.i(TAG, "onClick start");
+
+		switch (v.getId()) {
+		case R.id.vg_cover:
+			if (mContent.getVisibility()==View.VISIBLE) {
+				mContent.setVisibility(View.GONE);
+				mDivider.setVisibility(View.GONE);
+				mComma.setVisibility(View.VISIBLE);
+			}
+			else if (mContent.getVisibility()==View.GONE) {
+				mContent.setVisibility(View.VISIBLE);
+				mDivider.setVisibility(View.VISIBLE);
+				mComma.setVisibility(View.GONE);
+			}
+			return;
+		default:
+			break;
+		}
+	}
+
+	public void hideDescription() {
+		mContent.setVisibility(View.GONE);
+		mDivider.setVisibility(View.GONE);
+		mComma.setVisibility(View.VISIBLE);
+	}
 
 /*	public void matchData(Typeface tf2) {
 		Log.i(TAG, "matchData start");
