@@ -40,6 +40,8 @@
     <dimen name="media_content_item_pading_vertical">11dp</dimen>
     <dimen name="media_item_title_height">25dp</dimen>
     <dimen name="media_item_avartar_margin">12dp</dimen>
+    <dimen name="detail_layout_height">95dp</dimen>
+
     <integer name="num_cols">1</integer>
 
     <!-- lrucache -->
@@ -48,4 +50,5 @@
     <dimen name="divider_media_content_tv">8dp</dimen>
     <dimen name="plugin_margin">5dp</dimen>
     <dimen name="button_padding">10dp</dimen>
+
 </resources>
