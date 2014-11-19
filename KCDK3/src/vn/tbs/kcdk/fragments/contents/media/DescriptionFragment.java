@@ -90,7 +90,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	private boolean mEnableLoading = false;
 	private String mMediaId = null;
 	private String mOldMediaId = null;
-	private boolean mEnableLoadingRelative = false;
+	private boolean mEnableLoadRelative = false;
 	public List<RelateMediaFragment2> mFragmentList;
 	private Typeface tf;
 
@@ -406,6 +406,10 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				}
 				mDetailFragment.updateData(tf,item);
 			}
+			
+			if (mViewPager!=null) {
+				mViewPager.setCurrentItem(0);
+			}
 
 			/*mContent.setText(item.getContentInfo());
 			mTitleTextView.setText(item.getTitle());
@@ -427,7 +431,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			Log.i("mimi", url);
 
 			originalWebView.loadUrl(url);
-			mEnableLoadingRelative = true;
+			mEnableLoadRelative = true;
 			loadRelativeMediaList();
 			//mScrollView.fullScroll(ScrollView.FOCUS_UP);
 			/*if (mFacebookPluginFragment!=null) {
@@ -458,7 +462,12 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		public AppSectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
-
+		
+		@Override
+		public void destroyItem(View pView, int pIndex, Object pObject) {
+		        ((ViewPager) pView).removeView((View)pObject);
+		}
+		
 		@Override
 		public Fragment getItem(int i) {
 			String mediaId = mMediaItem!=null?mMediaItem.getMediaId():"";
@@ -672,13 +681,21 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	}
 	
 	public void loadRelativeMediaList() {
-		if (mEnableLoadingRelative&&mMediaItem!=null) {
+		if (mEnableLoadRelative&&mMediaItem!=null) {
 			mMediaId = mMediaItem.getMediaId();
 			mEnableLoading = mMediaId!=null&&mMediaId.length()>0&&!mMediaId.equals(mOldMediaId);
 			if (mEnableLoading){
+				if (mRelativeMediaList!=null&&mRelativeMediaList.size()>0) {
+					mRelativeMediaList.clear();
+					mRelativeMediaList = null;
+					mViewPager.setAdapter(mAppSectionsPagerAdapter);
+					if (mAppSectionsPagerAdapter!=null) {
+						mAppSectionsPagerAdapter.notifyDataSetChanged();
+					}
+				}
 				mLoadRelativeAsyntask = new RelativeAsyntask();
 				mLoadRelativeAsyntask.execute();
-				mEnableLoadingRelative = false;
+				mEnableLoadRelative = false;
 			}
 		}
 	}
@@ -688,7 +705,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		
 		public RelativeAsyntask() {
 			super();
-			//resetRelativeMedia();
+			
 		}
 
 		@Override
