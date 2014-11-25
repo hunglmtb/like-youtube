@@ -1,18 +1,13 @@
 package vn.tbs.kcdk.fragments.contents.media;
 
-import static vn.tbs.kcdk.global.Common.MEDIA_AUTHOR_KEY;
-import static vn.tbs.kcdk.global.Common.MEDIA_CONTENTINFO_KEY;
 import static vn.tbs.kcdk.global.Common.MEDIA_IMAGEURL_KEY;
-import static vn.tbs.kcdk.global.Common.MEDIA_PUBLISHDATE_KEY;
-import static vn.tbs.kcdk.global.Common.MEDIA_SPEAKER_KEY;
-import static vn.tbs.kcdk.global.Common.MEDIA_TITLE_KEY;
-import static vn.tbs.kcdk.global.Common.MEDIA_VIEWCOUNT_KEY;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
+import vn.tbs.kcdk.global.Common;
 import vn.tbs.kcdk.global.ServerConnection;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -33,9 +28,12 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -46,8 +44,8 @@ import com.novoda.imageloader.core.model.ImageTagFactory;
 
 public class DescriptionFragment extends Fragment implements OnClickListener {
 	private static final String TAG = DescriptionFragment.class.getName();
-	private WebView childView =null;
-	protected LinearLayout mParentLayout;
+	private WebView mChildWebview =null;
+	protected RelativeLayout mParentLayout;
 
 	private String mMediaImageUrl;
 	private ImageView mMediaImageView;
@@ -59,25 +57,12 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	public static final String IMAGE_CACHE_DIR = "images";
 
 	//private ImageFetcher mImageFetcher;
-	protected WebView originalWebView;
+	protected WebView mOriginalWebView;
 
 	private Bundle data;
 	private ScrollView mScrollView;
-
-/*	private TextView mContent;
-	private TextView mTitleTextView;
-	private TextView mAuthorTextView;
-	private TextView mViewCountTextView;
-	private TextView mSpeakerTextView;
-	private TextView mPublishedDateTextView;
-	private View mContentLayout;
-	private View mDivider;
-	private View mComma;*/
-
-
-
-
 	private ViewPager mViewPager;
+	private FrameLayout mLoadingLayout;
 
 	private MediaInfo mMediaItem = null;
 
@@ -93,8 +78,9 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	private boolean mEnableLoadRelative = false;
 	public List<RelateMediaFragment2> mFragmentList;
 	private Typeface tf;
+	private Button mRefreshWebViewButton;
 
-	
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -126,25 +112,12 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 		mScrollView = (ScrollView) inflater.inflate(R.layout.media_detail_layout, null);
 
-		//mMediaImageView = (ImageView)view.findViewById(R.id.media_imageview);
-
-		/*mComma = mScrollView.findViewById(R.id.three_comma_tv);
-		mDivider = mScrollView.findViewById(R.id.divider);
-		mContentLayout = mScrollView.findViewById(R.id.media_content_layout);
-		if (mContentLayout!=null) {
-			mContentLayout.setOnClickListener(this);
-		}
-
-		mContent = (TextView)mScrollView.findViewById(R.id.media_content_tv);
-		mTitleTextView = (TextView)mScrollView.findViewById(R.id.media_title_tv);
-		mAuthorTextView = (TextView)mScrollView.findViewById(R.id.media_author_tv);
-		mViewCountTextView = (TextView)mScrollView.findViewById(R.id.media_viewcount_tv);
-		mSpeakerTextView = (TextView)mScrollView.findViewById(R.id.media_speaker_tv);
-		mPublishedDateTextView = (TextView)mScrollView.findViewById(R.id.media_publisheddate_tv);*/
-
-		mParentLayout = (LinearLayout) mScrollView.findViewById(R.id.parent_of_webview);
-		originalWebView = (WebView)mScrollView.findViewById(R.id.webview);
-
+		mParentLayout = (RelativeLayout) mScrollView.findViewById(R.id.parent_of_webview);
+		mOriginalWebView = (WebView)mScrollView.findViewById(R.id.webview);
+		mLoadingLayout = (FrameLayout)mScrollView.findViewById(R.id.fb_loading_layout);
+		mRefreshWebViewButton = (Button)mScrollView.findViewById(R.id.refresh_webview);
+		mRefreshWebViewButton.setOnClickListener(this);
+		showOriginWebview(false);
 		//
 		mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
 		mViewPager = (ViewPager) mScrollView.findViewById(R.id.pager);
@@ -174,6 +147,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 	}
 
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -183,9 +157,9 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		//mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);
 
 		//define webview
-		originalWebView.setHorizontalScrollBarEnabled(false);
-		WebSettings webSettings = originalWebView.getSettings();
-		originalWebView.setWebChromeClient(new MyChromeClient());
+		mOriginalWebView.setHorizontalScrollBarEnabled(false);
+		WebSettings webSettings = mOriginalWebView.getSettings();
+		mOriginalWebView.setWebChromeClient(new MyChromeClient());
 
 		webSettings.setJavaScriptEnabled(true);
 		//originalWebView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
@@ -196,7 +170,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		/*if (mWebclient==null) {
 			mWebclient = new LikeWebviewClient();			
 		}*/
-		originalWebView.setWebViewClient(new WebViewClient(){
+		mOriginalWebView.setWebViewClient(new WebViewClient(){
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				Log.i(TAG, "LikeWebviewClient shouldOverrideUrlLoading url: " +url);
@@ -220,6 +194,8 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				String loginsuccess = "plugins/login_success.php";
 				mEnableRefresh = url.contains(loginsuccess)&&url.contains(fromComment);
 
+
+				showOriginWebview(true);
 				/*
 				if (mHandler!=null) {
 					mHandler.postDelayed(FacebookPluginFragment.this, 1000);
@@ -244,7 +220,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 
 
-		originalWebView.requestFocus(View.FOCUS_DOWN);
+		mOriginalWebView.requestFocus(View.FOCUS_DOWN);
 		/*originalWebView.setOnTouchListener(new View.OnTouchListener()
 		{
 			@SuppressWarnings("deprecation")
@@ -277,31 +253,20 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		});*/
 	}
 
-/*
-	public void matchData() {
-		Log.i(TAG, "matchData start");
-
-		if (data!=null) {
-			Typeface tf=Typeface.createFromAsset(getActivity().getAssets(),"Roboto-Light.ttf");
-
-			mContent.setText(data.getString(MEDIA_CONTENTINFO_KEY));
-			mTitleTextView.setText(data.getString(MEDIA_TITLE_KEY));
-			mAuthorTextView.setText(data.getString(MEDIA_AUTHOR_KEY));
-			mSpeakerTextView.setText(data.getString(MEDIA_SPEAKER_KEY));
-			mPublishedDateTextView.setText(data.getString(MEDIA_PUBLISHDATE_KEY));
-			mViewCountTextView.setText(data.getString(MEDIA_VIEWCOUNT_KEY));
-
-			mContent.setTypeface(tf); 
-			mTitleTextView.setTypeface(tf);
-			mAuthorTextView.setTypeface(tf);
-			mSpeakerTextView.setTypeface(tf);
-			mPublishedDateTextView.setTypeface(tf);
-			mViewCountTextView.setTypeface(tf);
-		}
-
-		Log.i(TAG, "matchData end");
+	protected void showOriginWebview(boolean show) {
+		Common.setVisible(mLoadingLayout, !show);
+		Common.setVisible(mOriginalWebView, show);
+		Common.setVisible(mRefreshWebViewButton, show);
+		Common.setVisible(mChildWebview, false);
 	}
-*/
+
+	protected void showChildWebview() {
+		Common.setVisible(mLoadingLayout, false);
+		Common.setVisible(mOriginalWebView, true);
+		Common.setVisible(mRefreshWebViewButton, true);
+		Common.setVisible(mChildWebview, true);
+	}
+
 	private void iniLrucache() {
 
 		// Fetch screen height and width, to use as our max size when loading images as this
@@ -377,6 +342,9 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				mDivider.setVisibility(View.VISIBLE);
 				mComma.setVisibility(View.GONE);
 			}*/
+		case R.id.refresh_webview:
+			showOriginWebview(true);
+			refreshWebView(true);
 			return;
 		default:
 			break;
@@ -406,49 +374,21 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				}
 				mDetailFragment.updateData(tf,item);
 			}
-			
+
 			if (mViewPager!=null) {
 				mViewPager.setCurrentItem(0);
 			}
 
-			/*mContent.setText(item.getContentInfo());
-			mTitleTextView.setText(item.getTitle());
-			mAuthorTextView.setText(item.getAuthor());
-			mSpeakerTextView.setText(item.getSpeaker());
-			mPublishedDateTextView.setText(item.getPublishedDate());
-			mViewCountTextView.setText(item.getCommentCount());
-
-			mContent.setTypeface(tf); 
-			mTitleTextView.setTypeface(tf);
-			mAuthorTextView.setTypeface(tf);
-			mSpeakerTextView.setTypeface(tf);
-			mPublishedDateTextView.setTypeface(tf);
-			mViewCountTextView.setTypeface(tf);*/
-
-
 			String url =context.getString(R.string.url_domain)+context.getString(R.string.action_url_social)+"mediaId="+mMediaItem.getMediaId();
 			// url = "https://m.facebook.com/";
 			Log.i("mimi", url);
+			
+			showOriginWebview(false);
+			mOriginalWebView.loadUrl(url);
+			refreshWebView(false);
 
-			originalWebView.loadUrl(url);
 			mEnableLoadRelative = true;
 			loadRelativeMediaList();
-			//mScrollView.fullScroll(ScrollView.FOCUS_UP);
-			/*if (mFacebookPluginFragment!=null) {
-				mFacebookPluginFragment.setMediaId(item.getMediaId());
-				mFacebookPluginFragment.setEnableLoading(true);
-				mFacebookPluginFragment.loadDataFromUrl(context);
-			}
-			 */
-			/*if (mRelateMediaFragment!=null) {
-				if (mViewPager.getCurrentItem()!=0) {
-					mRelateMediaFragment.setMediaId(item.getMediaId());
-					mRelateMediaFragment.showRelativeMediaView();					
-				}
-				else{
-					mRelateMediaFragment.resetRelativeMedia();
-				}
-			}*/
 		}
 	}
 
@@ -462,12 +402,12 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		public AppSectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
-		
+
 		@Override
 		public void destroyItem(View pView, int pIndex, Object pObject) {
-		        ((ViewPager) pView).removeView((View)pObject);
+			((ViewPager) pView).removeView((View)pObject);
 		}
-		
+
 		@Override
 		public Fragment getItem(int i) {
 			String mediaId = mMediaItem!=null?mMediaItem.getMediaId():"";
@@ -546,29 +486,25 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		@Override
 		public boolean onCreateWindow(WebView view, boolean dialog,
 				boolean userGesture, Message resultMsg) {
-			Log.i("MyChromeClient", "onCreateWindow start");
 
-			if (childView!=null) {
+			if (mChildWebview!=null) {
 				return false;
 			}
-
+			showOriginWebview(false);
 			initChildWebView();
 
-			childView.setWebChromeClient(this);
-			childView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
-
-			mParentLayout.addView(childView);
-
-
-			childView.requestFocus();
-			originalWebView.setVisibility(View.GONE);
+			mChildWebview.setWebChromeClient(this);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+			int mg = (int) getResources().getDimension(R.dimen.media_content_item_pading_vertical);
+			params.setMargins(mg, mg, mg, mg);
+			mChildWebview.setLayoutParams(params);
+			mParentLayout.addView(mChildWebview);
+			mChildWebview.requestFocus();
 
 			/*I think this is the main part which handles all the log in session*/
 			WebView.WebViewTransport transport =(WebView.WebViewTransport)resultMsg.obj;
-			transport.setWebView(childView);
+			transport.setWebView(mChildWebview);
 			resultMsg.sendToTarget();
-
-			Log.i("MyChromeClient", "onCreateWindow end");
 			return true;
 		}
 
@@ -582,30 +518,23 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 		@Override
 		public void onCloseWindow(WebView window) {
-			Log.i("MyChromeClient", "onCloseWindow start");
-
-			mParentLayout.removeViewAt(mParentLayout.getChildCount()-1);
-			childView =null;
-			originalWebView.setVisibility(View.VISIBLE);
-			originalWebView.requestFocus();
-
-			refreshWebView();
-			mEnableRefresh = false;
-
-			Log.i("MyChromeClient", "onCloseWindow end");
+			showOriginWebview(true);
+			refreshWebView(true);
 		}
 
 	}
 
 
-	public void refreshWebView() {
+	public void refreshWebView(boolean reload) {
 		Log.i(TAG, "refreshWebView start");
-
-		if (mEnableRefresh&&originalWebView!=null) {
-			//mLoadingLayout.setVisibility(View.VISIBLE);
-			//originalWebView.reload();
+		if (mChildWebview!=null&&mParentLayout!=null) {
+			mParentLayout.removeView(mChildWebview);				
+			mChildWebview =null;
 		}
-
+		mEnableRefresh = false;
+		if (reload) {
+			//mOriginalWebView.reload();			
+		}
 		Log.i(TAG, "refreshWebView end");
 	}
 
@@ -626,19 +555,17 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	private void initChildWebView() {
 		Log.i(TAG, "initChildWebView start");
 
-		//mLoadingLayout.setVisibility(View.VISIBLE);				
-
-		if (childView==null) {
-			childView = new WebView(mContext);			
+		if (mChildWebview==null) {
+			mChildWebview = new WebView(mContext);			
 		}
-		childView.getSettings().setJavaScriptEnabled(true);
+		mChildWebview.getSettings().setJavaScriptEnabled(true);
 
-		WebSettings webSettings = childView.getSettings();
+		WebSettings webSettings = mChildWebview.getSettings();
 		//		webSettings.setSupportZoom(true);
 		//		webSettings.setBuiltInZoomControls(true);
 		//webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
 
-		childView.setWebViewClient(new WebViewClient(){
+		mChildWebview.setWebViewClient(new WebViewClient(){
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				Log.i(TAG, "LikeWebviewClient shouldOverrideUrlLoading url: " +url);
@@ -661,7 +588,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				String fromComment = "plugins%2Fcomments.php";
 				String loginsuccess = "plugins/login_success.php";
 				mEnableRefresh = url.contains(loginsuccess)&&url.contains(fromComment);
-
+				showChildWebview();
 				/*
 				if (mHandler!=null) {
 					mHandler.postDelayed(FacebookPluginFragment.this, 1000);
@@ -679,7 +606,10 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 		Log.i(TAG, "initChildWebView end");
 	}
-	
+
+
+
+
 	public void loadRelativeMediaList() {
 		if (mEnableLoadRelative&&mMediaItem!=null) {
 			mMediaId = mMediaItem.getMediaId();
@@ -702,10 +632,10 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 	private class RelativeAsyntask extends AsyncTask<Void, Void, List<MediaInfo>>{
 
-		
+
 		public RelativeAsyntask() {
 			super();
-			
+
 		}
 
 		@Override

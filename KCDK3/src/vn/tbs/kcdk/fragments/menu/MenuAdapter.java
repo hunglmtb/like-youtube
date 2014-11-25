@@ -21,10 +21,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 //import com.actionbarsherlock.widget.SearchView;
 
@@ -36,6 +38,7 @@ public class MenuAdapter extends BaseAdapter { //implements SearchView.OnQueryTe
 	private Context mContext;
 	private Typeface mFont = null;
 	private SuggestionsAdapter mSuggestionsAdapter;
+	private View mAuthenticateView;
 
 	public MenuAdapter(List<CategoryRow> mCategories, Context context) {
 		this.mCategories = mCategories;
@@ -60,9 +63,9 @@ public class MenuAdapter extends BaseAdapter { //implements SearchView.OnQueryTe
 	@Override
 	public int getCount() {
 		if (mCategories!=null) {
-			return mCategories.size();
+			return mCategories.size()+1;
 		}
-		return 0;
+		return 1;
 	}
 
 	@Override
@@ -80,12 +83,33 @@ public class MenuAdapter extends BaseAdapter { //implements SearchView.OnQueryTe
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-
+		LayoutInflater inflater = LayoutInflater.from(mContext);
+		if (position==getCount()-1) {
+			if (mAuthenticateView==null) {
+				mAuthenticateView = inflater.inflate(R.layout.authenticate_view_layout, null);
+				WebView webview = (WebView) mAuthenticateView.findViewById(R.id.webview);
+				webview.setHorizontalScrollBarEnabled(false);
+				WebSettings webSettings = webview.getSettings();
+				webSettings.setJavaScriptEnabled(true);
+				webSettings.setAppCacheEnabled(true);
+				webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+				webSettings.setSupportMultipleWindows(true);
+				webview.setWebViewClient(new WebViewClient(){
+					@Override
+					public boolean shouldOverrideUrlLoading(WebView view, String url) {
+						return false;
+					}
+				} );
+				webview.requestFocus(View.FOCUS_DOWN);
+				String url =mContext.getString(R.string.url_domain)+mContext.getString(R.string.action_url_authenticate);
+				webview.loadUrl(url);
+			}
+			return mAuthenticateView;
+		}
 		CategoryRow category = mCategories.get(position);
 
 		if (category!=null) {
 			TextView rowText = null ;
-			LayoutInflater inflater = LayoutInflater.from(mContext);
 			ImageView icon = null;
 			switch (category.getItemMode()) {
 			case MENU_HEADER:

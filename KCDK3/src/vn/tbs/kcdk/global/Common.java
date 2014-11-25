@@ -21,6 +21,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class Common {
@@ -470,6 +471,13 @@ public class Common {
 
 	public static boolean checkNullOrEmpty(String mMediaId) {
 		return mMediaId!=null&&mMediaId.length()>0;
+	}
+
+	public static void setVisible(View view, boolean visible) {
+		int visibleValue = visible?View.VISIBLE:View.GONE;
+		if (view!=null) {
+			view.setVisibility(visibleValue);
+		}		
 	}
 
 }
