@@ -146,7 +146,8 @@
         <item name="android:textSize">@dimen/media_title_text_size</item>
         <item name="android:padding">@dimen/button_padding</item>
         <item name="android:gravity">left|center_vertical</item>
-    </style>
+        <item name="android:paddingRight">0dp</item>
+        </style>
 
     <style name="like_plugin_style" parent="@style/media_image_layout_style">
         <item name="android:paddingTop">3dp</item>

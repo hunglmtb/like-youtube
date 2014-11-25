@@ -12,6 +12,7 @@
     <string name="url_mediaList">/media/all</string>
     <string name="action_url">http://kcdkv2.appspot.com/media/play?key=</string>
     <string name="action_url_social">/media/social?</string>
+    <string name="action_url_authenticate">/media/authenticate</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">TRY THE BEST!</string>
     <string name="comment_fragment_title">BÌNH LUẬN</string>
@@ -25,4 +26,6 @@
     <string name="more_suggestion">XEM THÊM</string>
     <string name="less_suggestion">ẨN BỚT</string>
     <string name="dummy_section_text">Section %1d is just a dummy section.</string>
+    <string name="refresh_webview">RELOAD</string>
+    
 </resources>
