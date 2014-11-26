@@ -63,9 +63,9 @@ public class MenuAdapter extends BaseAdapter { //implements SearchView.OnQueryTe
 	@Override
 	public int getCount() {
 		if (mCategories!=null) {
-			return mCategories.size()+1;
+			return mCategories.size();
 		}
-		return 1;
+		return 0;
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class MenuAdapter extends BaseAdapter { //implements SearchView.OnQueryTe
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(mContext);
-		if (position==getCount()-1) {
+		/*if (position==getCount()-1) {
 			if (mAuthenticateView==null) {
 				mAuthenticateView = inflater.inflate(R.layout.authenticate_view_layout, null);
 				WebView webview = (WebView) mAuthenticateView.findViewById(R.id.webview);
@@ -105,7 +105,7 @@ public class MenuAdapter extends BaseAdapter { //implements SearchView.OnQueryTe
 				webview.loadUrl(url);
 			}
 			return mAuthenticateView;
-		}
+		}*/
 		CategoryRow category = mCategories.get(position);
 
 		if (category!=null) {

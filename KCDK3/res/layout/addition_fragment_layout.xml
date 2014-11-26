@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent_of_webview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:padding="@dimen/margin_third_layout" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:focusable="true"
+        android:focusableInTouchMode="true" >
+
+        <WebView
+            android:id="@+id/addition_webview"
+            android:layout_centerInParent="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:id="@+id/fb_loading_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true" >
+
+            <ProgressBar
+                android:id="@+id/fb_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

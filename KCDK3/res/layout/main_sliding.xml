@@ -71,6 +71,39 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/action_bar_view"
+        android:background="@android:color/transparent" >
+
+        <Button
+            android:id="@+id/close_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/media_content_item_pading_vertical"
+            android:layout_marginLeft="@dimen/media_content_item_pading_vertical"
+            android:layout_marginRight="@dimen/media_content_item_pading_vertical"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/bg_reload_webview"
+            android:gravity="center"
+            android:text="close"
+            android:textColor="@color/abs__holo_blue_light"
+            android:textSize="@dimen/media_title_text_size" >
+        </Button>
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/close_fragment"
+            android:background="@android:color/transparent" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@id/root_layout"
         android:layout_width="200dp"
         android:layout_height="150dp"

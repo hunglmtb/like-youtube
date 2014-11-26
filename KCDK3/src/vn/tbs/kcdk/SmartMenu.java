@@ -27,14 +27,28 @@ import android.widget.ListView;
 
 
 public class SmartMenu implements OnItemClickListener {
+	public interface ItemSelectedListener {
+
+		void doSelectMenuItem(CategoryRow item);
+
+	}
+
+
 	private static final String TAG = SmartMenu.class.getSimpleName();
 	private MenuAdapter mMenuAdapter;
 	private ListView mMenuListView;
 	private List<CategoryRow> mCategories;
 	private Context mContext = null;
 	private LoadCategoriesFromServerTask mLoadCategoriesFromServerTask;
+	private ItemSelectedListener mItemSelectedListener;
 
 	
+	public void setItemSelectedListener(ItemSelectedListener mItemSelectedListener) {
+		this.mItemSelectedListener = mItemSelectedListener;
+	}
+
+
+
 	public SmartMenu(ListView aMenuListView, Context mContext) {
 		super();
 		this.mMenuListView = aMenuListView;
@@ -117,6 +131,9 @@ public class SmartMenu implements OnItemClickListener {
 				mContext.switchContent(fragment,true);
 				return true;				
 			}*/
+			if (mItemSelectedListener!=null) {
+				mItemSelectedListener.doSelectMenuItem(item);
+			}
 		}
 
 		Log.i(TAG, "switchContent end");
