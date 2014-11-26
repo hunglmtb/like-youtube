@@ -34,6 +34,7 @@
     <dimen name="category_header_text_size">14sp</dimen>
     <dimen name="media_header_text_size">20sp</dimen>
     <dimen name="timer_text_size">25sp</dimen>
+    <dimen name="margin_third_layout">15dp</dimen>
     <dimen name="facebook_plugin_text_size">12sp</dimen>
     <dimen name="media_content_item_pading">5dp</dimen>
     <dimen name="media_content_item_pading_horizontal">11dp</dimen>

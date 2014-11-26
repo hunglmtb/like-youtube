@@ -1,11 +1,13 @@
 package vn.tbs.kcdk;
 
+import vn.tbs.kcdk.SmartMenu.ItemSelectedListener;
 import vn.tbs.kcdk.SmartViewWithMenu.OnTopListener;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.fragments.contents.media.DescriptionFragment;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
+import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.SearchManager;
@@ -20,6 +22,7 @@ import android.provider.BaseColumns;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListener, ItemSelectionListener,ServiceConnection  {
@@ -46,6 +49,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 
 	boolean mIsBound;
 	private KCDKMediaPlayer mKCDKMediaPlayer;
+	private AdditionalFragment mThirdFragment;
 
 
 	@Override
@@ -57,12 +61,27 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		mSmartViewWithMenu  = new SmartViewWithMenu(this,intent,this);
 		View view = mSmartViewWithMenu.getView();
 		setContentView(view);
+		
+		mSmartViewWithMenu.getSmartMenu().setItemSelectedListener( new ItemSelectedListener() {
+			@Override
+			public void doSelectMenuItem(CategoryRow item) {
+				if (mThirdFragment!=null) {
+					mThirdFragment.showOriginWebview(true);
+					mThirdFragment.refreshWebView(true);
+				}
+				mSmartViewWithMenu.doMenuItemSelection(item);
+			}
+		});
 
 		mPinnedHeaderMediaListFragment = (PinnedHeaderMediaListFragment)getSupportFragmentManager().findFragmentById(R.id.mainFragment);
 		mDescriptionFragment = (DescriptionFragment)getSupportFragmentManager().findFragmentById(R.id.secondFragment);
 
 		mPinnedHeaderMediaListFragment.setOnItemSelectionListener(this);
 		mPinnedHeaderMediaListFragment.setEnableLoading(mSmartViewWithMenu.isShowDetailMedia());
+
+		mThirdFragment = new AdditionalFragment();
+		mThirdFragment.setArguments(getIntent().getExtras());
+		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mThirdFragment).commit();
 
 		mKCDKMediaPlayer = mSmartViewWithMenu.getKCDKMediaPlayer();
 
@@ -71,7 +90,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		//automaticBind();
 		doBindService();
 	}
-	
+
 	@Override
 	public void onServiceConnected(ComponentName name, IBinder service) {
 		Log.d(TAG, "C:onServiceConnected()");
@@ -81,15 +100,15 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		}
 
 	}
-	
+
 	private boolean isMyServiceRunning(Class<?> serviceClass) {
-	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-	        if (serviceClass.getName().equals(service.service.getClassName())) {
-	            return true;
-	        }
-	    }
-	    return false;
+		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+			if (serviceClass.getName().equals(service.service.getClassName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -124,7 +143,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 				if (reachBottom&&mPinnedHeaderMediaListFragment!=null) {
 					mPinnedHeaderMediaListFragment.reloadMediaList();
 				}
-				
+
 			}
 		}
 	}
@@ -143,7 +162,6 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 			}
 		}
 	}
-
 	/**
 	 * Check if the service is running. If the service is running when the
 	 * activity starts, we want to automatically bind to it.

@@ -111,7 +111,7 @@ public class DetailFragment extends Fragment implements OnClickListener {
 			}
 			else if (mContent.getVisibility()==View.GONE) {
 				mContent.setVisibility(View.VISIBLE);
-				mDivider.setVisibility(View.VISIBLE);
+				mDivider.setVisibility(View.GONE);
 				mComma.setVisibility(View.GONE);
 			}
 			return;

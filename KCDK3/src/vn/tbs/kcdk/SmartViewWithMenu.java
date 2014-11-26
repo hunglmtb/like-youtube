@@ -1,9 +1,11 @@
 package vn.tbs.kcdk;
 
 
+import vn.tbs.kcdk.SmartMenu.ItemSelectedListener;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
+import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import vn.tbs.kcdk.global.Common;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -21,11 +24,12 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
-public class SmartViewWithMenu {
+public class SmartViewWithMenu implements OnClickListener {
 
 	public interface OnTopListener {
 
@@ -75,19 +79,24 @@ public class SmartViewWithMenu {
 	private Context 						mContext;
 	private RelativeLayout 					mMainLayout;
 	private View 							mActionBarView;
+	private boolean 						mShowDetailMedia = false;
+	private Button 							mCloseThirdFragment;
+	private RelativeLayout 					mThirdFragmentContainer;
+	private boolean 						mThirdFragmentContainerShowing = false; 
 	//kcdk data
-	private SmartMenu mSmartMenu;
-	private KCDKMediaPlayer mKCDKMediaPlayer;
-	private OnTopListener mOnTopListener;
+	private SmartMenu 						mSmartMenu;
+	private KCDKMediaPlayer 				mKCDKMediaPlayer;
+	private OnGlobalLayoutListener 			mOnGlobalLayoutListener;
+	private OnTopListener					mOnTopListener;
 	//listener
 	private OnTouchListener 				mTouchListener = new OnTouchListener() {
 
-		private boolean mFirstTimeMove = false;
-		private boolean mSlidingX = false;
-		private int mStartDownX;
-		private int mStartDownY;
-		private int mSlideXDelata = 40;
-		private int mLastXposition = mStartDownX;
+	private boolean mFirstTimeMove = false;
+	private boolean mSlidingX = false;
+	private int mStartDownX;
+	private int mStartDownY;
+	private int mSlideXDelata = 40;
+	private int mLastXposition = mStartDownX;
 
 
 		@Override
@@ -148,9 +157,6 @@ public class SmartViewWithMenu {
 			}
 		}
 	};
-	private OnGlobalLayoutListener mOnGlobalLayoutListener;
-	private boolean mShowDetailMedia = false; 
-
 
 
 	public KCDKMediaPlayer getKCDKMediaPlayer() {
@@ -201,6 +207,10 @@ public class SmartViewWithMenu {
 		mMenuListView = (MenuListView) mMainLayout.findViewById( R.id.menuListView );
 		mActionBarView = mMainLayout.findViewById( R.id.action_bar_view);
 		mMenuLayout.setVisibility(View.GONE);
+		mCloseThirdFragment = (Button) mMainLayout.findViewById( R.id.close_fragment);
+		mCloseThirdFragment.setOnClickListener(this);
+		mThirdFragmentContainer = (RelativeLayout) mMainLayout.findViewById( R.id.container);
+		
 		mRootRelativeLayoutParams = (android.widget.RelativeLayout.LayoutParams) mRootLayout.getLayoutParams();
 
 		mRootLayout.setOnTouchListener(new TrayTouchListener());
@@ -257,6 +267,7 @@ public class SmartViewWithMenu {
 					float alpha = aHiden?0:BACKVIEW_ALPHA_MAX;
 					updateBackView(aHiden,OVERLAY_BOTTOM_MARGIN,alpha);
 					mMenuHiden = aHiden;
+					Common.setVisible(mThirdFragmentContainer, mThirdFragmentContainerShowing);
 				}
 			}
 
@@ -269,6 +280,7 @@ public class SmartViewWithMenu {
 		menuAnimations.addAnimation(menuTranslate);
 		mMenuHiden = false;
 		mMenuLayout.startAnimation(menuAnimations);
+
 	}
 
 	protected void updateBackView(boolean hiden, int margin, float fromAlpha) {
@@ -716,5 +728,29 @@ public class SmartViewWithMenu {
 		if (mKCDKMediaPlayer!=null) {
 			mKCDKMediaPlayer.playMedia(item,mClosed,reset);						
 		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.close_fragment:
+			mThirdFragmentContainerShowing = false;
+			Common.setVisible(mThirdFragmentContainer, mThirdFragmentContainerShowing);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	
+	public SmartMenu  getSmartMenu() {
+		return mSmartMenu;
+	}
+
+	public void doMenuItemSelection(CategoryRow item) {
+		animateMenu(MENU_WIDTH, true);
+		mMenuHiden = true;
+		mThirdFragmentContainerShowing = true;
 	}
 }

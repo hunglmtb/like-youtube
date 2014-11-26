@@ -53,6 +53,11 @@
         <item name="android:textColor">@color/addition_text_color</item>
     </style>
 
+    <style name="more_detail_style" parent="@style/media_note_text_style">
+        <item name="android:textColor">@color/abs__holo_blue_light</item>
+        <item name="android:textSize">@dimen/facebook_plugin_text_size</item>
+    </style>
+
     <style name="detaiL_media_content_style">
         <item name="android:textSize">@dimen/detail_media_content_text_size</item>
     </style>
@@ -147,7 +152,7 @@
         <item name="android:padding">@dimen/button_padding</item>
         <item name="android:gravity">left|center_vertical</item>
         <item name="android:paddingRight">0dp</item>
-        </style>
+    </style>
 
     <style name="like_plugin_style" parent="@style/media_image_layout_style">
         <item name="android:paddingTop">3dp</item>

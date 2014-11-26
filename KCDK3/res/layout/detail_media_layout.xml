@@ -69,12 +69,12 @@
 
         <TextView
             android:id="@+id/three_comma_tv"
-            style="@style/detail_media_additional_text_style"
+            style="@style/more_detail_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="..."
-            android:visibility="gone" />
+            android:text="@string/detail"
+            android:visibility="visible" />
 
         <View
             android:id="@+id/divider"
@@ -82,7 +82,7 @@
             android:layout_height="1dp"
             android:layout_margin="@dimen/divider_media_content_tv"
             android:background="@color/shadow_color"
-            android:visibility="visible" />
+            android:visibility="gone" />
     </LinearLayout>
 
     <TextView
