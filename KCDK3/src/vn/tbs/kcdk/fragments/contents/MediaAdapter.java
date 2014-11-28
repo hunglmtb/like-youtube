@@ -9,6 +9,7 @@ import java.util.List;
 import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
+import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import vn.tbs.kcdk.global.Common;
 import android.content.Context;
 import android.util.Log;
@@ -38,6 +39,9 @@ public class MediaAdapter extends BaseAdapter {
 	private ImageFetcher mImageFetcher;
 
 	private boolean mIsHistoryAdapterType = false;
+
+	private String mCategoryId = "";
+	private String mCategoryName = "";
 
 	public MediaAdapter(List<MediaInfo> aMediaList, Context context, ImageFetcher imageFetcher) {
 		this.mMediaList = aMediaList;
@@ -171,12 +175,16 @@ public class MediaAdapter extends BaseAdapter {
 	}
 
 
-	public void setOffset(int mOffset) {
+	public void resetItemList(int mOffset, CategoryRow item) {
 		this.mOffset = mOffset;
+		if (item!=null) {
+			mCategoryId = item.getCategoryId();
+			mCategoryName = item.getCategoryName();
+		}
 	}
 
 
 	public String[] getUrlParams() {
-		return new String[] {mMediaGroupMode,String.valueOf(mLimit),String.valueOf(mOffset)};
+		return new String[] {mCategoryId,mMediaGroupMode,String.valueOf(mLimit),String.valueOf(mOffset)};
 	}
 }

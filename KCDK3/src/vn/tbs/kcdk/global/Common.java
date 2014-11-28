@@ -385,7 +385,8 @@ public class Common {
 			return domainUrl+secondaryUrl;
 		case URL_MEDIA_LIST_MODE:
 			secondaryUrl = context.getString(R.string.url_mediaList);
-			return domainUrl+secondaryUrl+"?groupmode="+params[0]+"&limit=" +params[1]+"&offset=" +params[2];
+			return domainUrl+secondaryUrl+"?category="+params[0]+"&limit=" +params[2]+"&offset=" +params[3];
+			//TODO group mode update later
 		default:
 			break;
 		}

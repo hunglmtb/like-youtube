@@ -40,6 +40,9 @@ public class DetailFragment extends Fragment implements OnClickListener {
 		this.mEnableLoading = mEnableLoading;
 	}
 
+	public DetailFragment() {
+		super();
+	}
 	public DetailFragment(Typeface tf, MediaInfo media) {
 		this.mTypeFace = tf;
 		this.mMedia = media;

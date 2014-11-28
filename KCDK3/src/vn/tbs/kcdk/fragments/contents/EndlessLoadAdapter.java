@@ -5,6 +5,7 @@ import java.util.List;
 
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
+import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import vn.tbs.kcdk.global.Common;
 import vn.tbs.kcdk.global.ServerConnection;
 import android.content.Context;
@@ -124,9 +125,9 @@ public class EndlessLoadAdapter extends EndlessAdapter {
 		}
 	}
 
-	public void reload() {
+	public void reload(CategoryRow item) {
 		mEnableLoading = true;
-		mPinnedHeaderMediaAdapter.setOffset(0);
+		mPinnedHeaderMediaAdapter.resetItemList(0,item);
 		if (mMoreData==null||mMoreData.size()<=0) {
 			super.restartAppending();
 		}

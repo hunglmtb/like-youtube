@@ -91,12 +91,12 @@ public class SmartViewWithMenu implements OnClickListener {
 	//listener
 	private OnTouchListener 				mTouchListener = new OnTouchListener() {
 
-	private boolean mFirstTimeMove = false;
-	private boolean mSlidingX = false;
-	private int mStartDownX;
-	private int mStartDownY;
-	private int mSlideXDelata = 40;
-	private int mLastXposition = mStartDownX;
+		private boolean mFirstTimeMove = false;
+		private boolean mSlidingX = false;
+		private int mStartDownX;
+		private int mStartDownY;
+		private int mSlideXDelata = 40;
+		private int mLastXposition = mStartDownX;
 
 
 		@Override
@@ -170,8 +170,8 @@ public class SmartViewWithMenu implements OnClickListener {
 	public RelativeLayout getView() {
 		return mMainLayout;
 	}
-	
-	
+
+
 
 	public boolean isShowDetailMedia() {
 		return mShowDetailMedia;
@@ -210,7 +210,7 @@ public class SmartViewWithMenu implements OnClickListener {
 		mCloseThirdFragment = (Button) mMainLayout.findViewById( R.id.close_fragment);
 		mCloseThirdFragment.setOnClickListener(this);
 		mThirdFragmentContainer = (RelativeLayout) mMainLayout.findViewById( R.id.container);
-		
+
 		mRootRelativeLayoutParams = (android.widget.RelativeLayout.LayoutParams) mRootLayout.getLayoutParams();
 
 		mRootLayout.setOnTouchListener(new TrayTouchListener());
@@ -225,22 +225,22 @@ public class SmartViewWithMenu implements OnClickListener {
 		}
 
 		//if (mShowDetailMedia) {
-			ViewTreeObserver vto = mAppLayout.getViewTreeObserver(); 
-			mOnGlobalLayoutListener = new OnGlobalLayoutListener() { 
-				@Override 
-				public void onGlobalLayout() { 
-					if (mKCDKMediaPlayer!=null) {
-						mKCDKMediaPlayer.requestUpdateGUI();
-					}
-					mAppLayout.getViewTreeObserver().removeGlobalOnLayoutListener(mOnGlobalLayoutListener);
-					mShowDetailMedia = false;
-				} 
-			};
-			vto.addOnGlobalLayoutListener(mOnGlobalLayoutListener);
-//		}
-//		else {
-//			
-//		}
+		ViewTreeObserver vto = mAppLayout.getViewTreeObserver(); 
+		mOnGlobalLayoutListener = new OnGlobalLayoutListener() { 
+			@Override 
+			public void onGlobalLayout() { 
+				if (mKCDKMediaPlayer!=null) {
+					mKCDKMediaPlayer.requestUpdateGUI();
+				}
+				mAppLayout.getViewTreeObserver().removeGlobalOnLayoutListener(mOnGlobalLayoutListener);
+				mShowDetailMedia = false;
+			} 
+		};
+		vto.addOnGlobalLayoutListener(mOnGlobalLayoutListener);
+		//		}
+	//		else {
+		//			
+		//		}
 		setOriginalPosition(false);			
 		//kcdk init values
 		mSmartMenu = new SmartMenu(mMenuListView, mContext);
@@ -367,6 +367,8 @@ public class SmartViewWithMenu implements OnClickListener {
 		updateViewLayout(false,aIsSlidingX,xAxis,yAxis);
 		updateMenu(0);
 		mRootLayout.setVisibility(mClosed?View.INVISIBLE:View.VISIBLE);
+		mThirdFragmentContainerShowing = false;
+		Common.setVisible(mThirdFragmentContainer, mThirdFragmentContainerShowing);
 	}
 
 
@@ -565,7 +567,7 @@ public class SmartViewWithMenu implements OnClickListener {
 					updateBackView(true,BACK_VIEW_WIDTH,0);
 					mInSimpleMode = mInSimpleMode&&!simpleModeSwitched;
 					mOnTop = mInSimpleMode||mOnTop;
-					
+
 					if (mOnTopListener!=null&&!aIsSlidingX&&!mInSimpleMode) {
 						mOnTopListener.doSmartViewOnTop(newYAxis,!mOnTop&&!mInSimpleMode,mOnTop);
 					}
@@ -743,7 +745,7 @@ public class SmartViewWithMenu implements OnClickListener {
 		}
 	}
 
-	
+
 	public SmartMenu  getSmartMenu() {
 		return mSmartMenu;
 	}
@@ -751,6 +753,7 @@ public class SmartViewWithMenu implements OnClickListener {
 	public void doMenuItemSelection(CategoryRow item) {
 		animateMenu(MENU_WIDTH, true);
 		mMenuHiden = true;
-		mThirdFragmentContainerShowing = true;
+		//TODO update later
+		mThirdFragmentContainerShowing = item.getCategoryId()=="dtdk";
 	}
 }
