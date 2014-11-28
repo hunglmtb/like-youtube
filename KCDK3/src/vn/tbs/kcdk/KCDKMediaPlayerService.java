@@ -30,9 +30,6 @@ import static vn.tbs.kcdk.global.Common.UPDATE_GUI_COMMAND;
 import static vn.tbs.kcdk.global.Common.UPDATE_PROGRESS_COMMAND;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -63,15 +60,12 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	private static final String TAG = KCDKMediaPlayer.class.getSimpleName();
 
 	private MediaPlayer mKCDKMediaPlayer = null;
-	private boolean      isPlaying = false;
 	private Timer mTimer = new Timer();
 	private int mMediaFileLengthInMilliseconds = 180000;
 	private static boolean isRunning = false;
+	private Messenger mServiceMessenger = null;
 
-	private static int classID = 579; // just a number
-
-
-	private List<Messenger> mClients = new ArrayList<Messenger>(); // Keeps
+	//	private List<Messenger> mClients = new ArrayList<Messenger>(); // Keeps
 	// track of
 	// all
 	// current
@@ -97,11 +91,11 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	private String mSpeaker;
 	private String mContentInfo;
 	private String mDuration;
-	private String mMediaLinkUrl;
+//	private String mMediaLinkUrl;
 	private String mAuthor;
-	private String mPublishedDate;
-	private String mViewCount;
-	private String mMediaImageThumbUrl;
+//	private String mPublishedDate;
+//	private String mViewCount;
+//	private String mMediaImageThumbUrl;
 	private String mMediaImageUrl;
 
 	private PhoneStateListener mPhoneStateListener;
@@ -117,16 +111,19 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		@Override
 		public void handleMessage(Message msg) {
 			Log.d(TAG, "S:handleMessage: " + msg.what);
+			//mClients.add(msg.replyTo);
+			mServiceMessenger = msg.replyTo;
 			switch (msg.what) {
 			case MSG_REGISTER_CLIENT:
 				Log.d(TAG, "S: RX MSG_REGISTER_CLIENT:mClients.add(msg.replyTo) ");
-				mClients.add(msg.replyTo);
+				//				mClients.add(msg.replyTo);
 				break;
 			case MSG_UNREGISTER_CLIENT:
 				Log.d(TAG, "S: RX MSG_REGISTER_CLIENT:mClients.remove(msg.replyTo) ");
-				mClients.remove(msg.replyTo);
+				//				mClients.remove(msg.replyTo);
 				break;
 			case START_PLAY_COMMAND:
+				//				mClients.add(msg.replyTo);
 				Bundle data = msg.getData();
 				mMediaFileUrl = data.getString(MEDIA_FILE_URL);
 				//mMediaFileUrl = "http://download.a1.nixcdn.com/1e5b9e0574a804e212375655b7d42687/545733a2/NhacCuaTui856/Exodus-HoaTau-3089103.mp3";
@@ -162,6 +159,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			default:
 				super.handleMessage(msg);
 			}
+			//mClients.clear();
 		}
 
 		private void updateProgress(int progress){
@@ -208,21 +206,21 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 	private void registerCallingState() {
 		mPhoneStateListener = new PhoneStateListener() {
-		    @Override
-		    public void onCallStateChanged(int state, String incomingNumber) {
-		        if (state == TelephonyManager.CALL_STATE_RINGING) {
-		        	pause();
-		        } else if(state == TelephonyManager.CALL_STATE_IDLE) {
-		        	playIfCan();
-		        } else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
-		        	pause();
-		        }
-		        super.onCallStateChanged(state, incomingNumber);
-		    }
+			@Override
+			public void onCallStateChanged(int state, String incomingNumber) {
+				if (state == TelephonyManager.CALL_STATE_RINGING) {
+					pause();
+				} else if(state == TelephonyManager.CALL_STATE_IDLE) {
+					playIfCan();
+				} else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
+					pause();
+				}
+				super.onCallStateChanged(state, incomingNumber);
+			}
 		};
 		TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 		if(mgr != null) {
-		    mgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+			mgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 		}
 	}
 
@@ -238,29 +236,30 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 	public void sendMediaData2GUI() {
 		Log.d(TAG, "S:sendMediaData2GUI");
-		Iterator<Messenger> messengerIterator = mClients.iterator();
-		while (messengerIterator.hasNext()) {
-			Messenger messenger = messengerIterator.next();
-			try {
-				// Send data as a String
-				Bundle  extras = new Bundle();
-				extras.putString(MEDIA_ID, mMediaId);
-				extras.putString(MEDIA_FILE_URL, mMediaFileUrl);
-				extras.putString(TITLE, mMediaTitle);
-				extras.putString(SPEAKER, mSpeaker);
-				extras.putString(CONTENT_INFO, mContentInfo);
-				extras.putString(DURATION, mDuration);
-				extras.putString(AUTHOR, mAuthor);
-				extras.putString(MEDIA_IMAGE_URL, mMediaImageUrl);
-				extras.putBoolean(IS_PLAYING, mKCDKMediaPlayer.isPlaying());
-				Message msg = Message.obtain(null, UPDATE_GUI_COMMAND);
-				msg.setData(extras);
-				messenger.send(msg);
-			} catch (RemoteException e) {
-				// The client is dead. Remove it from the list.
-				mClients.remove(messenger);
-			}
+		//		Iterator<Messenger> messengerIterator = mClients.iterator();
+		//		while (messengerIterator.hasNext()) {
+		//			Messenger messenger = messengerIterator.next();
+		try {
+			// Send data as a String
+			Bundle  extras = new Bundle();
+			extras.putString(MEDIA_ID, mMediaId);
+			extras.putString(MEDIA_FILE_URL, mMediaFileUrl);
+			extras.putString(TITLE, mMediaTitle);
+			extras.putString(SPEAKER, mSpeaker);
+			extras.putString(CONTENT_INFO, mContentInfo);
+			extras.putString(DURATION, mDuration);
+			extras.putString(AUTHOR, mAuthor);
+			extras.putString(MEDIA_IMAGE_URL, mMediaImageUrl);
+			extras.putBoolean(IS_PLAYING, mKCDKMediaPlayer.isPlaying());
+			Message msg = Message.obtain(null, UPDATE_GUI_COMMAND);
+			msg.setData(extras);
+			mServiceMessenger.send(msg);
+		} catch (RemoteException e) {
+			// The client is dead. Remove it from the list.
+			//mClients.remove(messenger);
+			e.printStackTrace();
 		}
+		//		}
 	}
 
 	public void pauseMediaPlayer(boolean isStop,boolean showNotification) {
@@ -379,25 +378,26 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	 */
 	private void sendMessageToUI(int type, int value, int sencondValue) {
 		Log.d(TAG, "S:sendMessageToUI");
-		Iterator<Messenger> messengerIterator = mClients.iterator();
-		while (messengerIterator.hasNext()) {
-			Messenger messenger = messengerIterator.next();
-			try {
-				// Send data as a String
-				Bundle bundle = new Bundle();
-				bundle.putInt("value", value);
-				bundle.putInt("type", type);
-				bundle.putInt("sencondValue", sencondValue);
-				Message msg = Message.obtain(null, UI_UPDATE_COMAND);
-				msg.setData(bundle);
-				Log.d(TAG, "S:TX MSG_SET_STRING_VALUE");
-				messenger.send(msg);
+		//		Iterator<Messenger> messengerIterator = mClients.iterator();
+		//		while (messengerIterator.hasNext()) {
+		//			Messenger messenger = messengerIterator.next();
+		try {
+			// Send data as a String
+			Bundle bundle = new Bundle();
+			bundle.putInt("value", value);
+			bundle.putInt("type", type);
+			bundle.putInt("sencondValue", sencondValue);
+			Message msg = Message.obtain(null, UI_UPDATE_COMAND);
+			msg.setData(bundle);
+			Log.d(TAG, "S:TX MSG_SET_STRING_VALUE");
+			mServiceMessenger.send(msg);
 
-			} catch (RemoteException e) {
-				// The client is dead. Remove it from the list.
-				mClients.remove(messenger);
-			}
+		} catch (RemoteException e) {
+			// The client is dead. Remove it from the list.
+			//mClients.remove(messenger);
+			e.printStackTrace();
 		}
+		//		}
 	}
 	private boolean startPlayMedia() {
 		Log.i(TAG, "playMedia start");

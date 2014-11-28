@@ -91,10 +91,10 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		mDescriptionFragment = (DescriptionFragment)getSupportFragmentManager().findFragmentById(R.id.secondFragment);
 
 		mPinnedHeaderMediaListFragment.setOnItemSelectionListener(this);
-		//mPinnedHeaderMediaListFragment.setEnableLoading(false);
-		if (mSmartViewWithMenu.isShowDetailMedia()) {
+		mPinnedHeaderMediaListFragment.setEnableLoading(false);
+		/*if (mSmartViewWithMenu.isShowDetailMedia()) {
 			mPinnedHeaderMediaListFragment.setEnableLoading(!mSmartViewWithMenu.isShowDetailMedia());			
-		}
+		}*/
 
 
 		mKCDKMediaPlayer = mSmartViewWithMenu.getKCDKMediaPlayer();
@@ -164,15 +164,16 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	@Override
 	public void doItemSelection(MediaInfo item, boolean reset) {
 		if(mDescriptionFragment!=null&&mSmartViewWithMenu!=null){
+			Log.i(TAG, "doItemSelection reloadMediaListitem.id "+item.getMediaId()+" reset "+reset);
+			//Log.i(TAG, "item id "+item.getMediaId()+" reset "+reset);
 			if (item.validated()) {
 				mDescriptionFragment.updateData(item,mSmartViewWithMenu.getMediaImage(),this);
 				mSmartViewWithMenu.showMediaContent(item,reset);				
 			}
 			else{
 				if (mPinnedHeaderMediaListFragment!=null) {
-					Log.d(TAG, "doItemSelection reloadMediaListitem.id "+item.getMediaId()+" reset "+reset);
-					mPinnedHeaderMediaListFragment.setEnableLoading(false);
-					mPinnedHeaderMediaListFragment.reloadMediaList(null);
+					//mPinnedHeaderMediaListFragment.setEnableLoading(false);
+					//mPinnedHeaderMediaListFragment.reloadMediaList(null);
 				}
 			}
 		}
