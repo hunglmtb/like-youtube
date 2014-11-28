@@ -5,6 +5,7 @@ import java.util.Arrays;
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.SmartKCDKActivity;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
+import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import vn.tbs.kcdk.global.Common;
 import vn.tbs.kcdk.global.PinnedHeaderListView;
 import android.graphics.Typeface;
@@ -246,16 +247,16 @@ public class PinnedHeaderMediaListFragment extends ListFragment {
 	}
 
 
-	public void setEnableLoading(boolean disable) {
+	public void setEnableLoading(boolean enable) {
 		if (mEndlessAdapter!=null) {
-			mEndlessAdapter.setEnableLoading(!disable);
+			mEndlessAdapter.setEnableLoading(enable);
 		}
 	}
 	
-	public void reloadMediaList() {
+	public void reloadMediaList(CategoryRow item) {
 		Log.i(TAG, "reloadMediaList start");
 		if (mEndlessAdapter!=null) {
-			mEndlessAdapter.reload();
+			mEndlessAdapter.reload(item);
 		}
 		Log.i(TAG, "reloadMediaList end");
 	}

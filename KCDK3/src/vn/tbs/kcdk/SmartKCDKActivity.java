@@ -61,15 +61,29 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		mSmartViewWithMenu  = new SmartViewWithMenu(this,intent,this);
 		View view = mSmartViewWithMenu.getView();
 		setContentView(view);
-		
+
 		mSmartViewWithMenu.getSmartMenu().setItemSelectedListener( new ItemSelectedListener() {
 			@Override
 			public void doSelectMenuItem(CategoryRow item) {
-				if (mThirdFragment!=null) {
-					mThirdFragment.showOriginWebview(true);
-					mThirdFragment.refreshWebView(true);
+				if (item!=null) {
+					//TODO update later
+					mSmartViewWithMenu.doMenuItemSelection(item);
+					if (item.getCategoryId()=="dtdk") {
+						if (mThirdFragment==null) {
+							mThirdFragment = new AdditionalFragment();
+							//		mThirdFragment.setArguments(getIntent().getExtras());					
+						}
+						mThirdFragment.showOriginWebview(true);
+						mThirdFragment.refreshWebView(true);
+						getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mThirdFragment).commit();					}
+					else{
+						if (mPinnedHeaderMediaListFragment!=null) {
+							mPinnedHeaderMediaListFragment.setEnableLoading(true);
+							mPinnedHeaderMediaListFragment.reloadMediaList(item);
+						}
+					}
 				}
-				mSmartViewWithMenu.doMenuItemSelection(item);
+
 			}
 		});
 
@@ -77,11 +91,11 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		mDescriptionFragment = (DescriptionFragment)getSupportFragmentManager().findFragmentById(R.id.secondFragment);
 
 		mPinnedHeaderMediaListFragment.setOnItemSelectionListener(this);
-		mPinnedHeaderMediaListFragment.setEnableLoading(mSmartViewWithMenu.isShowDetailMedia());
+		//mPinnedHeaderMediaListFragment.setEnableLoading(false);
+		if (mSmartViewWithMenu.isShowDetailMedia()) {
+			mPinnedHeaderMediaListFragment.setEnableLoading(!mSmartViewWithMenu.isShowDetailMedia());			
+		}
 
-		mThirdFragment = new AdditionalFragment();
-		mThirdFragment.setArguments(getIntent().getExtras());
-		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mThirdFragment).commit();
 
 		mKCDKMediaPlayer = mSmartViewWithMenu.getKCDKMediaPlayer();
 
@@ -141,7 +155,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 					actionBar.show();					
 				}
 				if (reachBottom&&mPinnedHeaderMediaListFragment!=null) {
-					mPinnedHeaderMediaListFragment.reloadMediaList();
+					mPinnedHeaderMediaListFragment.reloadMediaList(null);
 				}
 
 			}
@@ -156,8 +170,9 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 			}
 			else{
 				if (mPinnedHeaderMediaListFragment!=null) {
-					mPinnedHeaderMediaListFragment.setEnableLoading(true);
-					mPinnedHeaderMediaListFragment.reloadMediaList();
+					Log.d(TAG, "doItemSelection reloadMediaListitem.id "+item.getMediaId()+" reset "+reset);
+					mPinnedHeaderMediaListFragment.setEnableLoading(false);
+					mPinnedHeaderMediaListFragment.reloadMediaList(null);
 				}
 			}
 		}

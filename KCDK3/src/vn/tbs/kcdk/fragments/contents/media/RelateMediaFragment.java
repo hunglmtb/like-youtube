@@ -44,6 +44,11 @@ public class RelateMediaFragment extends Fragment implements  OnClickListener {
 	private String mMediaId = null;
 	private String mOldMediaId = null;
 
+	public RelateMediaFragment() {
+		super();
+	}
+	
+	
 	public RelateMediaFragment(String mediaId) {
 		//this.mImageFetcher = aImageFetcher;
 		this.mMediaId = mediaId;
