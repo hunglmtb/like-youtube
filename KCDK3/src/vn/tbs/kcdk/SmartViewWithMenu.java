@@ -63,6 +63,7 @@ public class SmartViewWithMenu implements OnClickListener {
 	private boolean mCloseOnRight = false;
 	private boolean mMenuHiden = true;
 	private boolean mIsRootLayoutAnimating = false;
+	private boolean mOtherAnimating = false;
 	protected OverlayMode mOverlayMode = OverlayMode.APP;
 
 	// Layout containers for various widgets
@@ -101,7 +102,7 @@ public class SmartViewWithMenu implements OnClickListener {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			if (mIsRootLayoutAnimating) {
+			if (mIsRootLayoutAnimating||mOtherAnimating) {
 				return true;
 			}
 			final int action = event.getActionMasked();
@@ -268,6 +269,7 @@ public class SmartViewWithMenu implements OnClickListener {
 					updateBackView(aHiden,OVERLAY_BOTTOM_MARGIN,alpha);
 					mMenuHiden = aHiden;
 					Common.setVisible(mThirdFragmentContainer, mThirdFragmentContainerShowing);
+					mOtherAnimating = false;
 				}
 			}
 
@@ -280,7 +282,7 @@ public class SmartViewWithMenu implements OnClickListener {
 		menuAnimations.addAnimation(menuTranslate);
 		mMenuHiden = false;
 		mMenuLayout.startAnimation(menuAnimations);
-
+		mOtherAnimating = true;
 	}
 
 	protected void updateBackView(boolean hiden, int margin, float fromAlpha) {

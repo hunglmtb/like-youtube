@@ -114,7 +114,7 @@ public class EndlessLoadAdapter extends EndlessAdapter {
 
 	@Override
 	protected void appendCachedData() {
-		//load more data
+		//load more data TODO update 35 later 
 		if (mPinnedHeaderMediaAdapter!=null&&mPinnedHeaderMediaAdapter.getCount()<35) {
 			mPinnedHeaderMediaAdapter.addMoreData(mMoreData);
 		}
