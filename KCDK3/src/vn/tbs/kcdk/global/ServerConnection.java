@@ -52,6 +52,7 @@ public class ServerConnection {
 				CategoryRow category = null;
 				String categoryId = null;
 				String categoryName = null;
+				String categoryKeyString = "";
 				boolean showChildCategory = false;
 				List<CategoryRow> childCategories = null;
 				JSONObject jCategory = null;
@@ -61,6 +62,7 @@ public class ServerConnection {
 					jCategory = jCategories.getJSONObject(i);
 					categoryId = jCategory.getString("categoryId");
 					categoryName = jCategory.getString("categoryName");
+					categoryKeyString = jCategory.getString("categoryKeyString");
 					try {
 						showChildCategory = jCategory.getBoolean("showChildCategory");
 					} catch (JSONException e1) {
@@ -72,7 +74,7 @@ public class ServerConnection {
 					//					childCategories = jCategory.getJSONArray("createdDate");
 					childCategories = null;
 
-					category = new CategoryRow(categoryId, categoryName, showChildCategory, childCategories);
+					category = new CategoryRow(categoryKeyString,categoryId, categoryName, showChildCategory, childCategories);
 					categories.add(category);
 				}
 

@@ -159,7 +159,7 @@ public class AdditionalFragment extends Fragment {
 			mParentLayout.removeView(mChildWebview);				
 			mChildWebview =null;
 		}
-		if (reload) {
+		if (reload&&mOriginalWebView!=null) {
 			mOriginalWebView.reload();			
 		}
 	}
