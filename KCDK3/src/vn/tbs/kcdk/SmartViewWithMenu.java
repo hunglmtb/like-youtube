@@ -754,6 +754,6 @@ public class SmartViewWithMenu implements OnClickListener {
 		animateMenu(MENU_WIDTH, true);
 		mMenuHiden = true;
 		//TODO update later
-		mThirdFragmentContainerShowing = item.getCategoryId()=="dtdk";
+		mThirdFragmentContainerShowing = item!=null?"CATEGORY01".equals(item.getCategoryId()):false;
 	}
 }

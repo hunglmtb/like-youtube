@@ -61,24 +61,29 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		mSmartViewWithMenu  = new SmartViewWithMenu(this,intent,this);
 		View view = mSmartViewWithMenu.getView();
 		setContentView(view);
+		if (mThirdFragment==null) {
+			mThirdFragment = new AdditionalFragment();
+			//		mThirdFragment.setArguments(getIntent().getExtras());					
+		}
 
 		mSmartViewWithMenu.getSmartMenu().setItemSelectedListener( new ItemSelectedListener() {
 			@Override
-			public void doSelectMenuItem(CategoryRow item) {
-				if (item!=null) {
+			public void doSelectMenuItem(CategoryRow item, boolean isOldItem) {
+				mSmartViewWithMenu.doMenuItemSelection(item);
+				if (!isOldItem&&item!=null) {
 					//TODO update later
-					mSmartViewWithMenu.doMenuItemSelection(item);
-					if (item.getCategoryId()=="dtdk") {
-						if (mThirdFragment==null) {
-							mThirdFragment = new AdditionalFragment();
+					//TODO update later for name with login or logout
+					if ("CATEGORY01".equals(item.getCategoryId())){
+						if (mThirdFragment!=null) {
+							//mThirdFragment = new AdditionalFragment();
 							//		mThirdFragment.setArguments(getIntent().getExtras());					
+							mThirdFragment.showOriginWebview(true);
+							mThirdFragment.refreshWebView(true);
+							getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mThirdFragment).commit();					}
 						}
-						mThirdFragment.showOriginWebview(true);
-						mThirdFragment.refreshWebView(true);
-						getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mThirdFragment).commit();					}
 					else{
 						if (mPinnedHeaderMediaListFragment!=null) {
-							mPinnedHeaderMediaListFragment.setEnableLoading(true);
+							//mPinnedHeaderMediaListFragment.setEnableLoading(true);
 							mPinnedHeaderMediaListFragment.reloadMediaList(item);
 						}
 					}

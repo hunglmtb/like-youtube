@@ -27,8 +27,8 @@ public class EndlessLoadAdapter extends EndlessAdapter {
 	private List<MediaInfo> mMoreData = null;
 	private boolean mEnableLoading = true;
 
-	
-	
+
+
 	public void setEnableLoading(boolean enableLoading) {
 		this.mEnableLoading = enableLoading;
 	}
@@ -85,7 +85,7 @@ public class EndlessLoadAdapter extends EndlessAdapter {
 
 	@Override
 	protected boolean cacheInBackground() {
-//		SystemClock.sleep(3000);
+		//		SystemClock.sleep(3000);
 
 		if (mPinnedHeaderMediaAdapter!=null) {
 			//load more data
@@ -101,7 +101,8 @@ public class EndlessLoadAdapter extends EndlessAdapter {
 				}
 				else{
 					Log.i("kuku", "cacheInBackground end hasMoreData");
-					return mPinnedHeaderMediaAdapter.hasMoreData();
+					mPinnedHeaderMediaAdapter.updateOffset(mMoreData.size());
+					return true;
 				}
 			}
 
@@ -126,10 +127,9 @@ public class EndlessLoadAdapter extends EndlessAdapter {
 	}
 
 	public void reload(CategoryRow item) {
-		mEnableLoading = true;
-		mPinnedHeaderMediaAdapter.resetItemList(0,item);
-		if (mMoreData==null||mMoreData.size()<=0) {
-			super.restartAppending();
+		mEnableLoading = mPinnedHeaderMediaAdapter.resetItemList(0,item);
+		if (mEnableLoading) {
+			super.restartAppending();			
 		}
 	}
 }

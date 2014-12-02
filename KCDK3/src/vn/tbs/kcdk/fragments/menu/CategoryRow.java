@@ -8,7 +8,8 @@ import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.global.Common;
 
 public class CategoryRow {
-
+	
+	private String mCategoryKeyString = "";
 	private String mCategoryId;
 	private String mCategoryName;
 	private int mIconResource;
@@ -25,9 +26,10 @@ public class CategoryRow {
 	}
 
 
-	public CategoryRow(String mCategoryId, String mCategoryName,
-			boolean mShowChildCategory,List<CategoryRow> mChildCategories) {
+	public CategoryRow(String categoryKeyString,String mCategoryId, String mCategoryName,
+			 boolean mShowChildCategory,List<CategoryRow> mChildCategories) {
 		super();
+		this.mCategoryKeyString = categoryKeyString;
 		this.mCategoryId = mCategoryId;
 		this.mCategoryName = mCategoryName;
 		this.mShowChildCategory = mShowChildCategory;
@@ -118,7 +120,9 @@ public class CategoryRow {
 	public String getCategoryId() {
 		return mCategoryId;
 	}
-
+	public String getCategoryKeyString() {
+		return mCategoryKeyString;
+	}
 
 	/**
 	 * @return the mName

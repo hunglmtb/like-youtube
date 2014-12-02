@@ -40,7 +40,7 @@ public class MediaAdapter extends BaseAdapter {
 
 	private boolean mIsHistoryAdapterType = false;
 
-	private String mCategoryId = "";
+	private String mCategoryKeyString = "";
 	private String mCategoryName = "";
 
 	public MediaAdapter(List<MediaInfo> aMediaList, Context context, ImageFetcher imageFetcher) {
@@ -161,30 +161,31 @@ public class MediaAdapter extends BaseAdapter {
 	}
 
 
-	public boolean hasMoreData() {
-
-		if (mMediaList!=null) {
-			mOffset += mLimit;
-			return mOffset<=mMediaList.size();
-		}
-		else{
-			mMediaList = new ArrayList<MediaInfo>();
-			return true;
-		}
-
+	public void updateOffset(int size) {
+		mOffset += size;
 	}
 
 
-	public void resetItemList(int mOffset, CategoryRow item) {
-		this.mOffset = mOffset;
+	public boolean resetItemList(int mOffset, CategoryRow item) {
+		boolean result = false;
 		if (item!=null) {
-			mCategoryId = item.getCategoryId();
+			this.mOffset = mOffset;
+			mCategoryKeyString = item.getCategoryKeyString();
 			mCategoryName = item.getCategoryName();
+			if (mMediaList!=null) {
+				mMediaList.clear();
+			}
+			result = true;
+		}else{
+			result = mMediaList==null||mMediaList.size()<=0;
 		}
+		
+		return result;
+		
 	}
 
 
 	public String[] getUrlParams() {
-		return new String[] {mCategoryId,mMediaGroupMode,String.valueOf(mLimit),String.valueOf(mOffset)};
+		return new String[] {mCategoryKeyString,mMediaGroupMode,String.valueOf(mLimit),String.valueOf(mOffset)};
 	}
 }

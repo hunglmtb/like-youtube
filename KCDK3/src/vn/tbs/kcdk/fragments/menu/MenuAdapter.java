@@ -107,6 +107,7 @@ public class MenuAdapter extends BaseAdapter { //implements SearchView.OnQueryTe
 			return mAuthenticateView;
 		}*/
 		CategoryRow category = mCategories.get(position);
+		Log.i(TAG, "category key String "+category.getCategoryKeyString()+" id "+ category.getCategoryId() +" name "+category.getCategoryName()+" mode "+category.getItemMode());
 
 		if (category!=null) {
 			TextView rowText = null ;

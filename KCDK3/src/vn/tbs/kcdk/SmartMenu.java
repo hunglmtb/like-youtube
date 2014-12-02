@@ -29,7 +29,7 @@ import android.widget.ListView;
 public class SmartMenu implements OnItemClickListener {
 	public interface ItemSelectedListener {
 
-		void doSelectMenuItem(CategoryRow item);
+		void doSelectMenuItem(CategoryRow item, boolean isOldItem);
 
 	}
 
@@ -90,11 +90,11 @@ public class SmartMenu implements OnItemClickListener {
 		List<CategoryRow> categories = new ArrayList<CategoryRow>();
 
 
-		categories.add(new CategoryRow(CATEGORY_ID_HEADER, "YOU",false, null));
+		categories.add(new CategoryRow(null,CATEGORY_ID_HEADER, "YOU",false, null));
 		//TODO later match to history at kcdk activity
-		categories.add(new CategoryRow(CATEGORY_ID_TIMER, "Close App when playing done", false, null));
-		categories.add(new CategoryRow(CATEGORY_ID_HISTORY, "History", false, null));
-		categories.add(new CategoryRow(CATEGORY_ID_HEADER, "CHUYÊN MỤC", false, null));
+		categories.add(new CategoryRow(null,CATEGORY_ID_TIMER, "Close App when playing done", false, null));
+		categories.add(new CategoryRow(null,CATEGORY_ID_HISTORY, "History", false, null));
+		categories.add(new CategoryRow(null,CATEGORY_ID_HEADER, "CHUYÊN MỤC", false, null));
 		/*categories.add(new CategoryRow(CATEGORY_ID_NAME_01, "Kể chuyện đêm khuya", false, null));
 		categories.add(new CategoryRow(CATEGORY_ID_NAME_02, "Cửa sổ tình yêu", false, null));
 		categories.add(new CategoryRow(CATEGORY_ID_NAME_03, "Blog Radio",  false, null));
@@ -111,10 +111,10 @@ public class SmartMenu implements OnItemClickListener {
 
 
 	private void showContentFragment(CategoryRow item, int position) {
-		boolean ok = switchContent(item);
+		/*boolean ok = switchContent(item);
 		if (ok) {
-			mMenuAdapter.setSelectedPosition(position,true);			
-		}
+		}*/
+		mMenuAdapter.setSelectedPosition(position,true);			
 //		mContext.showPlayer();
 	}
 
@@ -132,7 +132,7 @@ public class SmartMenu implements OnItemClickListener {
 				return true;				
 			}*/
 			if (mItemSelectedListener!=null) {
-				mItemSelectedListener.doSelectMenuItem(item);
+				mItemSelectedListener.doSelectMenuItem(item,false);
 			}
 		}
 
@@ -180,6 +180,7 @@ public class SmartMenu implements OnItemClickListener {
 		protected void onPostExecute(List<CategoryRow> categories) {
 			Log.i(TAG, "onPostExecute start");
 			if (categories!=null&&categories.size()>0&&mMenuAdapter!=null) {
+				//TODO update later
 				mCategories.addAll(categories);
 				mCategories.addAll(categories);
 				mCategories.addAll(categories);
@@ -221,13 +222,19 @@ public class SmartMenu implements OnItemClickListener {
 			return;
 		}
 
+		
+		if (mItemSelectedListener!=null) {
+			mItemSelectedListener.doSelectMenuItem(item,isCurrentPosition);
+		}
 		//other menu item
 		if (isCurrentPosition) {
 			//mKCDKActivity.toggle();
 			return ;
 		}
+		else{
+			showContentFragment(item,position);			
+		}
 
-		showContentFragment(item,position);
 
 		//		mKCDKActivity.setMenuVisible(position%2==0);
 		Log.i(TAG, "onItemClick end" +position);
