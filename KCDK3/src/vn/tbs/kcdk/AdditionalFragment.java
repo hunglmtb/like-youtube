@@ -165,7 +165,7 @@ public class AdditionalFragment extends Fragment {
 	}
 
 	protected void showOriginWebview(boolean show) {
-		Common.setVisible(mLoadingLayout, !show);
+		Common.setVisible(mLoadingLayout, false);
 		Common.setVisible(mOriginalWebView, show);
 		Common.setVisible(mChildWebview, false);
 	}
