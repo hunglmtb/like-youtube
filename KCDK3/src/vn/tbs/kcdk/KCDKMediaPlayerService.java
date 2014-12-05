@@ -59,9 +59,11 @@ import android.widget.RemoteViews;
 public class KCDKMediaPlayerService extends Service implements OnBufferingUpdateListener, OnCompletionListener {
 	private static final String TAG = KCDKMediaPlayer.class.getSimpleName();
 
+	public static final int DEFAULT_DUARATION = 3000000;
+
 	private MediaPlayer mKCDKMediaPlayer = null;
 	private Timer mTimer = new Timer();
-	private int mMediaFileLengthInMilliseconds = 180000;
+	private int mMediaFileLengthInMilliseconds = 0;
 	private static boolean isRunning = false;
 	private Messenger mServiceMessenger = null;
 
@@ -91,11 +93,11 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	private String mSpeaker;
 	private String mContentInfo;
 	private String mDuration;
-//	private String mMediaLinkUrl;
+	//	private String mMediaLinkUrl;
 	private String mAuthor;
-//	private String mPublishedDate;
-//	private String mViewCount;
-//	private String mMediaImageThumbUrl;
+	//	private String mPublishedDate;
+	//	private String mViewCount;
+	//	private String mMediaImageThumbUrl;
 	private String mMediaImageUrl;
 
 	private PhoneStateListener mPhoneStateListener;
@@ -190,9 +192,14 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			@Override
 			public void onPrepared(MediaPlayer player) {
 				player.start();
-				sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, 0);
+				int duration = mKCDKMediaPlayer.getDuration();
+				duration = duration>0&&duration<900000000?duration:DEFAULT_DUARATION;
+				int currentPosition = (int)mKCDKMediaPlayer.getCurrentPosition();
+				int progress = (int)((currentPosition/(float)duration )*SEEKBAR_MAX);
+				mMediaFileLengthInMilliseconds = duration;
+				sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, mMediaFileLengthInMilliseconds);
 				showControllerInNotification();
-
+				Log.d("duration", "currentPosition " + currentPosition + " duration "+duration + " progress "+progress);
 			}
 
 		});
@@ -241,6 +248,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		//			Messenger messenger = messengerIterator.next();
 		try {
 			// Send data as a String
+			mDuration = Common.getDurationTextFromNumber(mMediaFileLengthInMilliseconds);
 			Bundle  extras = new Bundle();
 			extras.putString(MEDIA_ID, mMediaId);
 			extras.putString(MEDIA_FILE_URL, mMediaFileUrl);
@@ -268,7 +276,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			if (showNotification) {
 				showControllerInNotification();
 			}
-			sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PAUSING, 0);
+			sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PAUSING, mMediaFileLengthInMilliseconds);
 			if (isStop) {
 				mNotificationManager.cancel(NOTIFICATION_ID);	
 				//mNotificationShown  = false;
@@ -412,7 +420,8 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			// setup song from http://www.hrupin.com/wp-content/uploads/mp3/testsong_20_sec.mp3 URL to mediaplayer data source
 			//			mMediaPlayer.setDataSource(mContext.getString(R.string.mp3_url_test));
 			if (mMediaFileUrl!=null&&mMediaFileUrl.length()>0) {
-				sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PAUSING, 0);
+				mDuration = Common.getDurationTextFromNumber(mMediaFileLengthInMilliseconds);
+				sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PAUSING, mMediaFileLengthInMilliseconds);
 				mKCDKMediaPlayer.reset();
 				mKCDKMediaPlayer.setDataSource(mMediaFileUrl );
 				// you must call this method after setup the datasource in setDataSource method.
@@ -459,7 +468,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			try {
 				if(!mKCDKMediaPlayer.isPlaying()){
 					mKCDKMediaPlayer.start();
-					sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, 0);
+					sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, mMediaFileLengthInMilliseconds);
 					showControllerInNotification();
 					result =  true;
 				}else {
@@ -570,19 +579,21 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	private class MyTask extends TimerTask {
 		@Override
 		public void run() {
-			int duration = mMediaFileLengthInMilliseconds;
-			duration = (duration>0&&duration<1000000000)?duration:100000;
-			int currentPosition = (int)mKCDKMediaPlayer.getCurrentPosition();
-			int progress = (int)((currentPosition/(float)duration )*SEEKBAR_MAX);
+			if (mKCDKMediaPlayer!=null&&mKCDKMediaPlayer.isPlaying()) {
+				int duration = mKCDKMediaPlayer.getDuration();
+				duration = (duration>0&&duration<1000000000)?duration:DEFAULT_DUARATION;
+				int currentPosition = (int)mKCDKMediaPlayer.getCurrentPosition();
+				int progress = (int)((currentPosition/(float)duration )*SEEKBAR_MAX);
+				Log.d("duration", "TimerTask currentPosition " + currentPosition + " duration "+duration + " progress "+progress);
+				try {
+					sendMessageToUI(SEEKBAR_UPDATE_COMAND,currentPosition,progress);
+					Log.d(TAG, "lele SEEKBAR_UPDATE_COMAND "+progress);
 
-			Log.d(TAG, "currentPosition " + currentPosition + " duration "+duration);
-			try {
-				sendMessageToUI(SEEKBAR_UPDATE_COMAND,currentPosition,progress);
-				Log.d(TAG, "lele SEEKBAR_UPDATE_COMAND "+progress);
+				} catch (Throwable t) { // you should always ultimately catch all
+					// exceptions in timer tasks.
+					Log.e("TimerTick", "Timer Tick Failed.", t);
+				}
 
-			} catch (Throwable t) { // you should always ultimately catch all
-				// exceptions in timer tasks.
-				Log.e("TimerTick", "Timer Tick Failed.", t);
 			}
 		}
 	}

@@ -4,6 +4,7 @@ package vn.tbs.kcdk.global;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.fragments.contents.FoundMediaFragment;
@@ -479,6 +480,33 @@ public class Common {
 		if (view!=null) {
 			view.setVisibility(visibleValue);
 		}		
+	}
+
+	public static String getDurationTextFromNumber(int duration) {
+		String durationText = "-:-";
+		if (duration>0&&duration<1000000000) {
+			long hours = TimeUnit.MILLISECONDS.toHours(duration);
+			
+			if (hours>0) {
+				durationText = String.format("%02d:%02d:%02d", 
+						TimeUnit.MILLISECONDS.toHours(duration),
+						TimeUnit.MILLISECONDS.toMinutes(duration) -  
+						TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(duration)), // The change is in this line
+						TimeUnit.MILLISECONDS.toSeconds(duration) - 
+						TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))); 
+			}
+			else{
+				long minute = TimeUnit.MILLISECONDS.toMinutes(duration);
+				
+				String format = minute>9?"%02d:%02d":"%1d:%02d";
+				durationText = String.format(format, 
+						TimeUnit.MILLISECONDS.toMinutes(duration), // The change is in this line
+						TimeUnit.MILLISECONDS.toSeconds(duration) - 
+						TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))); 
+			}
+			
+		}
+		return durationText;
 	}
 
 }

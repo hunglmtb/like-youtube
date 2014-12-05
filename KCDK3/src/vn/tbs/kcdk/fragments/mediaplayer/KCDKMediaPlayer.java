@@ -23,6 +23,7 @@ import static vn.tbs.kcdk.global.Common.UPDATE_PROGRESS_COMMAND;
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
+import vn.tbs.kcdk.global.Common;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
@@ -81,6 +82,8 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 				if (type==PLAY_PAUSE_UPDATE_COMAND) {
 					int iconResource = value==PLAYING?R.drawable.media_pause:R.drawable.media_start;
 					mButtonPlayPause.setImageResource(iconResource);
+					String duration = Common.getDurationTextFromNumber(sencondValue);
+					mDurationTextView.setText(duration);
 				}
 				break;
 			case MSG_SET_STRING_VALUE:
@@ -450,7 +453,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			this.mMediaInfoItem = item;
 			String url = mContext.getString(R.string.action_url)+item.getMediaFileUrl();
 			//String url = "http://stream2.r15s91.vcdn.vn/fsfsdfdsfdserwrwq3/6de9da3107e057671ecb386c5c8bb797/539814e6/2013/12/15/4/b/4b896ff9151263672609e9cb9cc04c00.mp3";
-			//url = "http://download.a2.nixcdn.com/f140e6b9dc70829347640ed2a279f9c0/543b4b67/NhacCuaTui149/CoHangXom-QuangLe_33pwh.mp3";
+//			url = "http://api.mp3.zing.vn/api/mobile/download/song/LGJGTLGNALGAXGVTLDJTDGLG";
 			boolean ok = true;
 			if (reset) {
 				ok = playMedia(url,closed);				
