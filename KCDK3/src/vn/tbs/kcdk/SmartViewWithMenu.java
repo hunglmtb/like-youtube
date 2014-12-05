@@ -1,7 +1,6 @@
 package vn.tbs.kcdk;
 
 
-import vn.tbs.kcdk.SmartMenu.ItemSelectedListener;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
@@ -21,10 +20,13 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
@@ -82,7 +84,9 @@ public class SmartViewWithMenu implements OnClickListener {
 	private View 							mActionBarView;
 	private boolean 						mShowDetailMedia = false;
 	private Button 							mCloseThirdFragment;
-	private RelativeLayout 					mThirdFragmentContainer;
+	private RelativeLayout 					mThirdLayout;
+	private FrameLayout 					mThirdFragmentContainer;
+
 	private boolean 						mThirdFragmentContainerShowing = false; 
 	//kcdk data
 	private SmartMenu 						mSmartMenu;
@@ -158,7 +162,32 @@ public class SmartViewWithMenu implements OnClickListener {
 			}
 		}
 	};
-
+	private Animation mAnimationFadeIn;
+	private AnimationListener mFadeListener = new AnimationListener() {
+		
+		@Override
+		public void onAnimationStart(Animation animation) {
+			mOtherAnimating = true;
+			if (mThirdFragmentContainerShowing) {
+				Common.setVisible(mThirdLayout, mThirdFragmentContainerShowing);
+			}
+		}
+		
+		@Override
+		public void onAnimationRepeat(Animation animation) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onAnimationEnd(Animation animation) {
+			// TODO Auto-generated method stub
+			Log.i("hung", "onAnimationEnd   here");
+			Common.setVisible(mThirdLayout, mThirdFragmentContainerShowing);
+			mThirdLayout.clearAnimation();
+			mOtherAnimating = false;
+		}
+	};
 
 	public KCDKMediaPlayer getKCDKMediaPlayer() {
 		return mKCDKMediaPlayer;
@@ -210,7 +239,8 @@ public class SmartViewWithMenu implements OnClickListener {
 		mMenuLayout.setVisibility(View.GONE);
 		mCloseThirdFragment = (Button) mMainLayout.findViewById( R.id.close_fragment);
 		mCloseThirdFragment.setOnClickListener(this);
-		mThirdFragmentContainer = (RelativeLayout) mMainLayout.findViewById( R.id.container);
+		mThirdLayout = (RelativeLayout) mMainLayout.findViewById( R.id.container);
+		mThirdFragmentContainer = (FrameLayout) mMainLayout.findViewById( R.id.fragment_container);
 
 		mRootRelativeLayoutParams = (android.widget.RelativeLayout.LayoutParams) mRootLayout.getLayoutParams();
 
@@ -239,7 +269,7 @@ public class SmartViewWithMenu implements OnClickListener {
 		};
 		vto.addOnGlobalLayoutListener(mOnGlobalLayoutListener);
 		//		}
-	//		else {
+		//		else {
 		//			
 		//		}
 		setOriginalPosition(false);			
@@ -261,15 +291,14 @@ public class SmartViewWithMenu implements OnClickListener {
 					Transformation t) {
 				int secondDeltaMargin  =aHiden?-MENU_WIDTH:MENU_WIDTH -aLastXposition ;
 				int xPosition = (int) (secondDeltaMargin*interpolatedTime + aLastXposition);
-				updateMenu(xPosition);
 				Log.i("hung", "interpolatedTime   "+interpolatedTime+" margin "+xPosition);
+				updateMenu(xPosition);
 				if (interpolatedTime==1) {
 					mMenuLayout.clearAnimation();
 					float alpha = aHiden?0:BACKVIEW_ALPHA_MAX;
 					updateBackView(aHiden,OVERLAY_BOTTOM_MARGIN,alpha);
 					mMenuHiden = aHiden;
-					Common.setVisible(mThirdFragmentContainer, mThirdFragmentContainerShowing);
-					mOtherAnimating = false;
+					mOtherAnimating = animateThirdFragment(mThirdFragmentContainerShowing);
 				}
 			}
 
@@ -283,6 +312,84 @@ public class SmartViewWithMenu implements OnClickListener {
 		mMenuHiden = false;
 		mMenuLayout.startAnimation(menuAnimations);
 		mOtherAnimating = true;
+	}
+
+	protected boolean animateThirdFragment(boolean show) {
+
+		if (show) {
+			if (mAnimationFadeIn==null) {
+				mAnimationFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fadein);
+				mAnimationFadeIn.setAnimationListener(mFadeListener);
+			}
+			
+			mThirdLayout.startAnimation(mAnimationFadeIn);
+	        
+		/*
+			// secondary
+			AnimationSet thirdAnimations = new AnimationSet(false);
+			thirdAnimations.setFillAfter(true);
+			thirdAnimations.setDuration(ANIMATION_DURATION);
+			
+			//translate
+			TranslateAnimation thirdTranslate = new TranslateAnimation( 0 , 0 , 0,0){
+				
+				private int mThirdFragmentFoot;
+				
+				@Override
+				protected void applyTransformation(float interpolatedTime,
+						Transformation t) {
+					if (mThirdFragmentFoot<=0) {
+						mThirdFragmentFoot = mThirdLayout!=null?mThirdLayout.getLayoutParams().height -30:60;
+					}
+					if (mThirdFragmentContainerShowing) {
+						Common.setVisible(mThirdLayout, mThirdFragmentContainerShowing);
+					}
+					mThirdFragmentFoot =  mAppLayout.getHeight();
+					int secondDeltaMargin  =mThirdFragmentContainerShowing?-mThirdFragmentFoot:mThirdFragmentFoot ;
+					float aLastXposition = mThirdFragmentContainerShowing?mThirdFragmentFoot:0 ;
+					int yPosition = (int) (secondDeltaMargin*interpolatedTime + aLastXposition + 100);
+					updateThirdLayout(yPosition);
+					Log.i("animate", "interpolatedTime   "+interpolatedTime+" margin "+yPosition);
+					if (interpolatedTime==1) {
+						mThirdLayout.clearAnimation();
+						float alpha = mThirdFragmentContainerShowing?0:BACKVIEW_ALPHA_MAX;
+						//updateBackView(aHiden,OVERLAY_BOTTOM_MARGIN,alpha);
+						//mMenuHiden = aHiden;
+						mOtherAnimating = false;
+						Common.setVisible(mThirdLayout, mThirdFragmentContainerShowing);
+					}
+				}
+				
+				@Override
+				public boolean willChangeBounds() {
+					return true;
+				}
+			};*/
+			
+			/*thirdAnimations.addAnimation(thirdTranslate);
+			mThirdLayout.startAnimation(thirdAnimations);*/
+		}
+
+		return show;
+	}
+
+	protected void updateThirdLayout(int yPosition) {
+		//int xPosition = Math.min(x, MENU_WIDTH);
+		//xPosition = Math.max(xPosition, 0);
+
+		LayoutParams thirdParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+		thirdParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		thirdParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		//thirdParams.addRule(RelativeLayout.BELOW,R.id.action_bar_view);
+		thirdParams.topMargin = yPosition;
+		mThirdLayout.setLayoutParams(thirdParams);
+		//thirdParams.topMargin = 90;
+		//mThirdLayout.requestLayout();
+		//mAppLayout.updateViewLayout(mThirdLayout, thirdParams);
+		//		mThirdLayout.setVisibility(View.VISIBLE);
+		/*float fromAlpha = BACKVIEW_ALPHA_MAX*xPosition/(float)MENU_WIDTH;
+		updateBackView(x<=0,OVERLAY_BOTTOM_MARGIN,fromAlpha);
+		updatePrimaryView(xPosition);*/
 	}
 
 	protected void updateBackView(boolean hiden, int margin, float fromAlpha) {
@@ -370,7 +477,7 @@ public class SmartViewWithMenu implements OnClickListener {
 		updateMenu(0);
 		mRootLayout.setVisibility(mClosed?View.INVISIBLE:View.VISIBLE);
 		mThirdFragmentContainerShowing = false;
-		Common.setVisible(mThirdFragmentContainer, mThirdFragmentContainerShowing);
+		Common.setVisible(mThirdLayout, mThirdFragmentContainerShowing);
 	}
 
 
@@ -739,7 +846,8 @@ public class SmartViewWithMenu implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.close_fragment:
 			mThirdFragmentContainerShowing = false;
-			Common.setVisible(mThirdFragmentContainer, mThirdFragmentContainerShowing);
+			Common.setVisible(mThirdLayout, mThirdFragmentContainerShowing);
+			//animateThirdFragment(true);
 			break;
 
 		default:

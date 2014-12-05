@@ -42,7 +42,7 @@ public class SmartMenu implements OnItemClickListener {
 	private LoadCategoriesFromServerTask mLoadCategoriesFromServerTask;
 	private ItemSelectedListener mItemSelectedListener;
 
-	
+
 	public void setItemSelectedListener(ItemSelectedListener mItemSelectedListener) {
 		this.mItemSelectedListener = mItemSelectedListener;
 	}
@@ -115,7 +115,7 @@ public class SmartMenu implements OnItemClickListener {
 		if (ok) {
 		}*/
 		mMenuAdapter.setSelectedPosition(position,true);			
-//		mContext.showPlayer();
+		//		mContext.showPlayer();
 	}
 
 
@@ -212,17 +212,22 @@ public class SmartMenu implements OnItemClickListener {
 			long id) {
 		Log.i(TAG, "onItemClick start" +position);
 
+
+
 		boolean isCurrentPosition = position==mMenuAdapter.getSelectedPosition();
 
 		//for search menu
 		CategoryRow item = mMenuAdapter.getItem(position);
-		if (item!=null&&item.getItemMode()==MENU_SEARCH) {
+
+		if (item==null||item.getItemMode()==Common.MENU_HEADER) {
+			return;
+		}
+		else if (item.getItemMode()==MENU_SEARCH) {
 			//mKCDKActivity.showSearchView(item);
 			mMenuAdapter.setSelectedPosition(position,true);			
 			return;
 		}
 
-		
 		if (mItemSelectedListener!=null) {
 			mItemSelectedListener.doSelectMenuItem(item,isCurrentPosition);
 		}
