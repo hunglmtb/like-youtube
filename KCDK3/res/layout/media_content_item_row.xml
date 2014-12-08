@@ -2,14 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent" >
+    android:background="@android:color/transparent">
 
     <RelativeLayout
         android:id="@+id/vg_cover"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/media_content_item_pading_vertical"
-        android:layout_marginRight="@dimen/media_content_item_pading_vertical" >
+        android:layout_marginRight="@dimen/media_content_item_pading_vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true" >
 
         <LinearLayout
             android:id="@+id/media_content_item"
@@ -145,7 +147,8 @@
         </LinearLayout>
 
         <View
-            android:id="@+id/relative_media_button"
+            android:clickable="true"
+            android:id="@+id/cover_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/media_content_item"
@@ -155,13 +158,5 @@
             android:background="@drawable/bg_media_item"
             android:visibility="visible" />
     </RelativeLayout>
-
-    <View
-        android:id="@+id/end_view"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/media_content_item_pading_vertical"
-        android:layout_below="@id/vg_cover"
-        android:background="@android:color/transparent"
-        android:visibility="gone" />
 
 </RelativeLayout>

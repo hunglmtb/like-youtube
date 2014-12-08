@@ -99,7 +99,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 					Bundle extras = msg.getData();
 					MediaInfo item = new MediaInfo(extras);
 					boolean reset = false;
-					mUpdateMediaDetailListener.doItemSelection(item,reset);
+					mUpdateMediaDetailListener.doItemSelection(item,reset,true);
 				}
 				break;
 				

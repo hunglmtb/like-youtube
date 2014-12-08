@@ -27,7 +27,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/root_layout"
-        android:background="#d0c599" >
+        android:background="#d0c599"
+        android:focusable="true"
+        android:focusableInTouchMode="true" >
 
         <fragment
             android:id="@+id/secondFragment"
@@ -35,7 +37,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true" />
+            android:layout_alignParentTop="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
     </RelativeLayout>
 
     <View

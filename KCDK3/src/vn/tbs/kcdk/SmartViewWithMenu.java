@@ -827,15 +827,17 @@ public class SmartViewWithMenu implements OnClickListener {
 		this.mOnTopListener = aOnTopListener;
 	}
 
-	public void showMediaContent(MediaInfo item, boolean reset) {
+	public void showMediaContent(MediaInfo item, boolean reset, boolean animate) {
 		// TODO Auto-generated method stub
 		//loadImage(item);
 		mClosed = false;
 		mOnTop = true;
 		mRootLayout.setVisibility(View.VISIBLE);
 		mSecondaryLayout.setVisibility(View.VISIBLE);
-		int screenHeight = mAppLayout.getHeight();
-		animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);
+		if (animate) {
+			int screenHeight = mAppLayout.getHeight();
+			animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);			
+		}
 		if (mKCDKMediaPlayer!=null) {
 			mKCDKMediaPlayer.playMedia(item,mClosed,reset);						
 		}
