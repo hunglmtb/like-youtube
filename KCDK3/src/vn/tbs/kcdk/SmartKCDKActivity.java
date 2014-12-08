@@ -94,6 +94,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 
 		mPinnedHeaderMediaListFragment = (PinnedHeaderMediaListFragment)getSupportFragmentManager().findFragmentById(R.id.mainFragment);
 		mDescriptionFragment = (DescriptionFragment)getSupportFragmentManager().findFragmentById(R.id.secondFragment);
+		mDescriptionFragment.setOnItemSelectionListener(this);
 
 		mPinnedHeaderMediaListFragment.setOnItemSelectionListener(this);
 		mPinnedHeaderMediaListFragment.setEnableLoading(false);
@@ -167,13 +168,13 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		}
 	}
 	@Override
-	public void doItemSelection(MediaInfo item, boolean reset) {
+	public void doItemSelection(MediaInfo item, boolean reset, boolean animate) {
 		if(mDescriptionFragment!=null&&mSmartViewWithMenu!=null){
 			Log.i(TAG, "doItemSelection reloadMediaListitem.id "+item.getMediaId()+" reset "+reset);
 			//Log.i(TAG, "item id "+item.getMediaId()+" reset "+reset);
 			if (item.validated()) {
 				mDescriptionFragment.updateData(item,mSmartViewWithMenu.getMediaImage(),this);
-				mSmartViewWithMenu.showMediaContent(item,reset);				
+				mSmartViewWithMenu.showMediaContent(item,reset,animate);				
 			}
 			else{
 				if (mPinnedHeaderMediaListFragment!=null) {

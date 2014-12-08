@@ -7,6 +7,7 @@ import java.util.List;
 
 import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
+import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.global.Common;
 import vn.tbs.kcdk.global.ServerConnection;
 import android.content.Context;
@@ -79,8 +80,11 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	public List<RelateMediaFragment2> mFragmentList;
 	private Typeface tf;
 	private Button mRefreshWebViewButton;
+	private ItemSelectionListener mItemSelectionListener;
 
-
+	public void setOnItemSelectionListener(ItemSelectionListener alistener) {
+		this.mItemSelectionListener = alistener;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -131,6 +135,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				//actionBar.setSelectedNavigationItem(position);
 				/*if (position>0&&mDetailFragment!=null) {
 				}*/
+				//mViewPager.getChildAt(position).requestFocus();
 			}
 
 			@Override
@@ -399,6 +404,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	 */
 	public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
 
+
 		public AppSectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
@@ -429,6 +435,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 						Fragment fragment = getFragmentByMediaId(media.getMediaId());
 						if (fragment==null) {
 							mRelateMediaFragment = new RelateMediaFragment2(media,mContext);
+							mRelateMediaFragment.setOnItemSelectionListener(mItemSelectionListener);
 							if (mFragmentList==null) {
 								mFragmentList = new ArrayList<RelateMediaFragment2>();
 							}

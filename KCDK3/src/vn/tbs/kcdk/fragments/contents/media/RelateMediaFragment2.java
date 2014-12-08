@@ -3,19 +3,21 @@ package vn.tbs.kcdk.fragments.contents.media;
 import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.SmartKCDKActivity;
+import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.global.Common;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.novoda.imageloader.core.ImageManager;
 import com.novoda.imageloader.core.model.ImageTagFactory;
 
-public class RelateMediaFragment2 extends Fragment  {
+public class RelateMediaFragment2 extends Fragment implements OnClickListener  {
 
 	private ImageManager imageManager;
 	private ImageTagFactory imageTagFactory;
@@ -24,6 +26,7 @@ public class RelateMediaFragment2 extends Fragment  {
 	private MediaInfo mOldMediaId = null;
 	private View mView;
 	private Context mContext;
+	private ItemSelectionListener mItemListerner;
 
 	public RelateMediaFragment2(MediaInfo media, Context context) {
 		//this.mImageFetcher = aImageFetcher;
@@ -38,6 +41,10 @@ public class RelateMediaFragment2 extends Fragment  {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mView =  inflater.inflate(R.layout.media_content_item_row, null);
 		bindView(mContext);
+		View coverView = mView.findViewById(R.id.cover_view);
+		if (coverView!=null) {
+			coverView.setOnClickListener(this);
+		}
 		return mView;
 	}
 
@@ -67,5 +74,23 @@ public class RelateMediaFragment2 extends Fragment  {
 		this.mOldMediaId = this.mMedia;
 		this.mMedia = media;
 		//bindView(context);
+	}
+
+	public void setOnItemSelectionListener(ItemSelectionListener alistener) {
+		this.mItemListerner = alistener;
+	}
+	
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.cover_view:
+			if (mItemListerner!=null) {
+				mItemListerner.doItemSelection(mMedia,true,false);			
+			}
+			break;
+
+		default:
+			break;
+		}
 	}
 }
