@@ -29,5 +29,6 @@
     <string name="less_suggestion">ẨN BỚT</string>
     <string name="dummy_section_text">Section %1d is just a dummy section.</string>
     <string name="refresh_webview">RELOAD</string>
-
+    <string name="description">Media Controls</string>
+    
 </resources>

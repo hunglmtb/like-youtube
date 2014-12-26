@@ -37,6 +37,11 @@ public class RelateMediaFragment2 extends Fragment implements OnClickListener  {
 	}
 
 
+	public RelateMediaFragment2() {
+		super();
+	}
+
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mView =  inflater.inflate(R.layout.media_content_item_row, null);

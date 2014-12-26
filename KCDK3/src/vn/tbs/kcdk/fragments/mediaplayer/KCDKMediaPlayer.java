@@ -20,7 +20,9 @@ import static vn.tbs.kcdk.global.Common.TITLE;
 import static vn.tbs.kcdk.global.Common.UI_UPDATE_COMAND;
 import static vn.tbs.kcdk.global.Common.UPDATE_GUI_COMMAND;
 import static vn.tbs.kcdk.global.Common.UPDATE_PROGRESS_COMMAND;
+import vn.tbs.kcdk.KCDKMediaPlayerService;
 import vn.tbs.kcdk.R;
+import vn.tbs.kcdk.SmartViewWithMenu;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.global.Common;
@@ -41,7 +43,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +59,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	private final Messenger mMessenger = new Messenger(
 			new IncomingMessageHandler());
 	public ItemSelectionListener mUpdateMediaDetailListener;
+    VideoControllerView controller;
 
 	/**
 	 * Handle incoming messages from TimerService
@@ -80,10 +85,13 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 					Log.d(TAG, "lala "+value);
 				}
 				if (type==PLAY_PAUSE_UPDATE_COMAND) {
-					int iconResource = value==PLAYING?R.drawable.media_pause:R.drawable.media_start;
+					/*int iconResource = value==PLAYING?R.drawable.media_pause:R.drawable.media_start;
 					mButtonPlayPause.setImageResource(iconResource);
 					String duration = Common.getDurationTextFromNumber(sencondValue);
-					mDurationTextView.setText(duration);
+					mDurationTextView.setText(duration);*/
+					//controller.updatePausePlay();
+					controller.show();
+
 				}
 				break;
 			case MSG_SET_STRING_VALUE:
@@ -113,7 +121,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 
 	private Context mContext;
 
-	private View mMediaPlayerView;
+	private RelativeLayout mMediaPlayerView;
 	private ImageButton mButtonPlayPause;
 	private SeekBar mSeekBarProgress;
 	private TextView mDurationTextView;
@@ -137,7 +145,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	}
 
 
-	public KCDKMediaPlayer(Context aContext, View mediaPlayerView) {
+	public KCDKMediaPlayer(Context aContext, RelativeLayout mediaPlayerView) {
 		this.mContext = aContext;
 		this.mMediaPlayerView = mediaPlayerView;
 		initMediaPlayer();
@@ -454,6 +462,7 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 			String url = mContext.getString(R.string.action_url)+item.getMediaFileUrl();
 			//String url = "http://stream2.r15s91.vcdn.vn/fsfsdfdsfdserwrwq3/6de9da3107e057671ecb386c5c8bb797/539814e6/2013/12/15/4/b/4b896ff9151263672609e9cb9cc04c00.mp3";
 //			url = "http://api.mp3.zing.vn/api/mobile/download/song/LGJGTLGNALGAXGVTLDJTDGLG";
+			//url = "http://dl.mp3.zdn.vn/fsfsdfdsfdserwrwq3/d81e2328aa8cbda32c770ba1bd2359f3/548924d0/8/df/8df1d452ce02adc29d12933442f27d30.mp3?filename=Forever%20And%20One%20-%20Helloween.mp3";
 			boolean ok = true;
 			if (reset) {
 				ok = playMedia(url,closed);				
@@ -497,8 +506,16 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 
 	public void updateView(boolean showProgressLayout,boolean showPlayControl) {
 		// TODO Auto-generated method stub
-		mMediaProgressLayout.setVisibility(showProgressLayout?View.VISIBLE:View.GONE);
-		mButtonPlayPause.setVisibility(showPlayControl?View.VISIBLE:View.INVISIBLE);
+		mMediaProgressLayout.setVisibility(showProgressLayout?View.GONE:View.GONE);
+		mButtonPlayPause.setVisibility(showProgressLayout?View.GONE:View.GONE);
+		if (controller!=null) {
+			controller.show();			
+			/*if (showProgressLayout) {
+			}
+			else {
+				controller.hide();
+			}*/
+		}
 		//mMediaPlayerView.setVisibility(showProgressLayout?View.VISIBLE:View.GONE);
 	}
 
@@ -519,8 +536,12 @@ public class KCDKMediaPlayer implements OnClickListener, OnTouchListener, OnBuff
 	}
 
 
-	public void initServiceMessenger(IBinder service) {
+	public void initServiceMessenger(IBinder service, KCDKMediaPlayerService kcdkService, SmartViewWithMenu mSmartViewWithMenu) {
 		mServiceMessenger = new Messenger(service);
+        controller = new VideoControllerView(mContext);
+        controller.setMediaPlayer(kcdkService);
+        controller.setAnchorView(mMediaPlayerView);
+        controller.setViewControl(mSmartViewWithMenu);
 		//textStatus.setText("Attached.");
 		Toast.makeText(mContext, "Attached", Toast.LENGTH_SHORT).show();
 		try {

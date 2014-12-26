@@ -11,6 +11,7 @@ import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.SearchManager;
+import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +51,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	boolean mIsBound;
 	private KCDKMediaPlayer mKCDKMediaPlayer;
 	private AdditionalFragment mThirdFragment;
+	private KCDKMediaPlayerService mService;
 
 
 	@Override
@@ -80,7 +82,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 							mThirdFragment.showOriginWebview(true);
 							mThirdFragment.refreshWebView(true);
 							getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mThirdFragment).commit();					}
-						}
+					}
 					else{
 						if (mPinnedHeaderMediaListFragment!=null) {
 							//mPinnedHeaderMediaListFragment.setEnableLoading(true);
@@ -106,17 +108,19 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		mKCDKMediaPlayer = mSmartViewWithMenu.getKCDKMediaPlayer();
 
 		startService(new Intent(SmartKCDKActivity.this, KCDKMediaPlayerService.class));			
-		mIsBound = false; // by default set this to unbound
+		//mIsBound = false; // by default set this to unbound
 		//automaticBind();
-		doBindService();
+		//doBindService();
 	}
 
 	@Override
 	public void onServiceConnected(ComponentName name, IBinder service) {
 		Log.d(TAG, "C:onServiceConnected()");
 		Toast.makeText(this, "C:onServiceConnected", Toast.LENGTH_SHORT).show();
-		if (mKCDKMediaPlayer!=null) {
-			mKCDKMediaPlayer.initServiceMessenger(service);
+		KCDKMediaPlayerService.LocalBinder binder = (KCDKMediaPlayerService.LocalBinder) service;
+		mService = binder.getService();
+		if (mKCDKMediaPlayer!=null&&service!=null) {
+			mKCDKMediaPlayer.initServiceMessenger(binder.getLocalBinder(),mService,mSmartViewWithMenu);
 		}
 
 	}
@@ -141,6 +145,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 			Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show();
 			//textStatus.setText("Disconnected.");
 		}
+		mIsBound = false;
 	}
 
 	public void onBackPressed() {
@@ -150,7 +155,7 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 	}
 	@Override
 	public void doSmartViewOnTop(int yAxis, boolean reachBottom,boolean onTop){
-		android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+		/*android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 		if (actionBar!=null) {
 			boolean hide = yAxis<=actionBar.getHeight();
 			if (hide) {
@@ -165,6 +170,10 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 				}
 
 			}
+		}*/
+		
+		if (reachBottom&&mPinnedHeaderMediaListFragment!=null) {
+			mPinnedHeaderMediaListFragment.reloadMediaList(null);
 		}
 	}
 	@Override
@@ -207,12 +216,21 @@ public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListen
 		//		textStatus.setText("Binding.");
 	}
 
-
+	@Override
+	protected void onStart() {
+		super.onStart();
+		doBindService();
+	}
 
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		mConnection = null;
+		// Unbind from the service
+		if (mIsBound&&mConnection!=null) {
+			unbindService(mConnection);
+			mConnection = null;
+			mIsBound = false;
+		}
 		super.onDestroy();
 	}
 }
