@@ -4,6 +4,7 @@ package vn.tbs.kcdk;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
+import vn.tbs.kcdk.fragments.mediaplayer.VideoControllerView.ViewControl;
 import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import vn.tbs.kcdk.global.Common;
 import android.annotation.SuppressLint;
@@ -31,7 +32,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
-public class SmartViewWithMenu implements OnClickListener {
+public class SmartViewWithMenu implements OnClickListener, ViewControl {
 
 	public interface OnTopListener {
 
@@ -69,6 +70,7 @@ public class SmartViewWithMenu implements OnClickListener {
 	protected OverlayMode mOverlayMode = OverlayMode.APP;
 
 	// Layout containers for various widgets
+	private RelativeLayout					mLayout;
 	private RelativeLayout 					mRootLayout;			// Root layout
 	private ImageView 						mMediaImage;
 	private RelativeLayout 					mAppLayout;			// Reference to the window
@@ -198,7 +200,7 @@ public class SmartViewWithMenu implements OnClickListener {
 	}
 
 	public RelativeLayout getView() {
-		return mMainLayout;
+		return mLayout;
 	}
 
 
@@ -213,13 +215,14 @@ public class SmartViewWithMenu implements OnClickListener {
 		this.mContext = aContext;
 		setOnTopListener(onTopListener);
 
-		mMainLayout = (RelativeLayout) LayoutInflater.from(mContext).inflate(R.layout.main_sliding, null);
+		mLayout = (RelativeLayout) LayoutInflater.from(mContext).inflate(R.layout.main_sliding, null);
+		mMainLayout = (RelativeLayout) mLayout.findViewById(R.id.app_layout);
 		//View playerNavigation = LayoutInflater.from(mContext).inflate(R.layout.media_player_panel_layout, null);
 
-		View playerNavigation = mMainLayout.findViewById(R.id.media_player_layout);
+		RelativeLayout playerNavigation = (RelativeLayout) mLayout.findViewById(R.id.media_player_layout);
+		mActionBarView = playerNavigation;
 		mKCDKMediaPlayer = new KCDKMediaPlayer(mContext,playerNavigation);
 		mKCDKMediaPlayer.setOnUpdateMediaDetailListener((ItemSelectionListener) aContext);
-
 
 		//mMainListView = (ListView) mMainLayout.findViewById( R.id.mainListView );
 		// Set the ArrayAdapter as the ListView's adapter.
@@ -235,7 +238,6 @@ public class SmartViewWithMenu implements OnClickListener {
 		mBackView = mMainLayout.findViewById(R.id.backView);
 		mMenuLayout = (RelativeLayout) mMainLayout.findViewById(R.id.menu_layout);
 		mMenuListView = (MenuListView) mMainLayout.findViewById( R.id.menuListView );
-		mActionBarView = mMainLayout.findViewById( R.id.action_bar_view);
 		mMenuLayout.setVisibility(View.GONE);
 		mCloseThirdFragment = (Button) mMainLayout.findViewById( R.id.close_fragment);
 		mCloseThirdFragment.setOnClickListener(this);
@@ -775,7 +777,7 @@ public class SmartViewWithMenu implements OnClickListener {
 		}
 		setAlphaValue(mRootLayout, fromAlpha);
 
-		mKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&mYAxis==0),false);
+		//mKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&mYAxis==0),false);
 
 		if (mOnTopListener!=null&&!aIsSlidingX&&!mInSimpleMode) {
 			mOnTopListener.doSmartViewOnTop(mYAxis,false,mOnTop);
@@ -796,7 +798,7 @@ public class SmartViewWithMenu implements OnClickListener {
 
 			//back view
 			updateBackView(false,margin,fromAlpha);
-			setAlphaValue(mActionBarView,1-fromAlpha);
+			//setAlphaValue(mActionBarView,1-fromAlpha);
 		}
 	}
 
@@ -867,5 +869,17 @@ public class SmartViewWithMenu implements OnClickListener {
 		mMenuHiden = true;
 		//TODO update later
 		mThirdFragmentContainerShowing = item!=null?"CATEGORY01".equals(item.getCategoryId()):false;
+	}
+
+	@Override
+	public void viewDetail() {
+		if ((!mOnTop||mClosed)&&mMenuHiden) {
+			
+			mOnTop = true;
+			mClosed = false;
+			mRootLayout.setVisibility(View.VISIBLE);
+			int screenHeight = mAppLayout.getHeight();
+			animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);			
+		}
 	}
 }
