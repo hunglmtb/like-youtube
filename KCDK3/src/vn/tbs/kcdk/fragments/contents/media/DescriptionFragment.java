@@ -9,6 +9,7 @@ import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.global.Common;
+import vn.tbs.kcdk.global.ImageViewTopCrop;
 import vn.tbs.kcdk.global.ServerConnection;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -368,7 +369,10 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				mMediaImageView = imageView;
 				/*mImageFetcher.setEnableOtherLoad(true);
 				mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);*/
-
+				if (mMediaImageView instanceof ImageViewTopCrop) {
+					ImageViewTopCrop image = (ImageViewTopCrop) mMediaImageView;
+					image.setOriginScaleFactor(-1);
+				}
 				imageView.setTag(imageTagFactory.build(mMediaImageUrl, context));
 				imageManager.getLoader().load(imageView);
 			}
