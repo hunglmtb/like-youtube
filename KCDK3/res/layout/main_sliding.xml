@@ -138,14 +138,13 @@
             android:layout_toLeftOf="@id/menu_layout"
             android:background="#d0c722" >
 
-            <ImageView
+            <vn.tbs.kcdk.global.ImageViewTopCrop
                 android:id="@+id/media_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:background="@android:color/black"
                 android:contentDescription="@string/imageview_description"
-                android:scaleType="fitCenter"
                 android:src="@drawable/media_image_sample" />
         </RelativeLayout>
 

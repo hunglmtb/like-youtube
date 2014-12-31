@@ -7,6 +7,7 @@ import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
 import vn.tbs.kcdk.fragments.mediaplayer.VideoControllerView.ViewControl;
 import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import vn.tbs.kcdk.global.Common;
+import vn.tbs.kcdk.global.ImageViewTopCrop;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -72,7 +73,7 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 	// Layout containers for various widgets
 	private RelativeLayout					mLayout;
 	private RelativeLayout 					mRootLayout;			// Root layout
-	private ImageView 						mMediaImage;
+	private ImageViewTopCrop				mMediaImage;
 	private RelativeLayout 					mAppLayout;			// Reference to the window
 	//private ListView						mMainListView ;
 	private RelativeLayout.LayoutParams 	mRootRelativeLayoutParams;
@@ -233,7 +234,7 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 		// Get references to all the views and add them to root view as needed.
 		mAppLayout = (RelativeLayout) mMainLayout.findViewById(R.id.app_layout);
 		mRootLayout = (RelativeLayout) mMainLayout.findViewById(R.id.root_layout);
-		mMediaImage = (ImageView) mMainLayout.findViewById(R.id.media_image);
+		mMediaImage = (ImageViewTopCrop) mMainLayout.findViewById(R.id.media_image);
 		mSecondaryLayout = (RelativeLayout) mMainLayout.findViewById(R.id.secondary_layout);
 		mBackView = mMainLayout.findViewById(R.id.backView);
 		mMenuLayout = (RelativeLayout) mMainLayout.findViewById(R.id.menu_layout);
@@ -705,6 +706,7 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 		int screenHeight = mAppLayout.getHeight();
 		int rightMargin = 0;
 		int secondTopMargin = 0;
+		mMediaImage.setKeepRatio(mInSimpleMode);
 		if (!aIsSlidingX) {
 
 
