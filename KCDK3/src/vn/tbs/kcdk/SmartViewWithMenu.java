@@ -668,6 +668,7 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 				updateViewLayout(true,aIsSlidingX,newXAxis,newYAxis);
 				//updateSecondaryLayout(margin, fromAlpha);
 				if (interpolatedTime==1) {
+					mIsRootLayoutAnimating = false;
 					mRootLayout.clearAnimation();
 					mKCDKMediaPlayer.updateView(mInSimpleMode||(mOnTop&&newYAxis==0),true);
 					if (mClosed) {
@@ -675,7 +676,6 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 					}
 					mRootLayout.setVisibility(mClosed?View.GONE:View.VISIBLE);
 					mSecondaryLayout.setVisibility(mClosed?View.GONE:View.VISIBLE);
-					mIsRootLayoutAnimating = false;
 					updateBackView(true,BACK_VIEW_WIDTH,0);
 					mInSimpleMode = mInSimpleMode&&!simpleModeSwitched;
 					mOnTop = mInSimpleMode||mOnTop;
@@ -694,8 +694,8 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 
 		animations.addAnimation(animation);
 		// Play the animations
-		mIsRootLayoutAnimating = true;
 		mRootLayout.startAnimation(animations);
+		mIsRootLayoutAnimating = true;
 	}
 
 
@@ -875,13 +875,25 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 
 	@Override
 	public void viewDetail() {
-		if ((!mOnTop||mClosed)&&mMenuHiden) {
+		if (mMenuHiden) {
+			if ((!mOnTop||mClosed)) {
+				
+				mOnTop = true;
+				mClosed = false;
+				mRootLayout.setVisibility(View.VISIBLE);
+				int screenHeight = mAppLayout.getHeight();
+				animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);			
+			}
+			else if (mInSimpleMode) {
+				swith2FullMode();
+			}
 			
-			mOnTop = true;
-			mClosed = false;
-			mRootLayout.setVisibility(View.VISIBLE);
-			int screenHeight = mAppLayout.getHeight();
-			animateRootLayout(false,0,screenHeight-OVERLAY_HEIGHT - OVERLAY_BOTTOM_MARGIN,false);			
+		}
+	}
+
+	private void swith2FullMode() {
+		if (mOnTop) {
+			animateRootLayout(false,0,SIMPLE_MODE_HEIGHT,mInSimpleMode);							
 		}
 	}
 }
