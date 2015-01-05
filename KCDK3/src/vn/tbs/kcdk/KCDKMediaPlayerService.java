@@ -257,12 +257,17 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		mPhoneStateListener = new PhoneStateListener() {
 			@Override
 			public void onCallStateChanged(int state, String incomingNumber) {
-				if (state == TelephonyManager.CALL_STATE_RINGING) {
-					pause();
-				} else if(state == TelephonyManager.CALL_STATE_IDLE) {
-					playIfCan();
-				} else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
-					pause();
+				switch (state) {
+				case TelephonyManager.CALL_STATE_RINGING:
+				case TelephonyManager.CALL_STATE_OFFHOOK:
+					if (mKCDKMediaPlayer!=null&&mKCDKMediaPlayer.isPlaying()) {
+						pause();
+					}
+					break;
+				case TelephonyManager.CALL_STATE_IDLE:
+					break;
+				default:
+					break;
 				}
 				super.onCallStateChanged(state, incomingNumber);
 			}
@@ -272,16 +277,6 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 			mgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 		}
 	}
-
-	protected void playIfCan() {
-		//pauseOrPlay(true);
-	}
-
-/*	protected void pause() {
-		if (mKCDKMediaPlayer!=null&&mKCDKMediaPlayer.isPlaying()) {
-			pauseMediaPlayer(false,true);
-		}
-	}*/
 
 	public void sendMediaData2GUI() {
 		Log.d(TAG, "S:sendMediaData2GUI");
