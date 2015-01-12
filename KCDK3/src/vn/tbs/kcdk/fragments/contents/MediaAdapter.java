@@ -11,11 +11,14 @@ import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import vn.tbs.kcdk.global.Common;
+import android.app.Activity;
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
@@ -36,17 +39,17 @@ public class MediaAdapter extends BaseAdapter {
 	private ImageTagFactory imageTagFactory;
 	
 	//lrucache 
-	private ImageFetcher mImageFetcher;
 
 	private boolean mIsHistoryAdapterType = false;
 
 	private String mCategoryKeyString = "";
 	private String mCategoryName = "";
 
-	public MediaAdapter(List<MediaInfo> aMediaList, Context context, ImageFetcher imageFetcher) {
+	protected boolean mInitLayout = false;
+
+	public MediaAdapter(List<MediaInfo> aMediaList, Context context) {
 		this.mMediaList = aMediaList;
 		this.mContext = context;
-		this.mImageFetcher = imageFetcher;
         imageManager = KCDKApplication.getImageLoader();
         imageTagFactory = KCDKApplication.getImageTagFactory();
 	}
@@ -91,7 +94,7 @@ public class MediaAdapter extends BaseAdapter {
 
 		MediaInfo media = mMediaList.get(position);
 
-		if (convertView == null) { 
+		if (convertView == null||((ImageView) convertView.findViewById(R.id.media_item_image))==null) { 
 			LayoutInflater inflater = LayoutInflater.from(mContext);
 			switch (media.getMediaType()) {
 			case MEDIA_TYPE_AUDIO:
@@ -138,13 +141,11 @@ public class MediaAdapter extends BaseAdapter {
 			imageView.setTag(imageTagFactory.build(media.getMediaImageUrl(), mContext));
 			imageManager.getLoader().load(imageView);
 			Log.e(TAG, "kaka "+media.getMediaImageUrl());
-			
-
 		}
-
+		
+		Common.setItemWidth(convertView,mContext,mInitLayout);
 		return convertView;
 	}
-
 
 	public void setSelectedPosition(int mSelectedPosition, boolean notify) {
 		Log.i(TAG, "setSelectedPosition start" + "position: "+ mSelectedPosition +" notify: "+notify);

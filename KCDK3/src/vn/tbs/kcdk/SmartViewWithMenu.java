@@ -9,9 +9,11 @@ import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import vn.tbs.kcdk.global.Common;
 import vn.tbs.kcdk.global.ImageViewTopCrop;
 import android.annotation.SuppressLint;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -646,8 +648,7 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 		Animation animation = new Animation(){
 
 			private int mY0 = aYAxis;
-			private int mY1 = simpleModeSwitched?(int) (screenWidth*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH):
-				(mKCDKMediaPlayer==null?SIMPLE_MODE_HEIGHT:mKCDKMediaPlayer.getSimpleModeHeight());
+			private int mY1 = simpleModeSwitched?(int) (screenWidth*OVERLAY_HEIGHT/(float)OVERLAY_WIDTH):0;
 			private int mX0 = aXAxis;
 
 			@Override
@@ -811,8 +812,8 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 			return false;			
 		}
 		if (mOnTop) {
-			int y0 = mInSimpleMode?SIMPLE_MODE_HEIGHT:0;
-			animateRootLayout(false,0,y0,mInSimpleMode);							
+			//int y0 = mInSimpleMode?SIMPLE_MODE_HEIGHT:0;
+			animateRootLayout(false,0,0,true);							
 			mOnTop = mInSimpleMode;
 		}
 		else{
@@ -893,7 +894,7 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 
 	private void swith2FullMode() {
 		if (mOnTop) {
-			animateRootLayout(false,0,SIMPLE_MODE_HEIGHT,mInSimpleMode);							
+			animateRootLayout(false,0,0,true);							
 		}
 	}
 }

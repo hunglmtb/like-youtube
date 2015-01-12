@@ -28,19 +28,33 @@ public class RelateMediaFragment2 extends Fragment implements OnClickListener  {
 	private Context mContext;
 	private ItemSelectionListener mItemListerner;
 
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		imageManager = KCDKApplication.getImageLoader();
+		imageTagFactory = KCDKApplication.getImageTagFactory();
+		this.mContext = getActivity();
+	}
+	
 	public RelateMediaFragment2(MediaInfo media, Context context) {
 		//this.mImageFetcher = aImageFetcher;
 		this.mMedia = media;
 		this.mContext = context;
-		imageManager = KCDKApplication.getImageLoader();
-		imageTagFactory = KCDKApplication.getImageTagFactory();
 	}
 
 
 	public RelateMediaFragment2() {
-		super();
+		this.mMedia = new MediaInfo(null);
+		this.mContext = getActivity();
 	}
 
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +68,7 @@ public class RelateMediaFragment2 extends Fragment implements OnClickListener  {
 	}
 
 	private void bindView(Context context) {
-		if (mView!=null) {
+		if (mView!=null&&this.mMedia!=null) {
 			Common.bindTextValue(mView,this.mMedia,false,SmartKCDKActivity.sFont);
 			ImageView imageView  = (ImageView) mView.findViewById(R.id.media_item_image);
 			imageView.setTag(imageTagFactory.build(mMedia.getMediaImageThumbUrl(), context));
@@ -98,4 +112,5 @@ public class RelateMediaFragment2 extends Fragment implements OnClickListener  {
 			break;
 		}
 	}
+	
 }
