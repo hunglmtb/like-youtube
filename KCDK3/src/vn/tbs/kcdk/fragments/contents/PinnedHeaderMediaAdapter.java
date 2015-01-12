@@ -34,8 +34,8 @@ public final class PinnedHeaderMediaAdapter extends MediaAdapter implements Sect
 		this.mIndexer = new StringArrayAlphabetIndexer(objects, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	}*/
 
-	public PinnedHeaderMediaAdapter(List<MediaInfo> mCategories, Context context, String[] objects, boolean mEnablePinnedHeader, ImageFetcher imageFetcher, MediaIndexer indexer) {
-		super(mCategories,context,imageFetcher);
+	public PinnedHeaderMediaAdapter(List<MediaInfo> mCategories, Context context, String[] objects, boolean mEnablePinnedHeader, MediaIndexer indexer) {
+		super(mCategories,context);
 		//		this.mIndexer = new StringArrayAlphabetIndexer(objects, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 //		this.mIndexer = new MediaIndexer(mCategories);
 		this.mIndexer = indexer;

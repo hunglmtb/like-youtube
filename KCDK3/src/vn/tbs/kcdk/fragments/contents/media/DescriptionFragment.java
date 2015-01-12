@@ -1,12 +1,18 @@
 package vn.tbs.kcdk.fragments.contents.media;
 
 import static vn.tbs.kcdk.global.Common.MEDIA_IMAGEURL_KEY;
+import it.sephiroth.android.library.widget.AbsHListView;
+import it.sephiroth.android.library.widget.AbsHListView.OnScrollListener;
+import it.sephiroth.android.library.widget.AdapterView;
+import it.sephiroth.android.library.widget.AdapterView.OnItemClickListener;
+import it.sephiroth.android.library.widget.HListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
+import vn.tbs.kcdk.fragments.contents.MediaAdapter;
 import vn.tbs.kcdk.fragments.contents.PinnedHeaderMediaListFragment.ItemSelectionListener;
 import vn.tbs.kcdk.global.Common;
 import vn.tbs.kcdk.global.ImageViewTopCrop;
@@ -20,7 +26,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,12 +44,13 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.example.android.bitmapfun.util.ImageCache;
 import com.example.android.bitmapfun.util.ImageWorker;
 import com.novoda.imageloader.core.ImageManager;
 import com.novoda.imageloader.core.model.ImageTagFactory;
 
-public class DescriptionFragment extends Fragment implements OnClickListener {
+public class DescriptionFragment extends Fragment implements OnClickListener, OnItemClickListener {
+
+
 	private static final String TAG = DescriptionFragment.class.getName();
 	private WebView mChildWebview =null;
 	protected RelativeLayout mParentLayout;
@@ -63,10 +69,20 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 	private Bundle data;
 	private ScrollView mScrollView;
-	private ViewPager mViewPager;
+	//	private ViewPager mViewPager;
 	private FrameLayout mLoadingLayout;
 
 	private MediaInfo mMediaItem = null;
+
+	private TextView mContent;
+	private TextView mTitleTextView;
+	private TextView mAuthorTextView;
+	private TextView mViewCountTextView;
+	private TextView mSpeakerTextView;
+	private TextView mPublishedDateTextView;
+	private View mContentLayout;
+	private View mDivider;
+	private View mComma;
 
 	private RelateMediaFragment2 mRelateMediaFragment;
 	private DetailFragment mDetailFragment;
@@ -82,6 +98,9 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	private Typeface tf;
 	private Button mRefreshWebViewButton;
 	private ItemSelectionListener mItemSelectionListener;
+	private HListView mHlvSimpleList;
+	private MediaAdapter mRelativeAdapter;
+	private View mDetailMediaView;
 
 	public void setOnItemSelectionListener(ItemSelectionListener alistener) {
 		this.mItemSelectionListener = alistener;
@@ -92,7 +111,6 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		super.onCreate(savedInstanceState);
 
 		initUrlData();
-		iniLrucache();
 
 		imageManager = KCDKApplication.getImageLoader();
 		imageTagFactory = KCDKApplication.getImageTagFactory();
@@ -115,7 +133,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		mScrollView = (ScrollView) inflater.inflate(R.layout.media_detail_layout, null);
+		mScrollView = (ScrollView) inflater.inflate(R.layout.media_detail_layout2, null);
 
 		mParentLayout = (RelativeLayout) mScrollView.findViewById(R.id.parent_of_webview);
 		mOriginalWebView = (WebView)mScrollView.findViewById(R.id.webview);
@@ -123,6 +141,61 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		mRefreshWebViewButton = (Button)mScrollView.findViewById(R.id.refresh_webview);
 		mRefreshWebViewButton.setOnClickListener(this);
 		showOriginWebview(false);
+		mHlvSimpleList = (HListView) mScrollView.findViewById(R.id.hlvSimpleList);
+		if (mContext==null) {
+			mContext = getActivity();
+		}
+
+		mDetailMediaView =  inflater.inflate(R.layout.detail_media_layout, null);
+		mComma = mDetailMediaView.findViewById(R.id.three_comma_tv);
+		mDivider = mDetailMediaView.findViewById(R.id.divider);
+		mContentLayout = mDetailMediaView.findViewById(R.id.vg_cover);
+		if (mContentLayout!=null) {
+			mContentLayout.setOnClickListener(this);
+		}
+
+		mContent = (TextView)mDetailMediaView.findViewById(R.id.media_content_tv);
+		mTitleTextView = (TextView)mDetailMediaView.findViewById(R.id.media_title_tv);
+		mAuthorTextView = (TextView)mDetailMediaView.findViewById(R.id.media_author_tv);
+		mViewCountTextView = (TextView)mDetailMediaView.findViewById(R.id.media_viewcount_tv);
+		mSpeakerTextView = (TextView)mDetailMediaView.findViewById(R.id.media_speaker_tv);
+		mPublishedDateTextView = (TextView)mDetailMediaView.findViewById(R.id.media_publisheddate_tv);
+
+		//        CustomArrayAdapter adapter = new CustomArrayAdapter(mContext, mCustomData);
+
+		mRelativeAdapter = new RelativeMediaAdapter(mRelativeMediaList, mContext);
+		// Assign adapter to the HorizontalListView
+
+		mHlvSimpleList.setAdapter(mRelativeAdapter);
+		mHlvSimpleList.setOnItemClickListener(this);
+		mHlvSimpleList.setOnScrollListener(new OnScrollListener() {
+
+			@Override
+			public void onScrollStateChanged(AbsHListView view, int scrollState) {
+				if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+					if (view.getId() == mHlvSimpleList.getId()) {
+						final int currentFirstVisibleItem = mHlvSimpleList.getFirstVisiblePosition();
+						if (currentFirstVisibleItem > 0) {
+							Log.i("a", "scrolling down...");
+							setDetaiVisible(false);
+							mHlvSimpleList.requestLayout();
+							/*for (int i = 0; i < mHlvSimpleList.getChildCount(); i++) {
+								Common.setItemWidth(mHlvSimpleList.getChildAt(i),mContext);
+							}*/
+						} else  {
+							Log.i("a", "scrolling up...");
+						}
+					}
+				}
+			}
+
+			@Override
+			public void onScroll(AbsHListView view, int firstVisibleItem,int visibleItemCount, int totalItemCount) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		/*
 		//
 		mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getChildFragmentManager());
 		mViewPager = (ViewPager) mScrollView.findViewById(R.id.pager);
@@ -134,8 +207,8 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				// We can also use ActionBar.Tab#select() to do this if we have a reference to the
 				// Tab.
 				//actionBar.setSelectedNavigationItem(position);
-				/*if (position>0&&mDetailFragment!=null) {
-				}*/
+				if (position>0&&mDetailFragment!=null) {
+				}
 				//mViewPager.getChildAt(position).requestFocus();
 			}
 
@@ -149,7 +222,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			}
 		});
 		//
-		return mScrollView;
+		 */		return mScrollView;
 
 	}
 
@@ -273,38 +346,6 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		Common.setVisible(mChildWebview, true);
 	}
 
-	private void iniLrucache() {
-
-		// Fetch screen height and width, to use as our max size when loading images as this
-		// activity runs full screen
-		final DisplayMetrics displayMetrics = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-		final int height = displayMetrics.heightPixels;
-		final int width = displayMetrics.widthPixels;
-
-		// For this sample we'll use half of the longest width to resize our images. As the
-		// image scaling ensures the image is larger than this, we should be left with a
-		// resolution that is appropriate for both portrait and landscape. For best image quality
-		// we shouldn't divide by 2, but this will use more memory and require a larger memory
-		// cache.
-		final int longest = (height > width ? height : width) / 2;
-
-		ImageCache.ImageCacheParams cacheParams =
-				new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
-		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
-
-		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
-		/*mImageFetcher = new ImageFetcher(getActivity(), longest);
-		mImageFetcher.setStandardWidth(width);
-		mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
-		mImageFetcher.setLoadingImage(R.drawable.empty_photo);
-		mImageFetcher.setImageFadeIn(true);
-		mImageFetcher.setEnableResizeImageView(false);
-
-        mImageFetcher.setLoadingDoneListener(mRelateMediaFragment);*/
-	}
-
-
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -337,17 +378,8 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		Log.i(TAG, "onClick start");
 
 		switch (v.getId()) {
-		case R.id.media_content_layout:
-			/*if (mContent.getVisibility()==View.VISIBLE) {
-				mContent.setVisibility(View.GONE);
-				mDivider.setVisibility(View.GONE);
-				mComma.setVisibility(View.VISIBLE);
-			}
-			else if (mContent.getVisibility()==View.GONE) {
-				mContent.setVisibility(View.VISIBLE);
-				mDivider.setVisibility(View.VISIBLE);
-				mComma.setVisibility(View.GONE);
-			}*/
+		case R.id.vg_cover:
+			setDetaiVisible(true);
 		case R.id.refresh_webview:
 			showOriginWebview(true);
 			refreshWebView(true);
@@ -359,6 +391,19 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 
 
 
+
+	private void setDetaiVisible(boolean enableView) {
+		if (mContent.getVisibility()==View.VISIBLE) {
+			mContent.setVisibility(View.GONE);
+			mDivider.setVisibility(View.GONE);
+			mComma.setVisibility(View.VISIBLE);
+		}
+		else if (mContent.getVisibility()==View.GONE&&enableView) {
+			mContent.setVisibility(View.VISIBLE);
+			mDivider.setVisibility(View.VISIBLE);
+			mComma.setVisibility(View.GONE);
+		}
+	}
 
 	public void updateData(MediaInfo item, ImageView imageView, Context context) {
 		this.mContext = context;
@@ -377,21 +422,25 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 				imageManager.getLoader().load(imageView);
 			}
 
-			if (mDetailFragment!=null) {
+			/*if (mDetailFragment!=null) {
 				if (tf==null) {
 					tf=Typeface.createFromAsset(context.getAssets(),"Roboto-Light.ttf");
 				}
 				mDetailFragment.updateData(tf,item);
-			}
+			}*/
 
-			if (mViewPager!=null) {
-				mViewPager.setCurrentItem(0);
+			if (tf==null) {
+				tf=Typeface.createFromAsset(context.getAssets(),"Roboto-Light.ttf");
 			}
+			updateData(tf, item);
+			/*if (mViewPager!=null) {
+				mViewPager.setCurrentItem(0);
+			}*/
 
 			String url =context.getString(R.string.url_domain)+context.getString(R.string.action_url_social)+"mediaId="+mMediaItem.getMediaId();
 			// url = "https://m.facebook.com/";
 			Log.i("mimi", url);
-			
+
 			showOriginWebview(false);
 			mOriginalWebView.loadUrl(url);
 			refreshWebView(false);
@@ -438,7 +487,10 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 					if (media!=null) {
 						Fragment fragment = getFragmentByMediaId(media.getMediaId());
 						if (fragment==null) {
-							mRelateMediaFragment = new RelateMediaFragment2(media,mContext);
+							if (mRelateMediaFragment==null) {
+								mRelateMediaFragment = new RelateMediaFragment2(media,mContext);
+
+							}
 							mRelateMediaFragment.setOnItemSelectionListener(mItemSelectionListener);
 							if (mFragmentList==null) {
 								mFragmentList = new ArrayList<RelateMediaFragment2>();
@@ -571,7 +623,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		}
 		mChildWebview.getSettings().setJavaScriptEnabled(true);
 
-		WebSettings webSettings = mChildWebview.getSettings();
+		//		WebSettings webSettings = mChildWebview.getSettings();
 		//		webSettings.setSupportZoom(true);
 		//		webSettings.setBuiltInZoomControls(true);
 		//webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
@@ -628,10 +680,14 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			if (mEnableLoading){
 				if (mRelativeMediaList!=null&&mRelativeMediaList.size()>0) {
 					mRelativeMediaList.clear();
-					mRelativeMediaList = null;
-					mViewPager.setAdapter(mAppSectionsPagerAdapter);
+					//mRelativeMediaList = null;
+					/*mViewPager.setAdapter(mAppSectionsPagerAdapter);
 					if (mAppSectionsPagerAdapter!=null) {
 						mAppSectionsPagerAdapter.notifyDataSetChanged();
+					}*/
+					//mHlvSimpleList.setAdapter(adapter);
+					if (mRelativeAdapter!=null) {
+						mRelativeAdapter.notifyDataSetChanged();
 					}
 				}
 				mLoadRelativeAsyntask = new RelativeAsyntask();
@@ -663,8 +719,13 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 		@Override
 		protected void onPostExecute(List<MediaInfo> mediaList) {
 			mRelativeMediaList = mediaList;
-			if (mAppSectionsPagerAdapter!=null) {
+
+			/*if (mAppSectionsPagerAdapter!=null) {
 				mAppSectionsPagerAdapter.notifyDataSetChanged();
+			}*/
+			if (mRelativeAdapter!=null) {
+				mRelativeAdapter.setMediaList(mRelativeMediaList);
+				mRelativeAdapter.notifyDataSetChanged();
 			}
 			super.onPostExecute(mediaList);
 			mLoadRelativeAsyntask.cancel(false);
@@ -676,5 +737,68 @@ public class DescriptionFragment extends Fragment implements OnClickListener {
 			mOldMediaId = mMediaId;*/
 		}
 
+	}
+
+	public class RelativeMediaAdapter extends MediaAdapter {
+
+		LayoutInflater inflater = null;
+		public RelativeMediaAdapter(List<MediaInfo> aMediaList, Context context) {
+			super(aMediaList, context);
+			inflater = LayoutInflater.from(mContext);
+			mInitLayout = true;
+		}
+		@Override
+		public int getCount() {
+			return super.getCount()+1;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+			if (position==0) {
+				convertView = mDetailMediaView;
+				updateData(tf, mMediaItem);
+				Common.setItemWidth(convertView,mContext,mInitLayout);
+				return convertView;
+			}
+			else {
+				convertView = super.getView(position-1, convertView, parent);			
+				if (position==1) {
+					convertView.setPadding(convertView.getPaddingLeft(),
+							0,
+							convertView.getPaddingRight(),
+							0);
+				}
+				//mHlvSimpleList.requestLayout();
+				//Common.setItemWidth(convertView,mContext);
+				return convertView;				
+			}
+		}
+	}
+
+	public void updateData(Typeface tf, MediaInfo item) {
+		if (tf!=null) {
+			mContent.setText(item.getContentInfo());
+			mTitleTextView.setText(item.getTitle());
+			mAuthorTextView.setText(item.getAuthor());
+			mSpeakerTextView.setText(item.getSpeaker());
+			mPublishedDateTextView.setText(item.getPublishedDate());
+			mViewCountTextView.setText(item.getCommentCount());
+
+			mContent.setTypeface(tf); 
+			mTitleTextView.setTypeface(tf);
+			mAuthorTextView.setTypeface(tf);
+			mSpeakerTextView.setTypeface(tf);
+			mPublishedDateTextView.setTypeface(tf);
+			mViewCountTextView.setTypeface(tf);
+		}
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+
+		MediaInfo media = mRelativeMediaList.get(position-1);
+		mItemSelectionListener.doItemSelection(media,true,false);
 	}
 }

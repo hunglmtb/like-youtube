@@ -17,12 +17,15 @@ import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import vn.tbs.kcdk.fragments.menu.MenuAdapter;
 import vn.tbs.kcdk.fragments.timer.TimerFragment;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
 
 public class Common {
@@ -507,6 +510,28 @@ public class Common {
 			
 		}
 		return durationText;
+	}
+	
+
+	public static void setItemWidth(View view,Context context,boolean initLayout) {
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+//		int height = displaymetrics.heightPixels;
+		int width = displaymetrics.widthPixels;
+		
+		int newWidht = width;
+		LayoutParams layout = view.getLayoutParams();
+		if (layout!=null) {
+			layout.width = newWidht;
+		}
+		else if (initLayout) {
+			layout = new  it.sephiroth.android.library.widget.AbsHListView.LayoutParams(width,android.view.ViewGroup.LayoutParams.MATCH_PARENT);
+		}
+		
+		if (layout!=null) {
+			view.setLayoutParams(layout);
+			view.requestLayout();
+		}
 	}
 
 }

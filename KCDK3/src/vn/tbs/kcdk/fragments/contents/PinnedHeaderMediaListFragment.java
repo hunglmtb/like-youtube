@@ -124,7 +124,7 @@ public class PinnedHeaderMediaListFragment extends ListFragment {
 	private void initAdapter() {
 		Log.i(TAG, "initAdapter start");
 
-		mPinnedHeaderMediaAdapter = new PinnedHeaderMediaAdapter(null,getActivity(),names,mEnablePinnedHeader,mImageFetcher,mIndexer);
+		mPinnedHeaderMediaAdapter = new PinnedHeaderMediaAdapter(null,getActivity(),names,mEnablePinnedHeader,mIndexer);
 		mPinnedHeaderMediaAdapter.setIsHistoryAdapterType(mEnablePercentInfo);
 		mEndlessAdapter = new EndlessLoadAdapter(mPinnedHeaderMediaAdapter, getActivity());
 		setListAdapter(mEndlessAdapter);
