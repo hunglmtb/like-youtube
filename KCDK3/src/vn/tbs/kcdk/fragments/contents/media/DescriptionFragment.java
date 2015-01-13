@@ -82,7 +82,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener, On
 	private TextView mPublishedDateTextView;
 	private View mContentLayout;
 	private View mDivider;
-	private View mComma;
+	private ImageView mComma;
 
 	private RelateMediaFragment2 mRelateMediaFragment;
 	private DetailFragment mDetailFragment;
@@ -147,11 +147,11 @@ public class DescriptionFragment extends Fragment implements OnClickListener, On
 		}
 
 		mDetailMediaView =  inflater.inflate(R.layout.detail_media_layout, null);
-		mComma = mDetailMediaView.findViewById(R.id.three_comma_tv);
+		mComma = (ImageView) mDetailMediaView.findViewById(R.id.three_comma_tv);
 		mDivider = mDetailMediaView.findViewById(R.id.divider);
 		mContentLayout = mDetailMediaView.findViewById(R.id.vg_cover);
-		if (mContentLayout!=null) {
-			mContentLayout.setOnClickListener(this);
+		if (mDetailMediaView!=null) {
+			mDetailMediaView.setOnClickListener(this);
 		}
 
 		mContent = (TextView)mDetailMediaView.findViewById(R.id.media_content_tv);
@@ -378,7 +378,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener, On
 		Log.i(TAG, "onClick start");
 
 		switch (v.getId()) {
-		case R.id.vg_cover:
+		case R.id.detail_media_layout_id:
 			setDetaiVisible(true);
 		case R.id.refresh_webview:
 			showOriginWebview(true);
@@ -389,19 +389,16 @@ public class DescriptionFragment extends Fragment implements OnClickListener, On
 		}
 	}
 
-
-
-
 	private void setDetaiVisible(boolean enableView) {
 		if (mContent.getVisibility()==View.VISIBLE) {
 			mContent.setVisibility(View.GONE);
 			mDivider.setVisibility(View.GONE);
-			mComma.setVisibility(View.VISIBLE);
+			mComma.setImageResource(R.drawable.ic_collape);
 		}
 		else if (mContent.getVisibility()==View.GONE&&enableView) {
 			mContent.setVisibility(View.VISIBLE);
-			mDivider.setVisibility(View.VISIBLE);
-			mComma.setVisibility(View.GONE);
+			mDivider.setVisibility(View.GONE);
+			mComma.setImageResource(R.drawable.ic_expand);
 		}
 	}
 
