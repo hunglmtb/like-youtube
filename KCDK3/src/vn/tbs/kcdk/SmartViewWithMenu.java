@@ -321,6 +321,7 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 
 	protected boolean animateThirdFragment(boolean show) {
 
+		mThirdLayout.clearAnimation();
 		if (show) {
 			if (mAnimationFadeIn==null) {
 				mAnimationFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fadein);
@@ -636,6 +637,7 @@ public class SmartViewWithMenu implements OnClickListener, ViewControl {
 	private void animateRootLayout(final boolean aIsSlidingX,final int aXAxis,final int aYAxis, final boolean simpleModeSwitched) {
 
 		// Scale the distance between open and close states to 0-1. 
+		mRootLayout.clearAnimation();
 		final int screenHeight = mAppLayout.getHeight();
 		final int screenWidth = mAppLayout.getWidth();
 
