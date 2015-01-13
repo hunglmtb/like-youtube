@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:listSelector="@android:color/transparent"
             android:background="@color/transparent"
-            android:paddingTop="@dimen/media_content_item_pading" />
+            android:paddingTop="@dimen/media_content_item_pading_vertical" />
 
         <FrameLayout
             android:id="@+id/fb_loading_layout"

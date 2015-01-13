@@ -11,7 +11,6 @@ import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.SearchManager;
-import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,13 +19,12 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Toast;
 
-public class SmartKCDKActivity  extends ActionBarActivity implements OnTopListener, ItemSelectionListener,ServiceConnection  {
+public class SmartKCDKActivity  extends FragmentActivity implements OnTopListener, ItemSelectionListener,ServiceConnection  {
 
 	private static final String TAG = SmartKCDKActivity.class.getSimpleName();
 	public static Typeface sFont = null;
