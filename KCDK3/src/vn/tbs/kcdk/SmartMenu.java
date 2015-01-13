@@ -114,7 +114,10 @@ public class SmartMenu implements OnItemClickListener {
 		/*boolean ok = switchContent(item);
 		if (ok) {
 		}*/
-		mMenuAdapter.setSelectedPosition(position,true);			
+		if (!"CATEGORY01".equals(item.getCategoryId())){
+			mMenuAdapter.setSelectedPosition(position,true);						
+		}
+
 		//		mContext.showPlayer();
 	}
 
