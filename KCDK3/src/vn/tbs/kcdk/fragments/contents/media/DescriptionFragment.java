@@ -299,7 +299,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener, On
 
 
 
-		mOriginalWebView.requestFocus(View.FOCUS_DOWN);
+//		mOriginalWebView.requestFocus(View.FOCUS_DOWN);
 		/*originalWebView.setOnTouchListener(new View.OnTouchListener()
 		{
 			@SuppressWarnings("deprecation")
@@ -407,7 +407,7 @@ public class DescriptionFragment extends Fragment implements OnClickListener, On
 		if (item!=null&&item!=mMediaItem) {
 			mMediaItem = item;
 			if (imageView!=null) {
-				mMediaImageUrl = item.getMediaImageUrl();
+				mMediaImageUrl = Common.getConnectUrl(context,Common.URL_IMAGE_LOAD,new String[]{item.getMediaImageUrl()});
 				mMediaImageView = imageView;
 				/*mImageFetcher.setEnableOtherLoad(true);
 				mImageFetcher.loadImage(mMediaImageUrl, mMediaImageView);*/

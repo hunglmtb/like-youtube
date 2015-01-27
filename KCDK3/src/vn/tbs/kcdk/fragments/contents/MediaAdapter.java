@@ -138,7 +138,7 @@ public class MediaAdapter extends BaseAdapter {
 			//TODO update font != null
 			Common.bindTextValue(convertView,media,mIsHistoryAdapterType,null);
 			//mImageFetcher.loadImage(media.getMediaImageThumbUrl(), imageView);
-			imageView.setTag(imageTagFactory.build(media.getMediaImageUrl(), mContext));
+			imageView.setTag(imageTagFactory.build(Common.getConnectUrl(mContext,Common.URL_IMAGE_LOAD,new String[]{media.getMediaImageUrl()}), mContext));
 			imageManager.getLoader().load(imageView);
 			Log.e(TAG, "kaka "+media.getMediaImageUrl());
 		}

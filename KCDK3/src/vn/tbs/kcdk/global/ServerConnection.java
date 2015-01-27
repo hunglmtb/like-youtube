@@ -50,7 +50,7 @@ public class ServerConnection {
 
 			if (jCategories!=null&&categoriesNum>0) {
 				CategoryRow category = null;
-				String categoryId = null;
+				String categoryId = Common.CATEGORY_ID_NEWSFEED;
 				String categoryName = null;
 				String categoryKeyString = "";
 				boolean showChildCategory = false;
@@ -60,9 +60,9 @@ public class ServerConnection {
 
 				for (int i = 0; i < categoriesNum; i++) {
 					jCategory = jCategories.getJSONObject(i);
-					categoryId = jCategory.getString("categoryId");
+//					categoryId = jCategory.getString("categoryId");
 					categoryName = jCategory.getString("categoryName");
-					categoryKeyString = jCategory.getString("categoryKeyString");
+					categoryKeyString = jCategory.getString("keyString");
 					try {
 						showChildCategory = jCategory.getBoolean("showChildCategory");
 					} catch (JSONException e1) {
@@ -187,7 +187,7 @@ public class ServerConnection {
 				String mediaId;
 				String title;
 				String mediaFileUrl;
-				String categoryId;
+				String categoryId = Common.CATEGORY_ID_NEWSFEED;
 				String likeCount;
 				String commentCount;
 				String speaker;
@@ -200,8 +200,8 @@ public class ServerConnection {
 				int mediaType;
 				String mediaImageThumbUrl;
 				String mediaImageUrl;
-				String enjoyDonePercent;
-				int timeDurationAgo;
+				String enjoyDonePercent = null;
+				int timeDurationAgo = 0;
 
 				MediaInfo media = null;
 				JSONObject jmedia = null;
@@ -211,10 +211,10 @@ public class ServerConnection {
 					jmedia = jCategories.getJSONObject(i);
 
 					//match field
-					mediaId = jmedia.getString("mediaId");
+					mediaId = jmedia.getString("keyString");
 					title = jmedia.getString("title");
 					mediaFileUrl = jmedia.getString("mediaFileUrl");
-					categoryId = jmedia.getString("categoryId");
+//					categoryId = jmedia.getString("categoryId");
 					likeCount = jmedia.getString("likeCount");
 					commentCount = jmedia.getString("commentCount");
 					speaker = jmedia.getString("speaker");
@@ -227,8 +227,8 @@ public class ServerConnection {
 					mediaType = jmedia.getInt("mediaType");
 					mediaImageThumbUrl = jmedia.getString("mediaImageThumbUrl");
 					mediaImageUrl = jmedia.getString("mediaImageUrl");
-					enjoyDonePercent = jmedia.getString("enjoyDonePercent");
-					timeDurationAgo = jmedia.getInt("timeDurationAgo");
+//					enjoyDonePercent = jmedia.getString("enjoyDonePercent");
+//					timeDurationAgo = jmedia.getInt("timeDurationAgo");
 
 
 					//init media

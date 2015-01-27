@@ -8,8 +8,7 @@ import vn.tbs.kcdk.fragments.contents.media.DescriptionFragment;
 import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.mediaplayer.KCDKMediaPlayer;
 import vn.tbs.kcdk.fragments.menu.CategoryRow;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
+import vn.tbs.kcdk.global.Common;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -114,7 +113,9 @@ public class SmartKCDKActivity  extends FragmentActivity implements OnTopListene
 	@Override
 	public void onServiceConnected(ComponentName name, IBinder service) {
 		Log.d(TAG, "C:onServiceConnected()");
-		Toast.makeText(this, "C:onServiceConnected", Toast.LENGTH_SHORT).show();
+		String macAddress = Common.getMacAddress(this);
+		Toast.makeText(this, "C:onServiceConnected"+macAddress, Toast.LENGTH_SHORT).show();
+		Log.i(TAG, "macAddress "+macAddress);
 		KCDKMediaPlayerService.LocalBinder binder = (KCDKMediaPlayerService.LocalBinder) service;
 		mService = binder.getService();
 		if (mKCDKMediaPlayer!=null&&service!=null) {
@@ -123,15 +124,6 @@ public class SmartKCDKActivity  extends FragmentActivity implements OnTopListene
 
 	}
 
-	private boolean isMyServiceRunning(Class<?> serviceClass) {
-		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-		for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-			if (serviceClass.getName().equals(service.service.getClassName())) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	@Override
 	public void onServiceDisconnected(ComponentName name) {
