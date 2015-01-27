@@ -17,9 +17,12 @@ import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import vn.tbs.kcdk.fragments.menu.MenuAdapter;
 import vn.tbs.kcdk.fragments.timer.TimerFragment;
+import android.R.string;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
@@ -95,7 +98,8 @@ public class Common {
 
 	public static final int URL_CATEGORY_MODE = 0;
 	public static final int URL_MEDIA_LIST_MODE = 1;
-	
+	public static final int URL_IMAGE_LOAD = 2;
+
 	public static final String CATEGORY_ID_HEADER = "HEADER";
 	public static final String CATEGORY_ID_SEARCH = "SEARCH";
 	public static final String CATEGORY_ID_HISTORY = "HISTORY";
@@ -390,6 +394,9 @@ public class Common {
 		case URL_MEDIA_LIST_MODE:
 			secondaryUrl = context.getString(R.string.url_mediaList);
 			return domainUrl+secondaryUrl+"?category="+params[0]+"&limit=" +params[2]+"&offset=" +params[3];
+		case URL_IMAGE_LOAD:
+			secondaryUrl = context.getString(R.string.url_image);
+			return domainUrl+secondaryUrl+params[0];
 			//TODO group mode update later
 		default:
 			break;
@@ -532,6 +539,13 @@ public class Common {
 			view.setLayoutParams(layout);
 			view.requestLayout();
 		}
+	}
+	
+	public static String getMacAddress(Activity activity) {
+		WifiManager wifiManager = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
+		WifiInfo wInfo = wifiManager.getConnectionInfo();
+		String macAddress = wInfo.getMacAddress();
+		return macAddress;
 	}
 
 }
