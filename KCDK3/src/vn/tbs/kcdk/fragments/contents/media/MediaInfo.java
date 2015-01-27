@@ -254,10 +254,10 @@ public class MediaInfo {
 	}
 
 	public boolean validated() {
-		boolean result = Common.checkNullOrEmpty(mMediaId)&&
-				Common.checkNullOrEmpty(mMediaFileUrl)&&
-				Common.checkNullOrEmpty(mTitle)&&
-				Common.checkNullOrEmpty(mMediaImageUrl); 
+		boolean result = Common.validateString(mMediaId)&&
+				Common.validateString(mMediaFileUrl)&&
+				Common.validateString(mTitle)&&
+				Common.validateString(mMediaImageUrl); 
 		
 		return result;
 	}
