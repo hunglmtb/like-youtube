@@ -21,6 +21,7 @@ import android.R.string;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.media.audiofx.Equalizer;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -481,8 +482,8 @@ public class Common {
 		likeAndCommentCountLoadingAsyntask.execute();			
 	}
 
-	public static boolean checkNullOrEmpty(String mMediaId) {
-		return mMediaId!=null&&mMediaId.length()>0;
+	public static boolean validateString(String mMediaId) {
+		return mMediaId!=null&&mMediaId.length()>0&&!"null".equals(mMediaId)&&!"NULL".equals(mMediaId);
 	}
 
 	public static void setVisible(View view, boolean visible) {

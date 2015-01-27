@@ -206,9 +206,15 @@ public class ServerConnection {
 				MediaInfo media = null;
 				JSONObject jmedia = null;
 				mediaList = new ArrayList<MediaInfo>();
+				String errorMessage = null;
 
 				for (int i = 0; i < categoriesNum; i++) {
 					jmedia = jCategories.getJSONObject(i);
+					errorMessage = jmedia.getString("errorMessage");
+					if (i==0&&Common.validateString(errorMessage)) {
+						Log.e("ServerConnection", jmedia.getString("errorMessage"));
+						return null;
+					}
 
 					//match field
 					mediaId = jmedia.getString("keyString");
@@ -258,6 +264,7 @@ public class ServerConnection {
 		} catch (JSONException e1) {
 			e1.printStackTrace();
 			Log.e(TAG, "parseMediaListJson JSONException "+e1);
+			mediaList = null;
 		}
 		Log.i(TAG, "parseMediaListJson end");
 		return mediaList;
