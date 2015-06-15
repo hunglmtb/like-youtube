@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/share_menu" android:title="share" android:showAsAction="never" android:orderInCategory="1"></item>
-    <item android:id="@+id/refresh_menu" android:title="refresh" android:orderInCategory="2" android:showAsAction="never"></item>
-</menu>
