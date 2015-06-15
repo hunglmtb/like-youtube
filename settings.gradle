@@ -1,0 +1,4 @@
+include ':ImageLoader-CORE'
+include ':appcompat_v7'
+include ':KCDK3'
+include ':HorizontalVariableListView-lib'
