@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="media_link_urls">
+        <item>http://www.haivl.com/photo/1064250</item>
+        <item>http://www.haivl.com/photo/973665</item>
+        <item>http://www.haivl.com/photo/486394</item>
+        <item>http://www.haivl.com/photo/499950</item>
+        <item>http://www.haivl.com/photo/574465</item>
+        <item>http://www.haivl.com/photo/798706</item>
+        <item>http://www.haivl.com/photo/466172</item>
+        <item>http://www.haivl.com/photo/394661</item>
+        <item>http://www.haivl.com/photo/474758</item>
+        <item>http://www.haivl.com/photo/189277</item>
+        <item>http://www.haivl.com/photo/509233</item>
+        <item>http://www.haivl.com/photo/882533</item>
+        <item>http://www.haivl.com/photo/739881</item>
+        <item>http://www.haivl.com/photo/300054</item>
+        <item>http://www.haivl.com/photo/459069</item>
+        <item>http://www.haivl.com/photo/328734</item>
+        <item>http://www.haivl.com/photo/326339</item>
+        <item>http://www.haivl.com/photo/440583</item>
+        <item>http://www.haivl.com/photo/784550</item>
+        <item>http://www.haivl.com/photo/748829</item>
+        <item>http://www.haivl.com/photo/552203</item>
+        <item>http://www.haivl.com/photo/1064250</item>
+        <item>http://www.haivl.com/photo/973665</item>
+        <item>http://www.haivl.com/photo/486394</item>
+        <item>http://www.haivl.com/photo/499950</item>
+        <item>http://www.haivl.com/photo/574465</item>
+        <item>http://www.haivl.com/photo/798706</item>
+        <item>http://www.haivl.com/photo/466172</item>
+        <item>http://www.haivl.com/photo/394661</item>
+        <item>http://www.haivl.com/photo/474758</item>
+        <item>http://www.haivl.com/photo/189277</item>
+        <item>http://www.haivl.com/photo/509233</item>
+        <item>http://www.haivl.com/photo/882533</item>
+        <item>http://www.haivl.com/photo/739881</item>
+        <item>http://www.haivl.com/photo/300054</item>
+        <item>http://www.haivl.com/photo/459069</item>
+        <item>http://www.haivl.com/photo/328734</item>
+        <item>http://www.haivl.com/photo/326339</item>
+        <item>http://www.haivl.com/photo/440583</item>
+        <item>http://www.haivl.com/photo/784550</item>
+        <item>http://www.haivl.com/photo/748829</item>
+        <item>http://www.haivl.com/photo/552203</item>
+    </string-array>
+    <string-array name="media_file_urls">
+        <item >http://s71.stream.nixcdn.com/feb7713303a9c6b38599a37cd13ccbd1/5227e999/NhacCuaTui076/Zhiyaoyouni-DengChaoJiMinJia_dxdu.mp3</item>
+        <item >http://s91.stream.nixcdn.com/6d3bcee4277fb906f687dfe8ed5d22cb/522d3d7e/Unv_Audio10/CallMeMaybe-CarlyRaeJepsen_4f5q.mp3</item>
+        <item >http://s71.stream.nixcdn.com/9c918098043f3ce6de5d69fefa72c47d/522d60a4/NhacCuaTui092/TuoiTreBaoThanhThienOST-HuaHao_jxqp.mp3</item>
+        <item >error</item>
+        <item >http://s91.stream.nixcdn.com/ef6430f319fedba7ff477e1a11562948/5227e999/NhacCuaTui014/TuyetHong-DanTruong_3tme.mp3</item>
+        <item >http://s71.stream.nixcdn.com/8563285c358d764e4b6360d1988c19ea/5227e999/NhacCuaTui087/Neumotngay-DanNguyen_hphe.mp3</item>
+        <item >http://s82.stream.nixcdn.com/be1857136b3d17f10ac911a01a96d20c/5227e999/NhacCuaTui197/NoiTinhYeuBatDau-BangKieu-LamAnh_3je8h.mp3</item>
+        <item >http://s82.stream.nixcdn.com/1d3a6711c62bbccacc7a1d0289783053/5227e999/NhacCuaTui199/ChoTrenThangNam-DanTruong_3k5bq.mp3</item>
+        <item >http://s82.stream.nixcdn.com/84038c49a8de81b8273e4eba9b4fa9ca/5227e999/NhacCuaTui828/ThuCuoi-Mr.TYanbiHangBingBoong-2427878.mp3</item>
+        <item >http://s91.stream.nixcdn.com/e99ab9109814b19078cac15119ce1d3f/5227e999/NhacCuaTui017/XuanVeTrenBanMong-LuongKimVinh_4c2m.mp3</item>
+        <item >http://s91.stream.nixcdn.com/1dcbe01049c0020f9f411d6ef311a5d2/5227e999/NhacCuaTui148/NoiLaiTinhXua-NhuQuynh-QuangLe_33ep7.mp3</item>
+        <item >http://s91.stream.nixcdn.com/7924bf1152e86c1e638c7f0b70647a9f/5227e999/NhacCuaTui102/RedBeanSong-DongLe_p9h7.mp3</item>
+        <item >http://s91.stream.nixcdn.com/0394365b3850037d3a573906a78e4e56/5227e999/NhacCuaTui052/Catbui-KhanhLy_86jh.mp3</item>
+        <item >http://s91.stream.nixcdn.com/8930a5a5eacd0fda7c3b13f6fd6abe69/5227e999/NhacCuaTui004/Question-HaYuSeon_32tb.mp3</item>
+        <item >http://s91.stream.nixcdn.com/897c2f32f21de80ff53d38373ac01092/5227e999/NhacCuaTui112/KhuynhQuocKhuynhThanh-UongHongBa_rqhz.mp3</item>
+        <item >http://s91.stream.nixcdn.com/218e806e400852aac8e55fac43cf7601/5227e999/NhacCuaTui107/TiengSaoChanCuu-Dangcapnhat_qfd3.mp3</item>
+        <item >http://download.s71.stream.nixcdn.com/2ade2a65e81fca96531067394785beb9/5226de72/NhacCuaTui092/TuoiTreBaoThanhThienOST-HuaHao_jxqp.mp3</item>
+        <item >http://s91.stream.nixcdn.com/4c7298ce5aa10d90098e4090f779d05e/5227e999/NhacCuaTui105/TheLonelyShepherd-JamesLast_q32r.mp3</item>
+        <item >http://s82.stream.nixcdn.com/d292cb3f91235b3d268b983c7ce826ae/5227e999/NhacCuaTui194/LienKhucChieuMua3List2-NhuQuynh-_3gmb7.mp3</item>
+        <item >http://s72.stream.nixcdn.com/bf8f3152a0ec66923c3454b0389a74eb/5227e999/NhacCuaTui225/LienKhucChieuMua2-DangCapNhat_43y8m.mp3</item>
+        <item >http://s72.stream.nixcdn.com/ba1c2b51502027f26dcedefa2f7e0f5d/5227e999/NhacCuaTui225/LienKhucChieuMua1-DangCapNhat_43y6n.mp3</item>
+        <item >http://s82.stream.nixcdn.com/12dddbac3bda9a9dab45acea12d3f2df/5227e999/NhacCuaTui194/LienKhucChieuMua3List3-NhuQuynh-_3gmb8.mp3</item>
+        
+        <item >http://s71.stream.nixcdn.com/feb7713303a9c6b38599a37cd13ccbd1/5227e999/NhacCuaTui076/Zhiyaoyouni-DengChaoJiMinJia_dxdu.mp3</item>
+        <item >http://s91.stream.nixcdn.com/1ae27db27a76472671756f25f9ad587a/5227e999/NhacCuaTui065/TuoitrebaothanhthienIII-Dangcapnh_aj9b.mp3</item>
+        <item >error</item>
+        <item >http://s82.stream.nixcdn.com/e4d2f852204d9949b73bfaec8f6c736d/5227e999/NhacCuaTui835/LkTinh2InShanghai-DonHoHuyVuHaVyShayla-2624619.mp3</item>
+        <item >http://s91.stream.nixcdn.com/ef6430f319fedba7ff477e1a11562948/5227e999/NhacCuaTui014/TuyetHong-DanTruong_3tme.mp3</item>
+        <item >http://s71.stream.nixcdn.com/8563285c358d764e4b6360d1988c19ea/5227e999/NhacCuaTui087/Neumotngay-DanNguyen_hphe.mp3</item>
+        <item >http://s82.stream.nixcdn.com/be1857136b3d17f10ac911a01a96d20c/5227e999/NhacCuaTui197/NoiTinhYeuBatDau-BangKieu-LamAnh_3je8h.mp3</item>
+        <item >http://s82.stream.nixcdn.com/1d3a6711c62bbccacc7a1d0289783053/5227e999/NhacCuaTui199/ChoTrenThangNam-DanTruong_3k5bq.mp3</item>
+        <item >http://s82.stream.nixcdn.com/84038c49a8de81b8273e4eba9b4fa9ca/5227e999/NhacCuaTui828/ThuCuoi-Mr.TYanbiHangBingBoong-2427878.mp3</item>
+        <item >http://s91.stream.nixcdn.com/e99ab9109814b19078cac15119ce1d3f/5227e999/NhacCuaTui017/XuanVeTrenBanMong-LuongKimVinh_4c2m.mp3</item>
+        <item >http://s91.stream.nixcdn.com/1dcbe01049c0020f9f411d6ef311a5d2/5227e999/NhacCuaTui148/NoiLaiTinhXua-NhuQuynh-QuangLe_33ep7.mp3</item>
+        <item >http://s91.stream.nixcdn.com/7924bf1152e86c1e638c7f0b70647a9f/5227e999/NhacCuaTui102/RedBeanSong-DongLe_p9h7.mp3</item>
+        <item >http://s91.stream.nixcdn.com/0394365b3850037d3a573906a78e4e56/5227e999/NhacCuaTui052/Catbui-KhanhLy_86jh.mp3</item>
+        <item >http://s91.stream.nixcdn.com/8930a5a5eacd0fda7c3b13f6fd6abe69/5227e999/NhacCuaTui004/Question-HaYuSeon_32tb.mp3</item>
+        <item >http://s91.stream.nixcdn.com/897c2f32f21de80ff53d38373ac01092/5227e999/NhacCuaTui112/KhuynhQuocKhuynhThanh-UongHongBa_rqhz.mp3</item>
+        <item >http://s91.stream.nixcdn.com/218e806e400852aac8e55fac43cf7601/5227e999/NhacCuaTui107/TiengSaoChanCuu-Dangcapnhat_qfd3.mp3</item>
+        <item >http://download.s71.stream.nixcdn.com/2ade2a65e81fca96531067394785beb9/5226de72/NhacCuaTui092/TuoiTreBaoThanhThienOST-HuaHao_jxqp.mp3</item>
+        <item >http://s91.stream.nixcdn.com/4c7298ce5aa10d90098e4090f779d05e/5227e999/NhacCuaTui105/TheLonelyShepherd-JamesLast_q32r.mp3</item>
+        <item >http://s82.stream.nixcdn.com/d292cb3f91235b3d268b983c7ce826ae/5227e999/NhacCuaTui194/LienKhucChieuMua3List2-NhuQuynh-_3gmb7.mp3</item>
+        <item >http://s72.stream.nixcdn.com/bf8f3152a0ec66923c3454b0389a74eb/5227e999/NhacCuaTui225/LienKhucChieuMua2-DangCapNhat_43y8m.mp3</item>
+        <item >http://s72.stream.nixcdn.com/ba1c2b51502027f26dcedefa2f7e0f5d/5227e999/NhacCuaTui225/LienKhucChieuMua1-DangCapNhat_43y6n.mp3</item>
+        <item >http://s82.stream.nixcdn.com/12dddbac3bda9a9dab45acea12d3f2df/5227e999/NhacCuaTui194/LienKhucChieuMua3List3-NhuQuynh-_3gmb8.mp3</item>
+    </string-array>
+    
+     <string-array name="media_image_thumb_urls">
+        <item >http://xemanhdep.com/wp-content/uploads/2013/09/anh-tre-tho-em-be-dep-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/hinh-girl-xinh-9x-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/anh-do-an-dep-dang-yeu01-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/hinh-anh-dep-iphone-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/anh-bikini-hot-girl-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/ngoi-nha-cay-sang-tao-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/hinh-anh-vui-anh-dong-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/girl-xinh-viet-nam-de-thuong-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-anh-dep-ve-tinh-yeu12-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-nen-dep-phong-canh-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-girl-xinh-de-thuong-dep-nhat-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-anh-vui-nhon-ngo-nghinh-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-dep-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/girl-xinh-viet-nam-ao-dai-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/06/nhung-hinh-anh-dep-nhat-the-gioi-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/06/tong-hop-comment-hinh-anh-facebook-vui-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/06/anh-thieu-nu-xinh-dep-ben-hoa-sen-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/06/summer-02-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/06/I_Can_Still_Remember_by_gilad-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/05/hinh-anh-girl-xinh-viet-nam-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/05/enhanced-buzz-wide-12743-1366470726-17-290x160.jpg</item>
+        
+        <item >http://s.f3.img.vnexpress.net/2013/09/07/anh-1378512123_53x53.jpg</item>
+        <item >http://s.f30.img.vnecdn.net/2013/09/07/dongho-1378521938_1378522606_53x53.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/anh-do-an-dep-dang-yeu01.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/hinh-anh-dep-iphone.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/anh-bikini-hot-girl.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/ngoi-nha-cay-sang-tao-589x900.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/anh-girl-xinh-dep-nhu-thien-than-600x893.jpg</item>
+        <item >http://farm8.staticflickr.com/7436/9376880516_04c3664342_z.jpg</item>
+        <item >http://farm3.staticflickr.com/2894/9305088179_b9bc2e50a4_b.jpg</item>
+        <item >http://24.media.tumblr.com/fb75cd5304fce7e9d379e256af347040/tumblr_mpyfphq3321qbd81ro1_1280.jpg</item>
+        <item >http://24.media.tumblr.com/a5f34960a290fa1a8cbfe52ebf22764b/tumblr_mqfqpp8daE1qbd81ro1_1280.jpg</item>
+        <item >http://farm4.staticflickr.com/3741/9303285429_49d78785e6_z.jpg</item>
+        <item >http://imgs.abduzeedo.com/files/paul0v2/follow-me/fm-03.jpg</item>
+        <item >http://imgs.abduzeedo.com/files/paul0v2/follow-me/fm-04.jpg</item>
+        <item >http://imgs.abduzeedo.com/files/paul0v2/follow-me/fm-07.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/girl-xinh-viet-nam-ao-dai.jpg</item>
+        <item >http://24.media.tumblr.com/tumblr_lrvrn8Q0qT1qbd81ro1_1280.jpg</item>
+        <item >http://img3.tamtay.vn/files/photo2/2012/7/27/12/72564/501225f1_1c5127fe_482142_330286017062510_290112691_n.jpg</item>
+        <item >http://img3.tamtay.vn/files/photo2/2012/11/28/11/8271479/50b596a8_7c0f3fbf_nguoiduatin-d03d3cdb-4359-4275-8612-c53045aa5a83.jpg</item>
+        <item >http://farm9.staticflickr.com/8538/8701599584_4b3514333a_z.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-nen-dep-phong-canh-600x375.jpg</item>
+    </string-array>
+    
+     <string-array name="media_image_urls">
+        <item >http://media6.tiin.vn/media01/4e1cfbbd90db3/2013/09/05/b4b63597-07ec-4e94-921f-e5bafc4b0c43.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/hinh-girl-xinh-9x-600x359.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/anh-do-an-dep-dang-yeu01.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/hinh-anh-dep-iphone.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/anh-bikini-hot-girl.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/ngoi-nha-cay-sang-tao-589x900.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/anh-girl-xinh-dep-nhu-thien-than-600x893.jpg</item>
+        <item >http://farm8.staticflickr.com/7436/9376880516_04c3664342_z.jpg</item>
+        <item >http://farm3.staticflickr.com/2894/9305088179_b9bc2e50a4_b.jpg</item>
+        <item >http://24.media.tumblr.com/fb75cd5304fce7e9d379e256af347040/tumblr_mpyfphq3321qbd81ro1_1280.jpg</item>
+        <item >http://24.media.tumblr.com/a5f34960a290fa1a8cbfe52ebf22764b/tumblr_mqfqpp8daE1qbd81ro1_1280.jpg</item>
+        <item >http://farm4.staticflickr.com/3741/9303285429_49d78785e6_z.jpg</item>
+        <item >http://imgs.abduzeedo.com/files/paul0v2/follow-me/fm-03.jpg</item>
+        <item >http://imgs.abduzeedo.com/files/paul0v2/follow-me/fm-04.jpg</item>
+        <item >http://imgs.abduzeedo.com/files/paul0v2/follow-me/fm-07.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/girl-xinh-viet-nam-ao-dai.jpg</item>
+        <item >http://24.media.tumblr.com/tumblr_lrvrn8Q0qT1qbd81ro1_1280.jpg</item>
+        <item >http://img3.tamtay.vn/files/photo2/2012/7/27/12/72564/501225f1_1c5127fe_482142_330286017062510_290112691_n.jpg</item>
+        <item >http://img3.tamtay.vn/files/photo2/2012/11/28/11/8271479/50b596a8_7c0f3fbf_nguoiduatin-d03d3cdb-4359-4275-8612-c53045aa5a83.jpg</item>
+        <item >http://farm9.staticflickr.com/8538/8701599584_4b3514333a_z.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-nen-dep-phong-canh-600x375.jpg</item>
+        
+        <item >http://xemanhdep.com/wp-content/uploads/2013/09/anh-tre-tho-em-be-dep-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/hinh-girl-xinh-9x-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/anh-do-an-dep-dang-yeu01-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/hinh-anh-dep-iphone-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/anh-bikini-hot-girl-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/ngoi-nha-cay-sang-tao-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/hinh-anh-vui-anh-dong-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/08/girl-xinh-viet-nam-de-thuong-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-anh-dep-ve-tinh-yeu12-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-nen-dep-phong-canh-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-girl-xinh-de-thuong-dep-nhat-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-anh-vui-nhon-ngo-nghinh-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/hinh-dep-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/07/girl-xinh-viet-nam-ao-dai-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/06/nhung-hinh-anh-dep-nhat-the-gioi-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/06/tong-hop-comment-hinh-anh-facebook-vui-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/06/anh-thieu-nu-xinh-dep-ben-hoa-sen-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/06/summer-02-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/06/I_Can_Still_Remember_by_gilad-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/05/hinh-anh-girl-xinh-viet-nam-290x160.jpg</item>
+        <item >http://xemanhdep.com/wp-content/uploads/2013/05/enhanced-buzz-wide-12743-1366470726-17-290x160.jpg</item>
+    </string-array>
+    
+      <string-array name="media_title_names">
+       <item >kaka</item>
+       <item >keke</item>
+       <item >kiki</item>
+       <item >kuku</item>
+       <item >koko</item>
+       <item >kyky</item>
+       <item >kjkj</item>
+       <item >k0k0</item>
+       <item >ksks</item>
+       <item >kaakaa</item>
+       <item >kmkm</item>
+       <item >kaka</item>
+       <item >kaka</item>
+       <item >kaka</item>
+       <item >kaka</item>
+       <item >kaka</item>
+       <item >kaka</item>
+       <item >kaka</item>
+       <item >kaka</item>
+       <item >kaka</item>
+       <item >kaka</item>
+       <item >kaka</item>
+       <item >kaka</item>
+    </string-array>
+</resources>
