@@ -69,21 +69,21 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	private int mMediaFileLengthInMilliseconds = 0;
 	private static boolean isRunning = false;
 	private Messenger mServiceMessenger = null;
-	
-	// Binder given to clients
-    private IBinder mBinder = null;
 
-    /**
-     * Class used for the client Binder.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with IPC.
-     */
-    public class LocalBinder extends Binder {
-    	private IBinder mLocalBinder;
+	// Binder given to clients
+	private IBinder mBinder = null;
+
+	/**
+	 * Class used for the client Binder.  Because we know this service always
+	 * runs in the same process as its clients, we don't need to deal with IPC.
+	 */
+	public class LocalBinder extends Binder {
+		private IBinder mLocalBinder;
 
 		public LocalBinder(IBinder binder) {
-    		mLocalBinder = binder;
+			mLocalBinder = binder;
 		}
-		
+
 
 		public IBinder getLocalBinder() {
 			return mLocalBinder;
@@ -91,12 +91,12 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 
 
 		KCDKMediaPlayerService getService() {
-            // Return this instance of LocalService so clients can call public methods
-            return KCDKMediaPlayerService.this;
-        }
-    }
-    
-   /* @Override
+			// Return this instance of LocalService so clients can call public methods
+			return KCDKMediaPlayerService.this;
+		}
+	}
+
+	/* @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }*/
@@ -283,26 +283,28 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		//		Iterator<Messenger> messengerIterator = mClients.iterator();
 		//		while (messengerIterator.hasNext()) {
 		//			Messenger messenger = messengerIterator.next();
-		try {
-			// Send data as a String
-			mDuration = Common.getDurationTextFromNumber(mMediaFileLengthInMilliseconds);
-			Bundle  extras = new Bundle();
-			extras.putString(MEDIA_ID, mMediaId);
-			extras.putString(MEDIA_FILE_URL, mMediaFileUrl);
-			extras.putString(TITLE, mMediaTitle);
-			extras.putString(SPEAKER, mSpeaker);
-			extras.putString(CONTENT_INFO, mContentInfo);
-			extras.putString(DURATION, mDuration);
-			extras.putString(AUTHOR, mAuthor);
-			extras.putString(MEDIA_IMAGE_URL, mMediaImageUrl);
-			extras.putBoolean(IS_PLAYING, mKCDKMediaPlayer.isPlaying());
-			Message msg = Message.obtain(null, UPDATE_GUI_COMMAND);
-			msg.setData(extras);
-			mServiceMessenger.send(msg);
-		} catch (RemoteException e) {
-			// The client is dead. Remove it from the list.
-			//mClients.remove(messenger);
-			e.printStackTrace();
+		if (mServiceMessenger!=null) {
+			try {
+				// Send data as a String
+				mDuration = Common.getDurationTextFromNumber(mMediaFileLengthInMilliseconds);
+				Bundle  extras = new Bundle();
+				extras.putString(MEDIA_ID, mMediaId);
+				extras.putString(MEDIA_FILE_URL, mMediaFileUrl);
+				extras.putString(TITLE, mMediaTitle);
+				extras.putString(SPEAKER, mSpeaker);
+				extras.putString(CONTENT_INFO, mContentInfo);
+				extras.putString(DURATION, mDuration);
+				extras.putString(AUTHOR, mAuthor);
+				extras.putString(MEDIA_IMAGE_URL, mMediaImageUrl);
+				extras.putBoolean(IS_PLAYING, mKCDKMediaPlayer.isPlaying());
+				Message msg = Message.obtain(null, UPDATE_GUI_COMMAND);
+				msg.setData(extras);
+				mServiceMessenger.send(msg);
+			} catch (RemoteException e) {
+				// The client is dead. Remove it from the list.
+				//mClients.remove(messenger);
+				e.printStackTrace();
+			}
 		}
 		//		}
 	}
@@ -329,7 +331,7 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	@Override
 	public IBinder onBind(Intent intent) {
 		Log.d(TAG, "S:onBind() - return mMessenger.getBinder()");
-		 mBinder = new LocalBinder(mMessenger.getBinder());
+		mBinder = new LocalBinder(mMessenger.getBinder());
 		return mBinder;
 	}
 
@@ -424,21 +426,23 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 		//		Iterator<Messenger> messengerIterator = mClients.iterator();
 		//		while (messengerIterator.hasNext()) {
 		//			Messenger messenger = messengerIterator.next();
-		try {
-			// Send data as a String
-			Bundle bundle = new Bundle();
-			bundle.putInt("value", value);
-			bundle.putInt("type", type);
-			bundle.putInt("sencondValue", sencondValue);
-			Message msg = Message.obtain(null, UI_UPDATE_COMAND);
-			msg.setData(bundle);
-			Log.d(TAG, "S:TX MSG_SET_STRING_VALUE");
-			mServiceMessenger.send(msg);
+		if (mServiceMessenger!=null) {
+			try {
+				// Send data as a String
+				Bundle bundle = new Bundle();
+				bundle.putInt("value", value);
+				bundle.putInt("type", type);
+				bundle.putInt("sencondValue", sencondValue);
+				Message msg = Message.obtain(null, UI_UPDATE_COMAND);
+				msg.setData(bundle);
+				Log.d(TAG, "S:TX MSG_SET_STRING_VALUE");
+				mServiceMessenger.send(msg);
 
-		} catch (RemoteException e) {
-			// The client is dead. Remove it from the list.
-			//mClients.remove(messenger);
-			e.printStackTrace();
+			} catch (RemoteException e) {
+				// The client is dead. Remove it from the list.
+				//mClients.remove(messenger);
+				e.printStackTrace();
+			}
 		}
 		//		}
 	}
@@ -640,83 +644,83 @@ public class KCDKMediaPlayerService extends Service implements OnBufferingUpdate
 	public KCDKMediaPlayerService getService() {
 		return KCDKMediaPlayerService.this;
 	}
-	
 
-    // Implement MediaPlayer.OnPreparedListener
-/*    @Override
+
+	// Implement MediaPlayer.OnPreparedListener
+	/*    @Override
     public void onPrepared(MediaPlayer mp) {
         controller.setMediaPlayer(this);
         controller.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
         player.start();
     }*/
-    // End MediaPlayer.OnPreparedListener
+	// End MediaPlayer.OnPreparedListener
 
-    // Implement VideoMediaController.MediaPlayerControl
-    @Override
-    public boolean canPause() {
-        return true;
-    }
+	// Implement VideoMediaController.MediaPlayerControl
+	@Override
+	public boolean canPause() {
+		return true;
+	}
 
-    @Override
-    public boolean canSeekBackward() {
-        return true;
-    }
+	@Override
+	public boolean canSeekBackward() {
+		return true;
+	}
 
-    @Override
-    public boolean canSeekForward() {
-        return true;
-    }
+	@Override
+	public boolean canSeekForward() {
+		return true;
+	}
 
-    @Override
-    public int getBufferPercentage() {
-        return mBufferPercentage;
-    }
+	@Override
+	public int getBufferPercentage() {
+		return mBufferPercentage;
+	}
 
-    @Override
-    public int getCurrentPosition() {
-        return mKCDKMediaPlayer.getCurrentPosition();
-    }
+	@Override
+	public int getCurrentPosition() {
+		return mKCDKMediaPlayer.getCurrentPosition();
+	}
 
-    @Override
-    public int getDuration() {
-    	if (isOkayState) {
-    		return mKCDKMediaPlayer.getDuration();
+	@Override
+	public int getDuration() {
+		if (isOkayState) {
+			return mKCDKMediaPlayer.getDuration();
 		}
-    	else{
-    		return 0;
-    	}
-    }
+		else{
+			return 0;
+		}
+	}
 
-    @Override
-    public boolean isPlaying() {
-        return mKCDKMediaPlayer.isPlaying();
-    }
+	@Override
+	public boolean isPlaying() {
+		return mKCDKMediaPlayer.isPlaying();
+	}
 
-    @Override
-    public void pause() {
-    	mKCDKMediaPlayer.pause();
-    	showControllerInNotification();
-    }
-
-    @Override
-    public void seekTo(int i) {
-    	mKCDKMediaPlayer.seekTo(i);
-    }
-
-    @Override
-    public void start() {
-    	mKCDKMediaPlayer.start();
-    	//sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, mMediaFileLengthInMilliseconds);
+	@Override
+	public void pause() {
+		mKCDKMediaPlayer.pause();
 		showControllerInNotification();
-    }
+	}
 
-    @Override
-    public boolean isFullScreen() {
-        return false;
-    }
+	@Override
+	public void seekTo(int i) {
+		mKCDKMediaPlayer.seekTo(i);
+	}
 
-    @Override
-    public void toggleFullScreen() {
-        
-    }
+	@Override
+	public void start() {
+		mKCDKMediaPlayer.start();
+		//sendMessageToUI(PLAY_PAUSE_UPDATE_COMAND, PLAYING, mMediaFileLengthInMilliseconds);
+		showControllerInNotification();
+	}
+
+	@Override
+	public boolean isFullScreen() {
+		return false;
+	}
+
+	@Override
+	public void toggleFullScreen() {
+
+	}
 }
