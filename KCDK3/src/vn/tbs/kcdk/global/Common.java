@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import vn.tbs.kcdk.KCDKApplication;
 import vn.tbs.kcdk.R;
 import vn.tbs.kcdk.fragments.contents.FoundMediaFragment;
 import vn.tbs.kcdk.fragments.contents.HistoryFragment;
@@ -17,18 +18,15 @@ import vn.tbs.kcdk.fragments.contents.media.MediaInfo;
 import vn.tbs.kcdk.fragments.menu.CategoryRow;
 import vn.tbs.kcdk.fragments.menu.MenuAdapter;
 import vn.tbs.kcdk.fragments.timer.TimerFragment;
-import android.R.string;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.media.audiofx.Equalizer;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
 
@@ -159,6 +157,7 @@ public class Common {
 	public static final String AUTHOR="AUTHOR";
 	public static final String MEDIA_IMAGE_URL="MEDIA_IMAGE_URL";
 	public static final String IS_PLAYING = "IS_PLAYING";
+	public static final String USER_KEY = "USER_KEY";
 
 	
 	public static Bundle initFragmentBund(FragmentMode mode, String[] values) {
@@ -388,13 +387,22 @@ public class Common {
 		
 		String domainUrl = context.getString(R.string.url_domain);
 		String secondaryUrl = "";
+		String result = domainUrl;
+		KCDKApplication kcdkApp = KCDKApplication.getInstance();
+		String userKey = kcdkApp!=null?kcdkApp.getUserKey():"";
 		switch (urlMode) {
 		case URL_CATEGORY_MODE:
-			secondaryUrl = context.getString(R.string.url_categories);
-			return domainUrl+secondaryUrl;
+			if (!Common.validateString(userKey)) {
+				secondaryUrl = context.getString(R.string.url_macaddress)+"?macaddress="+getMacAddress(context);
+			}
+			else{
+				secondaryUrl = context.getString(R.string.url_categories)+"?userkey="+userKey;
+			}
+			result = domainUrl+secondaryUrl;
+			break;
 		case URL_MEDIA_LIST_MODE:
 			secondaryUrl = context.getString(R.string.url_mediaList);
-			return domainUrl+secondaryUrl+"?category="+params[0]+"&limit=" +params[2]+"&offset=" +params[3];
+			return domainUrl+secondaryUrl+"?category="+params[0]+"&limit=" +params[2]+"&offset=" +params[3]+"&userkey="+userKey;
 		case URL_IMAGE_LOAD:
 			secondaryUrl = context.getString(R.string.url_image);
 			return domainUrl+secondaryUrl+params[0];
@@ -402,7 +410,7 @@ public class Common {
 		default:
 			break;
 		}
-		return domainUrl;
+		return result;
 		
 	}
 
@@ -542,8 +550,8 @@ public class Common {
 		}
 	}
 	
-	public static String getMacAddress(Activity activity) {
-		WifiManager wifiManager = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
+	public static String getMacAddress(Context context) {
+		WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 		WifiInfo wInfo = wifiManager.getConnectionInfo();
 		String macAddress = wInfo.getMacAddress();
 		return macAddress;
