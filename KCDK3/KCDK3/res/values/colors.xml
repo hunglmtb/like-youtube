@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+
+    <color name="red">#FF0000</color>
+    <color name="DarkGray">#4C4646</color>
+    <color name="transparent">#00000000</color>
+    <color name="transparent_bg">#80000000</color>
+    <color name="White">#FFFFFF</color>
+    <color name="DarkGray_transparent">#804C4646</color>
+    <color name="banner_text_background_color">#90788E98</color>
+    <color name="text_line_chart_legnd">#00BFFF</color>
+    <color name="background">#E6E7E7</color>
+    <color name="textview_home_power_saving_background">#4D4C4F</color>
+    <color name="media_content_caption_background_color">#BB4D4C4F</color>
+    <color name="media_category_avatar_background_color">#774D4C4F</color>
+    <color name="black_with_transparent">#99000000</color>
+    <color name="media_content_background_color">#222222</color>
+    <color name="back_view_color">#95000000</color>
+
+    <!-- //subsonic -->
+    <color name="mediaControlBackground">#222E42</color>
+    <color name="mediaControlBackgroundDark">#222222</color>
+    <!-- Same as Google Music -->
+    <color name="mediaControlForeground">#F0F0F0</color>
+    <color name="dividerColor">#FF33B5E5</color>
+    <!-- Cyan Holo -->
+    <color name="overlayColor">#80000000</color>
+    <color name="appwidget_text">#FFFFFF</color>
+    <color name="notificationArtist">#434343</color>
+    <color name="notificationTitle">#000000</color>
+    <color name="buttonBarTextColor">#A0A0A0</color>
+    <color name="appwidget_text_primary">#ffffffff</color>
+    <color name="appwidget_text_secondary">#ff999999</color>
+    <color name="facebook_color">#3b5998</color>
+    <color name="menu_header_text_color">#989898</color>
+    <color name="highlight_color">#33b5e5</color>
+    <color name="highlight_color_purple">#9c27b0</color>
+    <color name="highlight_color_blue">#5677fc</color>
+<!--      <color name="media_highlight_color">#4433b5e5</color> -->
+    <color name="media_highlight_color">#505677fc</color>
+    <color name="bg_menu">#222222</color>
+    <color name="bg_menu_divider_color">#464644</color>
+    <color name="bg_media_list">#e0e0e0</color>
+    <color name="shadow_color">#c4c4c4</color>
+    <color name="alpha_white">#ccffffff</color>
+    <color name="addition_text_color">#525252</color>
+    <color name="bg_color_media_item">#aacbcbcb</color>
+    <color name="abs__background_holo_dark">#ff000000</color>
+    <color name="abs__background_holo_light">#fff3f3f3</color>
+    <color name="abs__bright_foreground_holo_dark">@color/abs__background_holo_light</color>
+    <color name="abs__bright_foreground_holo_light">@color/abs__background_holo_dark</color>
+    <color name="abs__bright_foreground_disabled_holo_dark">#ff4c4c4c</color>
+    <color name="abs__bright_foreground_disabled_holo_light">#ffb2b2b2</color>
+    <color name="abs__bright_foreground_inverse_holo_dark">@color/abs__bright_foreground_holo_light</color>
+    <color name="abs__bright_foreground_inverse_holo_light">@color/abs__bright_foreground_holo_dark</color>
+    <color name="abs__holo_blue_light">#ff33b5e5</color>
+
+</resources>

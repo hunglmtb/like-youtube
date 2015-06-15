@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/detail_media_layout_id"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:id="@+id/vg_cover"
+        style="@style/media_image_layout_style"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/detail_layout_height"
+        android:layout_marginLeft="@dimen/media_content_item_pading_vertical"
+        android:layout_marginRight="@dimen/media_content_item_pading_vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:padding="@dimen/plugin_margin" >
+
+        <TextView
+            android:id="@+id/media_title_tv"
+            style="@style/detail_media_title_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tuổi trẻ Bao Thanh Thiên Phần 3 tập 30 Vietsub" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/plugin_margin" >
+
+            <TextView
+                android:id="@+id/media_author_tv"
+                style="@style/detail_media_additional_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="Kim dung" />
+
+            <TextView
+                android:id="@+id/media_viewcount_tv"
+                style="@style/detail_media_additional_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:gravity="right"
+                android:text="765 Views" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/media_speaker_tv"
+                style="@style/detail_media_additional_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="giọng đọc Việt Hùng" />
+
+            <TextView
+                android:id="@+id/media_publisheddate_tv"
+                style="@style/detail_media_additional_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:gravity="right"
+                android:text="14/9/2013" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/three_comma_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_expand"
+            android:layout_gravity="center_horizontal"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="@dimen/divider_media_content_tv"
+            android:background="@color/shadow_color"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/media_content_tv"
+        style="@style/detaiL_media_content_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/vg_cover"
+        android:layout_alignRight="@id/vg_cover"
+        android:layout_below="@id/vg_cover"
+        android:padding="@dimen/media_content_item_pading_vertical"
+        android:background="@drawable/bg_plugin"
+        android:text="Dương- Qua đã trải qua bảy ngày du ngoạn. Chàng đã rõ cỏ Đoạn trường tuy độc nhưng chất độc này có thể chế ngự được chất độc Tình hoa, nên chàng hái một nhánh Đoạn trường thảo cho vào miệng nhai nuốt rồi vận khí hộ lấy tâm phế."
+        android:visibility="visible" />
+
+</RelativeLayout>
