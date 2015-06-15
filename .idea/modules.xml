@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/HorizontalVariableListView-lib/HorizontalVariableListView-lib.iml" filepath="$PROJECT_DIR$/HorizontalVariableListView-lib/HorizontalVariableListView-lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ImageLoader-CORE/ImageLoader-CORE.iml" filepath="$PROJECT_DIR$/ImageLoader-CORE/ImageLoader-CORE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/KCDK3/KCDK3.iml" filepath="$PROJECT_DIR$/KCDK3/KCDK3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WORKPLACE.iml" filepath="$PROJECT_DIR$/WORKPLACE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/appcompat_v7/appcompat_v7.iml" filepath="$PROJECT_DIR$/appcompat_v7/appcompat_v7.iml" />
+    </modules>
+  </component>
+</project>
+
